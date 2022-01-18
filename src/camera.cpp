@@ -1,20 +1,29 @@
-#include "mylib/camera.h"
+#include "mylib/camera.hpp"
 
-//Initialize camera positions
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-bool firstMouse = true; //Initialize firstMouse to true upon startup
-float yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+Camera* playerCamera {new Camera(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)};
 
-//Initialize the pitch, lastY and lastX variables to 0
-float pitch {};
-float lastY {};
-float lastX {};
+/* Constructor for Camera class. */
+Camera::Camera(const float& yaw, const float& pitch, const float& movementSpeed, const float& mouseSensitivity, const float& zoom) : 
+   cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)}, cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)}, cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed},
+   view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {movementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
+   yaw {yaw}, pitch {pitch}, mouseSensitivity {mouseSensitivity}, zoom {zoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)}  {}
 
-//Method that retrieves the current view matrix
-glm::mat4 getViewMatrix()
+
+/* Camera class destructor. */
+Camera::~Camera()
 {
-    return glm::lookAt(cameraPos, cameraPos + cameraFront, worldUp);
+
+}
+
+void Camera::updateCameraPos()
+{
+	glm::vec3 direction;
+	const double cosPitch {cos(glm::radians(pitch))};
+
+	direction.x = cos(glm::radians(yaw)) * cosPitch;
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cosPitch;	
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+	cameraFront = glm::normalize(direction);
 }

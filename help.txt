@@ -1,0 +1,9 @@
+Glm::Perspective(FOV, Viewport width/height, near plane, far plane)
+
+The first parameter defines the FOV value, the second sets the aspect ratio, and the third and fourth parameter set the near and
+far plane of the frustrum.
+
+Model Matrix:
+-------------
+The model matrix consists of translations, scaling, or rotations
+that we'd like to apply to all object's vertices to global world space.
