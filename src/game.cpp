@@ -44,10 +44,11 @@ void Game::runGame()
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
-        glClearColor(0.0f, 0.85f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        renderer->drawLightSource();
         renderer->drawChunk(Block(*dirtBlock));
 
         glfwSwapBuffers(gameWindow->getWindow()); // Swap color buffer
@@ -55,7 +56,7 @@ void Game::runGame()
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
         playerCamera->updateCameraPos(gameWindow->getWindow());
-        renderer->shader->setMat4("view", playerCamera->view);
+        renderer->updateView(playerCamera->view);
         gameWindow->processKeyboardInput(deltaTime, playerCamera.get());
     }
 

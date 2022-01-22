@@ -109,6 +109,11 @@ void Shader::setVec2(const char* name, const glm::vec2& vec) const
     glUniform2f(glGetUniformLocation(shaderProgram, "subTextureCoords"), vec.x, vec.y);
 }
 
+void Shader::setVec3(const char* name, const glm::vec3& vec) const
+{
+    glUniform3f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y, vec.z);
+}
+
 /* Passes the 4x4 matrix to the shader to GLSL. */
 void Shader::setMat4(const char* name, const glm::mat4& matrix) const
 {
