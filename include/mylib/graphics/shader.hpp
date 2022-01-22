@@ -13,6 +13,7 @@ class Shader
         void useShader();
         void setMat4(const char* name, const glm::mat4 &matrix) const;
         void setVec2(const char* name, const glm::vec2& vec) const;
+        void setVec3(const char* name, const glm::vec3& vec) const;
         void setInt(const char* name, const int& value) const;
         unsigned int shaderProgram;
     private:
