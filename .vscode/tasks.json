@@ -23,6 +23,8 @@
 				"${workspaceFolder}/src/attribute.cpp",
 				"${workspaceFolder}/src/buffer.cpp",
 				"${workspaceFolder}/src/block.cpp",
+				"${workspaceFolder}/src/subtexture.cpp",
+				"${workspaceFolder}/src/renderer.cpp",
 				"-o",
 				"${workspaceFolder}/main.exe",
 				"${workspaceFolder}/icons/icon.res",

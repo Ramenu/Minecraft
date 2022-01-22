@@ -9,7 +9,7 @@
 
 /* Loads the vertex and fragment shader and links them into the shader program, the arguments passed should be paths to where the
    shader code is located, if there are any errors during compilation then it will print them out as well. */
-void Shader::loadShaders(const char* vertexShaderSource, const char* fragmentShaderSource)
+Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
     // Open the files
     std::ifstream vertexShaderFile {vertexShaderSource};
@@ -87,20 +87,30 @@ void Shader::checkLinkageErrors()
     }
 }
 
+/* Destructor for Shader. */
+Shader::~Shader()
+{
+    glDeleteProgram(shaderProgram);
+}
+
 /* Uses this shader program. */
 void Shader::useShader()
 {
     glUseProgram(shaderProgram);
 }
 
-/* Deletes this shader program. */
-void Shader::deleteShaderProgram()
+void Shader::setInt(const char* name, const int& value) const
 {
-	glDeleteProgram(shaderProgram);
+    glUniform1i(glGetUniformLocation(shaderProgram, name), value);
+}
+
+void Shader::setVec2(const char* name, const glm::vec2& vec) const
+{
+    glUniform2f(glGetUniformLocation(shaderProgram, "subTextureCoords"), vec.x, vec.y);
 }
 
 /* Passes the 4x4 matrix to the shader to GLSL. */
-void Shader::setMat4(const char* name, const glm::mat4 &matrix) const
+void Shader::setMat4(const char* name, const glm::mat4& matrix) const
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }

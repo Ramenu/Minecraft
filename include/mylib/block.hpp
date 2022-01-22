@@ -1,17 +1,15 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 
+#include "mylib/graphics/subtexture.hpp"
+
 class Block
 {
     public:
-        Block(const char* pathToDirectory);
+        Block(SubTextures subTexture);
         ~Block();
-        void drawBlock();
-    private:
-        static unsigned int blockID;
-        unsigned int blockTextures[3];
-        unsigned short noOfTextures;
-        unsigned short upTo;
+        void drawBlock() const;
+        SubTexture blockTexture;
 };
 
 #endif

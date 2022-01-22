@@ -4,19 +4,20 @@
 #include <filesystem>
 #include "mylib/graphics/textures.hpp"
 #include <stb-master/stb_image.h>
+#include <iostream>
 
-
-void createTexture(const char* filePath, GLuint wrap, unsigned int& texture)
+/* Creates a texture from the filepath given with the default wrapping and filtering configurations. */
+void createTexture(const char* filePath, unsigned int& texture)
 {
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // Set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Set the texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     loadTexture(filePath); // Load the texture data 
 }
@@ -54,17 +55,4 @@ void loadTexture(const char* fileName)
     }
     else
         printf("\nERROR: No file \"%s\" exists!\n", fileName);
-}
-
-
-/* Sets the default texture configurations. */
-void setDefaultTextureConfigs()
-{
-    // Set texture wrapping parameters 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

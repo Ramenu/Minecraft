@@ -1,0 +1,1 @@
+g++ -fdiagnostics-color=always -g -Wall -std=c++17 -I./include -L./lib ./src/main.cpp ./src/glad/glad.c ./src/game.cpp ./src/window.cpp ./src/shader.cpp ./src/texture.cpp ./src/camera.cpp ./src./vertices.cpp ./src/subtexture.cpp ./src/attribute.cpp ./src/buffer.cpp ./src/block.cpp -o main ./icons/icon.res -lglfw3dll

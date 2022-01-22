@@ -15,7 +15,7 @@ class Camera
 		glm::vec3 cameraFront;
 		glm::vec3 cameraRight;
 		glm::mat4 view;
-		void updateCameraPos();
+		void updateCameraPos(GLFWwindow* window);
 		float movementSpeed;
 		double deltaTime;
 		double lastFrame;
@@ -30,7 +30,6 @@ class Camera
 		glm::vec3 cameraUp;
 };
 
-extern Camera* playerCamera;
 
 
 #endif

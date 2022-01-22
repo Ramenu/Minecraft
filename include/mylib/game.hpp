@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include "window.hpp"
+#include <memory>
 
 class Game
 {
@@ -10,7 +11,7 @@ class Game
         void startGame();
     private:
         void runGame();
-        Window gameWindow;
+        std::unique_ptr<Window> gameWindow;
         
 };
 

@@ -1,4 +1,7 @@
 {
-    "workbench.colorTheme": "Monokai Night"
+    "workbench.colorTheme": "Monokai Night",
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
     
 }
