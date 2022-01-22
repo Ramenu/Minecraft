@@ -12,9 +12,13 @@ class Renderer
         Renderer(const Window* window);
         ~Renderer();
         void drawChunk(const Block& block);
-        std::unique_ptr<Shader> shader;
+        void drawLightSource();
+        void updateView(glm::mat4& viewMatrix);
+        Shader cubeShader;
+        Shader lightShader;
     private:
-        unsigned int vao;
+        unsigned int blockVao;
+        unsigned int lightVao;
         unsigned int vertexBuffer;
 };
 
