@@ -8,6 +8,7 @@ class Game
 {
     public:
         Game(const unsigned int &windowWidth, const unsigned int &windowHeight);
+        ~Game();
         void startGame();
     private:
         void runGame();

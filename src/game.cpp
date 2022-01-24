@@ -8,6 +8,7 @@
 #include "mylib/game.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/renderer.hpp"
+#include "mylib/lighting.hpp"
 
 
 /* Game constructor. Initializes the window width and height and GLFW itself. */
@@ -22,6 +23,7 @@ void Game::startGame()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         std::cerr << "ERROR: Failed to initialize GLAD\n"; 
     glViewport(0, 0, gameWindow->screenWidth, gameWindow->screenHeight);
+    Lighting::initLightVAO();
     return runGame();
 }
 
@@ -32,7 +34,6 @@ void Game::runGame()
     double lastFrame {0.0f}; // Time of last frame
 
     auto renderer = std::make_unique<Renderer>(gameWindow.get());
-    auto playerCamera = std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f);
     auto dirtBlock = std::make_unique<Block>(SubTextures::GRASS_BLOCK); 
 
     glEnable(GL_DEPTH_TEST);
@@ -44,26 +45,27 @@ void Game::runGame()
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.8f, 1.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer->drawLightSource();
         renderer->drawChunk(Block(*dirtBlock));
+        //renderer->drawBlock(Block(*dirtBlock), {2.0f, 0.0f, 0.0f});
 
         glfwSwapBuffers(gameWindow->getWindow()); // Swap color buffer
 
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        playerCamera->updateCameraPos(gameWindow->getWindow());
-        renderer->updateView(playerCamera->view);
-        gameWindow->processKeyboardInput(deltaTime, playerCamera.get());
+        renderer->updateView(gameWindow->getWindow());
+        gameWindow->processKeyboardInput(deltaTime, renderer->playerCamera.get());
     }
-
-    // Destroy objects we no longer need them
-    dirtBlock->~Block();
-    renderer->~Renderer();
-    gameWindow->~Window();
+    
     glfwTerminate();
+}
+
+Game::~Game()
+{
+    
 }
 

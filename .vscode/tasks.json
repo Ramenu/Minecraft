@@ -25,6 +25,7 @@
 				"${workspaceFolder}/src/block.cpp",
 				"${workspaceFolder}/src/subtexture.cpp",
 				"${workspaceFolder}/src/renderer.cpp",
+				"${workspaceFolder}/src/lighting.cpp",
 				"-o",
 				"${workspaceFolder}/main.exe",
 				"${workspaceFolder}/icons/icon.res",

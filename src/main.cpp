@@ -11,5 +11,6 @@ int main(int argc, char* argv[])
     const unsigned int windowWidth {400}, windowHeight {400};
     Game minecraft(windowWidth, windowHeight);
     minecraft.startGame();
+    minecraft.~Game();
     return 0;
 }
