@@ -4,6 +4,8 @@
 #include "mylib/block.hpp"
 #include "mylib/graphics/shader.hpp"
 #include "mylib/window.hpp"
+#include "mylib/camera.hpp"
+#include "mylib/lighting.hpp"
 #include <memory>
 
 class Renderer
@@ -11,14 +13,15 @@ class Renderer
     public:
         Renderer(const Window* window);
         ~Renderer();
+        void drawBlock(const Block& block, const glm::vec3& xyzPos);
         void drawChunk(const Block& block);
         void drawLightSource();
-        void updateView(glm::mat4& viewMatrix);
+        void updateView(GLFWwindow* window);
         Shader cubeShader;
-        Shader lightShader;
+        std::unique_ptr<Camera> playerCamera;
     private:
+		std::unique_ptr<Lighting> lightSource;
         unsigned int blockVao;
-        unsigned int lightVao;
         unsigned int vertexBuffer;
 };
 

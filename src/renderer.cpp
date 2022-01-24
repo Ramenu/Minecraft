@@ -10,20 +10,26 @@
 
 Renderer::Renderer(const Window* window) : 
 cubeShader {"shaders/block/blockvertexshader.vs", "shaders/block/blockfragmentshader.fs"},
-lightShader {"shaders/light/lightvertexshader.vs", "shaders/light/lightfragmentshader.fs"}
+playerCamera {std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)},
+lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(1.0f, 3.0f, 1.0f))}
 {
     // Create our buffers and store the attribute data in them
     glGenVertexArrays(1, &blockVao);
-    glGenVertexArrays(1, &lightVao);
     glGenBuffers(1, &vertexBuffer);
     glBindVertexArray(blockVao);
     loadVertexBuffer(vertexBuffer, sizeof(cubeVertices), cubeVertices);
-    setAttributes(3, 2); // 3 = position coordinates, 2 = texture coordinates 
-    enableVAOAttributes(2);
+    setAttributes(std::vector<intptr_t>{3, 2, 3}); // 1 = Position coordinates, 2 = Texture coordinates
+    enableVAOAttributes({0, 1, 2});
 
-    cubeShader.useShader(); // Use the cube cubeShader program
-    cubeShader.setVec3("objectColor", {1.0f, 0.5f, 0.31f});
-    cubeShader.setVec3("lightColor", {1.0f, 1.0f, 1.0f});
+    glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
+    cubeShader.useShader(); 
+    cubeShader.setMat3("normalMatrix", normalMatrix);
+    cubeShader.setVec3("viewPos", playerCamera->cameraPos);
+    cubeShader.setVec3("material.ambient", {1.0f, 0.5f, 0.31f});
+    cubeShader.setInt("material.diffuse", 0);
+    cubeShader.setVec3("material.specular", {0.5f, 0.5f, 0.5f});
+    cubeShader.setFloat("material.shine", 32.0f);
+    lightSource->shaderProgramLightSource(cubeShader);
 
     // Load in the texture atlas
     unsigned int textureAtlas;
@@ -34,29 +40,33 @@ lightShader {"shaders/light/lightvertexshader.vs", "shaders/light/lightfragments
     // Create the projection matrix which defines the visible space
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), static_cast<float>(window->screenWidth)/ static_cast<float>(window->screenHeight), 0.1f, 100.0f);
     cubeShader.setMat4("projection", proj);
-    
-    // Identity matrix
-    glm::mat4 model = glm::mat4(1.0f);
-    cubeShader.setMat4("model", model);
 
-    // Same process again... for the light cubeShader
-    
-    glBindVertexArray(lightVao);
+    // Same process again... for the light cubeShader (Don't need this right now since it is a directional light at the moment)
+ 
+    Lighting::bindLightVAO();
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Do not need to store the buffer data into it, since we already did it for the cube
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    lightShader.useShader();
-    lightShader.setMat4("projection", proj);
-    lightShader.setMat4("model", model);
+    lightSource->lightShader.useShader();
+    lightSource->lightShader.setMat4("projection", proj);
 }
 
 /* Class destructor for Renderer. */
 Renderer::~Renderer()
 {
+    lightSource->removeAllLights();
     glDeleteBuffers(1, &vertexBuffer);
     glDeleteVertexArrays(1, &blockVao);
-    glDeleteVertexArrays(1, &lightVao);
+}
+
+void Renderer::drawBlock(const Block& block, const glm::vec3& xyzPos)
+{
+    glBindVertexArray(blockVao);
+    cubeShader.useShader();
+    glm::mat4 model {glm::translate(glm::mat4(1.0f), xyzPos)};
+    cubeShader.setMat4("model", model);
+    block.drawBlock();
 }
 
 /* Draws a 5x0x5 chunk of the block passed. */
@@ -68,14 +78,12 @@ void Renderer::drawChunk(const Block& block)
     glm::mat4 model;
     for (unsigned int i {}; i < 5; i++)
     {
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, {x, 0.0f, 0.0f});
+        model = glm::translate(glm::mat4(1.0f), {x, 0.0f, 0.0f});
         cubeShader.setMat4("model", model);
         block.drawBlock();
         for (unsigned int j {}; j < 5; j++)
         {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, {x, 0.0f, z});
+            model = glm::translate(glm::mat4(1.0f), {x, 0.0f, z});
             cubeShader.setMat4("model", model);
             block.drawBlock();
             z += 0.5f;
@@ -85,21 +93,25 @@ void Renderer::drawChunk(const Block& block)
     }
 }
 
+/* Draws the source of the light, should only be used for debugging or testing. It does not make sense to draw the light source since it
+   is a directional light. */
 void Renderer::drawLightSource()
 {
-    lightShader.useShader();
-    glm::mat4 model {glm::mat4(1.0f)};
-    model = glm::translate(model, {1.0f, 5.0f, 0.5f});
-    lightShader.setMat4("model", model);
+    Lighting::bindLightVAO();
+    lightSource->lightShader.useShader();
+    glm::mat4 model {glm::translate(glm::mat4(1.0f), lightSource->lightPos)};
+    lightSource->lightShader.setMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void Renderer::updateView(glm::mat4& viewMatrix)
+/* Updates the camera view for the player. */
+void Renderer::updateView(GLFWwindow* window)
 {
-    glBindVertexArray(lightVao);
+    playerCamera->updateCameraPos(window);
     cubeShader.useShader();
-    cubeShader.setMat4("view", viewMatrix);
-    lightShader.useShader();
-    lightShader.setMat4("view", viewMatrix);
+    cubeShader.setMat4("view", playerCamera->view);
+    cubeShader.setVec3("viewPos", playerCamera->cameraPos);
+    lightSource->lightShader.useShader();
+    lightSource->lightShader.setMat4("view", playerCamera->view);
 }
 
