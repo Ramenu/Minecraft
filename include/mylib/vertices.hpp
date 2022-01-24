@@ -1,4 +1,3 @@
-#include <array>
 
-extern const float cubeVertices[180];
+extern const float cubeVertices[288];
 extern const unsigned int indices[36];
