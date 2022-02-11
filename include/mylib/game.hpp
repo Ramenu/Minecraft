@@ -7,13 +7,10 @@
 class Game
 {
     public:
-        Game(const unsigned int &windowWidth, const unsigned int &windowHeight);
+        Game(const unsigned int windowWidth, const unsigned int windowHeight);
         ~Game();
-        void startGame();
-    private:
         void runGame();
-        std::unique_ptr<Window> gameWindow;
         
 };
 
-#endif
+#endif // GAME_HPP

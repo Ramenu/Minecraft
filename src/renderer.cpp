@@ -1,14 +1,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+#include "mylib/window.hpp"
 #include "mylib/renderer.hpp"
 #include "mylib/attribute.hpp"
 #include "mylib/vertices.hpp"
 #include "mylib/buffers/buffer.hpp"
-#include "mylib/graphics/textures.hpp"
+#include "mylib/gfx/texture.hpp"
 #include "mylib/camera.hpp"
 
-Renderer::Renderer(const Window* window) : 
+glm::mat4 Renderer::proj;
+
+/* Creates the projection matrix which defines the visible space. */
+void Renderer::initProjection()
+{
+    proj = glm::perspective(glm::radians(45.0f), static_cast<float>(screenWidth)/ static_cast<float>(screenHeight), 0.1f, 100.0f);
+}
+
+Renderer::Renderer() : 
 cubeShader {"shaders/block/blockvertexshader.vs", "shaders/block/blockfragmentshader.fs"},
 playerCamera {std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)},
 lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(1.0f, 3.0f, 1.0f))}
@@ -25,10 +35,6 @@ lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0
     cubeShader.useShader(); 
     cubeShader.setMat3("normalMatrix", normalMatrix);
     cubeShader.setVec3("viewPos", playerCamera->cameraPos);
-    cubeShader.setVec3("material.ambient", {1.0f, 0.5f, 0.31f});
-    cubeShader.setInt("material.diffuse", 0);
-    cubeShader.setVec3("material.specular", {0.5f, 0.5f, 0.5f});
-    cubeShader.setFloat("material.shine", 32.0f);
     lightSource->shaderProgramLightSource(cubeShader);
 
     // Load in the texture atlas
@@ -36,20 +42,18 @@ lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0
     glGenTextures(1, &textureAtlas);
     createTexture("textures/textureatlas.jpg", textureAtlas);
     cubeShader.setInt("allTextures", 0);
-
-    // Create the projection matrix which defines the visible space
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), static_cast<float>(window->screenWidth)/ static_cast<float>(window->screenHeight), 0.1f, 100.0f);
     cubeShader.setMat4("projection", proj);
 
     // Same process again... for the light cubeShader (Don't need this right now since it is a directional light at the moment)
- 
-    Lighting::bindLightVAO();
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Do not need to store the buffer data into it, since we already did it for the cube
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    lightSource->lightShader.useShader();
-    lightSource->lightShader.setMat4("projection", proj);
+    #if 0
+        Lighting::bindLightVAO();
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Do not need to store the buffer data into it, since we already did it for the cube
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+    
+        lightSource->lightShader.useShader();
+        lightSource->lightShader.setMat4("projection", proj);
+    #endif
 }
 
 /* Class destructor for Renderer. */
@@ -60,17 +64,23 @@ Renderer::~Renderer()
     glDeleteVertexArrays(1, &blockVao);
 }
 
-void Renderer::drawBlock(const Block& block, const glm::vec3& xyzPos)
+void Renderer::bindBlock(BlockName block)
+{
+    selectedBlock = Block(block);
+}
+
+/* Draws the selected block on the (X, Y, Z) position passed. */
+void Renderer::drawBlock(glm::vec3&& xyzPos)
 {
     glBindVertexArray(blockVao);
     cubeShader.useShader();
     glm::mat4 model {glm::translate(glm::mat4(1.0f), xyzPos)};
     cubeShader.setMat4("model", model);
-    block.drawBlock();
+    selectedBlock.drawBlock();
 }
 
-/* Draws a 5x0x5 chunk of the block passed. */
-void Renderer::drawChunk(const Block& block)
+/* Draws a 5x0x5 chunk of the selected block. */
+void Renderer::drawChunk()
 {
     glBindVertexArray(blockVao);
     cubeShader.useShader();
@@ -80,12 +90,12 @@ void Renderer::drawChunk(const Block& block)
     {
         model = glm::translate(glm::mat4(1.0f), {x, 0.0f, 0.0f});
         cubeShader.setMat4("model", model);
-        block.drawBlock();
+        selectedBlock.drawBlock();
         for (unsigned int j {}; j < 5; j++)
         {
             model = glm::translate(glm::mat4(1.0f), {x, 0.0f, z});
             cubeShader.setMat4("model", model);
-            block.drawBlock();
+            selectedBlock.drawBlock();
             z += 0.5f;
         }
         x += 0.5f;
@@ -105,13 +115,15 @@ void Renderer::drawLightSource()
 }
 
 /* Updates the camera view for the player. */
-void Renderer::updateView(GLFWwindow* window)
+void Renderer::updateView()
 {
-    playerCamera->updateCameraPos(window);
+    playerCamera->updateCameraPos();
     cubeShader.useShader();
     cubeShader.setMat4("view", playerCamera->view);
     cubeShader.setVec3("viewPos", playerCamera->cameraPos);
-    lightSource->lightShader.useShader();
-    lightSource->lightShader.setMat4("view", playerCamera->view);
+    #if 0
+        lightSource->lightShader.useShader();
+        lightSource->lightShader.setMat4("view", playerCamera->view);
+    #endif
 }
 

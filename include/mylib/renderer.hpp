@@ -1,9 +1,8 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-#include "mylib/block.hpp"
-#include "mylib/graphics/shader.hpp"
-#include "mylib/window.hpp"
+#include "mylib/block/block.hpp"
+#include "mylib/shader.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/lighting.hpp"
 #include <memory>
@@ -11,18 +10,23 @@
 class Renderer
 {
     public:
-        Renderer(const Window* window);
+        Renderer();
         ~Renderer();
-        void drawBlock(const Block& block, const glm::vec3& xyzPos);
-        void drawChunk(const Block& block);
+        void bindBlock(BlockName block);
+        void drawBlock(glm::vec3&& xyzPos);
+        void drawChunk();
         void drawLightSource();
-        void updateView(GLFWwindow* window);
+        void updateView();
         Shader cubeShader;
         std::unique_ptr<Camera> playerCamera;
+        static void initProjection();
+        static inline glm::mat4 getProjection() {return proj;}
     private:
+        Block selectedBlock;
 		std::unique_ptr<Lighting> lightSource;
         unsigned int blockVao;
         unsigned int vertexBuffer;
+        static glm::mat4 proj;
 };
 
-#endif
+#endif // RENDERER_HPP

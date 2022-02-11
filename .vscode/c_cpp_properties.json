@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/include/**"
+                "${workspaceFolder}/include/**",
+                "C:/Users/ramen/Clibrary/**"
             ],
             "defines": [
                 "_DEBUG",

@@ -1,15 +1,14 @@
 #ifndef LIGHTING_HPP
 #define LIGHTING_HPP
 
-#include <glm/glm.hpp>
-#include "mylib/graphics/shader.hpp"
+#include "mylib/shader.hpp"
 
 class Lighting
 {
     public:
         static void initLightVAO();
         static void bindLightVAO();
-        Lighting(const float& ambient, const float& specular, const float& diffuse, const glm::vec3& directionVec, const glm::vec3& lightPos);
+        Lighting(const float ambient, const float specular, const float diffuse, const glm::vec3& directionVec, const glm::vec3& lightPos);
         ~Lighting();
 		void removeAllLights();
         void shaderProgramLightSource(const Shader& shader);
@@ -24,5 +23,4 @@ class Lighting
 
 };
 
-
-#endif
+#endif // LIGHTING_HPP

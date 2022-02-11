@@ -1,12 +1,15 @@
 #include "GLFW/glfw3.h"
 #include "mylib/camera.hpp"
+#include "mylib/window.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 
 /* Constructor for Camera class. */
-Camera::Camera(const float& yaw, const float& pitch, const float& movementSpeed, const float& mouseSensitivity, const float& zoom) : 
+Camera::Camera(const float yaw, const float pitch, const float movementSpeed, const float mouseSensitivity, const float zoom) : 
    cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)}, cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)}, cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed},
    view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {movementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
-   yaw {yaw}, pitch {pitch}, mouseSensitivity {mouseSensitivity}, zoom {zoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)}  {}
+   yaw {yaw}, pitch {pitch}, mouseSensitivity {mouseSensitivity}, zoom {zoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)},
+   cameraRay {cameraPos, cameraFront, glm::vec3(0.0f, 0.0f, 2.0f)}  {}
 
 
 /* Camera class destructor. */
@@ -16,7 +19,7 @@ Camera::~Camera()
 }
 
 /* Updates the position of the camera. */
-void Camera::updateCameraPos(GLFWwindow* window)
+void Camera::updateCameraPos()
 {
 	glm::vec3 direction;
 	const double cosPitch {cos(glm::radians(pitch))};
@@ -32,21 +35,8 @@ void Camera::updateCameraPos(GLFWwindow* window)
 	cameraFront = glm::normalize(direction);
 
 	double xPos, yPos;
-    int width, height;
 
-	glfwGetCursorPos(window, &xPos, &yPos);
-    glfwGetWindowSize(window, &width, &height);
-
-    // To prevent cursor from going out of screen range
-    if (xPos > width)
-        glfwSetCursorPos(window, width - 1, yPos);
-    else if (xPos < 0)
-        glfwSetCursorPos(window, 0, yPos + 1);
-    if (yPos > height)
-        glfwSetCursorPos(window, xPos, height - 1);
-    else if (yPos < -30) // Limit kept at -30 so the user can still minimize/fullscreen or close the game
-        glfwSetCursorPos(window, xPos, -29);
-
+	glfwGetCursorPos(glfwWindow, &xPos, &yPos);
 
     if (firstMouseMovement)
     {
@@ -73,5 +63,12 @@ void Camera::updateCameraPos(GLFWwindow* window)
         pitch = 180.0f;
     else if (pitch < -180.0f)
         pitch = -180.0f;
+
+
+    cameraRay.rayShader.useShader();
+    cameraRay.origin = cameraPos;
+    cameraRay.direction = cameraFront;
+    cameraRay.rayShader.setMat4("view", view);
+    cameraRay.drawRay();
 
 }

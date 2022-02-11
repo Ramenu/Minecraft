@@ -1,17 +1,23 @@
-#include "mylib/block.hpp"
+#include "mylib/block/block.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
+Block::Block() {}
+
 /* Constructor for Block, initializes the textures and the total number of textures the block has. */
-Block::Block(SubTextures subTexture)
+Block::Block(BlockName block)
 {
-    typedef SubTextures T;
-    switch (subTexture)
+    typedef BlockName Block;
+    switch (block)
     {
-        case T::GRASS_BLOCK: blockTexture = SubTexture(0, 0); break;
-        case T::COBBLESTONE_BLOCK: blockTexture = SubTexture(1, 1); break;
+        case Block::GRASS_BLOCK: blockTexture = SubTexture(0, 0); break;
+        case Block::COBBLESTONE_BLOCK: blockTexture = SubTexture(1, 1); break;
     }
+    blockMaterial.ambient = glm::vec3(1.0f, 0.5f, 0.31f);
+    blockMaterial.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+    blockMaterial.shine = 32.0f;
+    blockMaterial.diffuse = 0;
 }
 
 

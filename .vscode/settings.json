@@ -1,7 +1,8 @@
 {
     "workbench.colorTheme": "Monokai Night",
     "files.associations": {
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "iosfwd": "cpp"
     }
     
 }

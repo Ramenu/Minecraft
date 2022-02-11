@@ -1,10 +1,12 @@
+#include "glad/glad.h"
 #include "mylib/window.hpp"
 #include "mylib/camera.hpp"
 #include <stb-master/stb_image.h>
 #include <iostream>
 
+GLFWwindow* glfwWindow;
 /* Handles keyboard-input.  */
-void Window::processKeyboardInput(const double &deltaTime, Camera* camera)
+void processKeyboardInput(const double deltaTime, Camera* camera)
 {
     camera->movementSpeed = 2.5f * deltaTime;
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
@@ -31,7 +33,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 /* Enables/disables wireframes. */
-void Window::renderWireframes()
+void renderWireframes()
 {
     if (wireframeMode)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -47,16 +49,9 @@ void framebuffer_size_callBack(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-/* Class constructor for Window. Initializes a window of widthxheight. */
-Window::Window(const unsigned int& width, const unsigned int& height) : screenWidth {width}, screenHeight {height}, wireframeMode {} {}
 
-/* Class destructor for Window. */
-Window::~Window()
-{
-    glfwDestroyWindow(glfwWindow);
-}
 //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
-GLFWwindow* Window::loadWindow(GLFWwindow* window, const char* title)
+GLFWwindow* loadWindow(GLFWwindow* window, const char* title)
 {
     //Specify version
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -77,27 +72,27 @@ GLFWwindow* Window::loadWindow(GLFWwindow* window, const char* title)
     return window; 
 }
 
-/* Initializes the window. */
-void Window::initWindow(const char* windowName)
+/* Destroys the window. */
+void destroyWindow()
 {
+    if (glfwWindow)
+        glfwDestroyWindow(glfwWindow);
+}
+
+/* Initializes the window. */
+void initWindow(const char* windowName, const double windowWidth, const double windowHeight)
+{
+    screenWidth = windowWidth;
+    screenHeight = windowHeight;
     glfwWindow = loadWindow(glfwWindow, windowName);
     GLFWimage icon[1];
     icon[0].pixels = stbi_load("icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
     glfwSetWindowSize(glfwWindow, screenWidth, screenHeight);
     glfwSetWindowIcon(glfwWindow, 1, icon);
     glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callBack);
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     stbi_image_free(icon[0].pixels);
 }
-/* Returns this window. */
-GLFWwindow* Window::getWindow()
-{
-    return glfwWindow;
-}
 
-/* Makes this window the main context. */
-void Window::makeContextCurrent()
-{
-    if (glfwWindow)
-        glfwMakeContextCurrent(glfwWindow);
-}
+
+

@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <filesystem>
-#include "mylib/graphics/textures.hpp"
+#include "mylib/gfx/texture.hpp"
 #include <stb-master/stb_image.h>
 #include <iostream>
 

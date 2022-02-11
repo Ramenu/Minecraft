@@ -1,8 +1,6 @@
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-#include "mylib/graphics/shader.hpp"
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
+#include "mylib/shader.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -11,6 +9,9 @@
    shader code is located, if there are any errors during compilation then it will print them out as well. */
 Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
+    vertexShaderPath = vertexShaderSource;
+    fragmentShaderPath = fragmentShaderSource;
+
     // Open the files
     std::ifstream vertexShaderFile {vertexShaderSource};
     std::ifstream fragmentShaderFile {fragmentShaderSource};
@@ -31,7 +32,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     }
     catch (std::ifstream::failure& e)
     {
-        printf("ERROR: \nFailed to read shader file: %s\n", e.what());
+        std::cerr << "ERROR: Failed to read shader file: " << e.what() << '\n';
     }
 
     std::string vertexShaderCode {vertexShaderStream.str()};
@@ -65,12 +66,12 @@ void Shader::checkShaderCompilationErrors(unsigned int &shader, ShaderType shade
 {
     int success;
     char infoLog[512];
-    const char* shaderName {(shaderType == ShaderType::VERTEX) ? "vertex" : "fragment"};
+    const char* shaderPath {(shaderType == ShaderType::VERTEX) ? vertexShaderPath : fragmentShaderPath};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cerr << "\nERROR: failed to compile " << shaderName << " shader: \n" << infoLog;
+        std::cerr << "\nERROR: failed to compile shader \"" << shaderPath << "\":\n" << infoLog;
     }
 }
 
@@ -94,17 +95,17 @@ Shader::~Shader()
 }
 
 /* Uses this shader program. */
-void Shader::useShader()
+void Shader::useShader() const
 {
     glUseProgram(shaderProgram);
 }
 
-void Shader::setInt(const char* name, const int& value) const
+void Shader::setInt(const char* name, const int value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setFloat(const char* name, const float& value) const
+void Shader::setFloat(const char* name, const float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgram, name), value);
 }
