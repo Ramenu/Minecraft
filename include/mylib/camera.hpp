@@ -6,7 +6,7 @@
 class Camera
 {
     public:
-        Camera(const float cameraYaw, const float cameraPitch, const float cameraMovementSpeed, const float cameraMouseSensitivty, const float mouseZoom);
+        Camera(float cameraYaw, float cameraPitch, float cameraMovementSpeed, float cameraMouseSensitivty, float mouseZoom);
 		~Camera();
 		glm::vec3 cameraPos;
 		glm::vec3 cameraFront;

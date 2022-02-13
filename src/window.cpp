@@ -6,7 +6,7 @@
 
 GLFWwindow* glfwWindow;
 /* Handles keyboard-input.  */
-void processKeyboardInput(const float deltaTime, Camera* camera)
+void processKeyboardInput(float deltaTime, Camera* camera)
 {
     camera->movementSpeed = 2.5f * deltaTime;
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
@@ -72,7 +72,7 @@ void destroyWindow()
 }
 
 /* Initializes the window. */
-void initWindow(const char* windowName, const double windowWidth, const double windowHeight)
+void initWindow(const char* windowName, double windowWidth, double windowHeight)
 {
     screenWidth = windowWidth;
     screenHeight = windowHeight;

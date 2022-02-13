@@ -100,12 +100,12 @@ void Shader::useShader() const
     glUseProgram(shaderProgram);
 }
 
-void Shader::setInt(const char* name, const int value) const
+void Shader::setInt(const char* name, int value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setFloat(const char* name, const float value) const
+void Shader::setFloat(const char* name, float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgram, name), value);
 }

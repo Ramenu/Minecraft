@@ -5,7 +5,7 @@
 
 
 /* Constructor for Camera class. */
-Camera::Camera(const float cameraYaw, const float cameraPitch, const float cameraMovementSpeed, const float cameraMouseSensitivity, const float cameraZoom) : 
+Camera::Camera(float cameraYaw, float cameraPitch, float cameraMovementSpeed, float cameraMouseSensitivity, float cameraZoom) : 
    cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)}, cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)}, cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed},
    view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {cameraMovementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
    yaw {cameraYaw}, pitch {cameraPitch}, mouseSensitivity {cameraMouseSensitivity}, zoom {cameraZoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)},

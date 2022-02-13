@@ -8,7 +8,7 @@ class SubTexture
 {
     public:
         SubTexture();
-        SubTexture(const float column, const float row);
+        SubTexture(float column, float row);
         ~SubTexture();
         glm::vec2 texCoords;
 };

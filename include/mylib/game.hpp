@@ -7,7 +7,7 @@
 class Game
 {
     public:
-        Game(const unsigned int windowWidth, const unsigned int windowHeight);
+        Game(unsigned int windowWidth, unsigned int windowHeight);
         ~Game();
         void runGame();
         

@@ -5,8 +5,8 @@
 #include <cstdint>
 
 extern void setAttributes(std::vector<intptr_t>&& attributeIndices); 
-extern void enableVBOAttributes(unsigned int& buffer,  const unsigned int upTo);
-extern void disableVBOAttributes(unsigned int& buffer, const unsigned int upTo);
+extern void enableVBOAttributes(unsigned int& buffer, unsigned int upTo);
+extern void disableVBOAttributes(unsigned int& buffer, unsigned int upTo);
 extern void enableVAOAttributes(std::vector<unsigned int>&& indices);
 extern void disableVAOAttributes(std::vector<unsigned int>&& indices);
 

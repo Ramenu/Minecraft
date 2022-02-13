@@ -16,8 +16,8 @@ class Shader
         void setMat3(const char* name, const glm::mat3& matrix) const;
         void setVec2(const char* name, const glm::vec2& vec) const;
         void setVec3(const char* name, const glm::vec3& vec) const;
-        void setInt(const char* name, const int value) const;
-        void setFloat(const char* name, const float value) const;
+        void setInt(const char* name, int value) const;
+        void setFloat(const char* name, float value) const;
         inline unsigned int getShader() const {return shaderProgram;}
     private:
         unsigned int shaderProgram;

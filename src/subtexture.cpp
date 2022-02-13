@@ -5,7 +5,7 @@
 SubTexture::SubTexture() {}
 
 /* Constructor for the sub texture. */
-SubTexture::SubTexture(const float column, const float row) :
+SubTexture::SubTexture(float column, float row) :
 texCoords {column * xPos, row * yPos} {}
 
 /* Destructor for the sub texture. */

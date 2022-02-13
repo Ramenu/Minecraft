@@ -4,7 +4,7 @@
 unsigned int Lighting::lightVao {};
 //TODO: Make another class for positional light source later on
 /* Constructor for lighting. Initializes the ambient, specular vector and the shader for the light as well. */
-Lighting::Lighting(const float ambient, const float specular, const float diffuse, const glm::vec3& direction, const glm::vec3& light) :
+Lighting::Lighting(float ambient, float specular, float diffuse, const glm::vec3& direction, const glm::vec3& light) :
 lightShader {"shaders/light/lightvertexshader.vs", "shaders/light/lightfragmentshader.fs"},
 ambientVec {glm::vec3(ambient)}, 
 specularVec {glm::vec3(specular)}, 
