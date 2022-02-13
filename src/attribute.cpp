@@ -26,7 +26,7 @@ void enableVBOAttributes(unsigned int& buffer,  unsigned int upTo)
 }
 
 /* Disables all of the attributes in the buffer (only up to the number passed). */
-void disableVBOAttributes(unsigned int& buffer, unsigned int upTo)
+void disableVBOAttributes(unsigned int& buffer, const unsigned int upTo)
 {
     for (unsigned int i {}; i < upTo; i++)
         glDisableVertexArrayAttrib(buffer, i);

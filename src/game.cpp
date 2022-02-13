@@ -11,7 +11,7 @@
 
 
 /* Game constructor. Initializes the window width and height and GLFW itself. */
-Game::Game(unsigned int windowWidth, unsigned int windowHeight) 
+Game::Game(const unsigned int windowWidth, const unsigned int windowHeight) 
 {
     glfwInit();
     initWindow("Minecraft", windowWidth, windowHeight);
