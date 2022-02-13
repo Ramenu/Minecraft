@@ -8,11 +8,10 @@ Block::Block() {}
 /* Constructor for Block, initializes the textures and the total number of textures the block has. */
 Block::Block(BlockName block)
 {
-    typedef BlockName Block;
     switch (block)
     {
-        case Block::GRASS_BLOCK: blockTexture = SubTexture(0, 0); break;
-        case Block::COBBLESTONE_BLOCK: blockTexture = SubTexture(1, 1); break;
+        case BlockName::GRASS_BLOCK: blockTexture = SubTexture(0, 0); break;
+        case BlockName::COBBLESTONE_BLOCK: blockTexture = SubTexture(1, 1); break;
     }
     blockMaterial.ambient = glm::vec3(1.0f, 0.5f, 0.31f);
     blockMaterial.specular = glm::vec3(0.5f, 0.5f, 0.5f);

@@ -5,10 +5,10 @@
 
 
 /* Constructor for Camera class. */
-Camera::Camera(const float yaw, const float pitch, const float movementSpeed, const float mouseSensitivity, const float zoom) : 
+Camera::Camera(const float cameraYaw, const float cameraPitch, const float cameraMovementSpeed, const float cameraMouseSensitivity, const float cameraZoom) : 
    cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)}, cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)}, cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed},
-   view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {movementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
-   yaw {yaw}, pitch {pitch}, mouseSensitivity {mouseSensitivity}, zoom {zoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)},
+   view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {cameraMovementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
+   yaw {cameraYaw}, pitch {cameraPitch}, mouseSensitivity {cameraMouseSensitivity}, zoom {cameraZoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)},
    cameraRay {cameraPos, cameraFront, glm::vec3(0.0f, 0.0f, 2.0f)}  {}
 
 
@@ -45,8 +45,8 @@ void Camera::updateCameraPos()
         firstMouseMovement = false;
     }
 
-    double xOffset {xPos - lastX};
-    double yOffset {lastY - yPos}; // y-axis is reversed, which is why the order is flipped
+    float xOffset {static_cast<float>(xPos - lastX)};
+    float yOffset {static_cast<float>(lastY - yPos)}; // y-axis is reversed, which is why the order is flipped
 
     // Update the last mouse positions to the current position
     lastX = xPos;

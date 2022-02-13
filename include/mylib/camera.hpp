@@ -6,7 +6,7 @@
 class Camera
 {
     public:
-        Camera(const float yaw, const float pitch, const float movementSpeed, const float mouseSensitivty, const float zoom);
+        Camera(const float cameraYaw, const float cameraPitch, const float cameraMovementSpeed, const float cameraMouseSensitivty, const float mouseZoom);
 		~Camera();
 		glm::vec3 cameraPos;
 		glm::vec3 cameraFront;
@@ -14,8 +14,8 @@ class Camera
 		glm::mat4 view;
 		void updateCameraPos();
 		float movementSpeed;
-		double deltaTime;
-		double lastFrame;
+		float deltaTime;
+		float lastFrame;
 		float yaw;
 		float pitch;
 		float mouseSensitivity;

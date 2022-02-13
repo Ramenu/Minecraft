@@ -7,7 +7,7 @@ class Material
 {
     public:
         Material();
-        Material(glm::vec3&& ambient, glm::vec3&& specular, const unsigned int diffuse, const float shine);
+        Material(glm::vec3&& ambientVec, glm::vec3&& specularVec, const unsigned int diffuseNum, const float shineNum);
         glm::vec3 ambient;
         glm::vec3 specular;
         unsigned int diffuse;

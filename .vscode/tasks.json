@@ -4,38 +4,12 @@
 		{
 			"type": "cppbuild",
 			"label": "Minecraft Build",
-			"command": "C:/Users/ramen/batch/timer.bat",
+			"command": "C:/Users/ramen/Projects/Minecraft/build.bat",
 			"args": [
-				"ccache",
-				"g++",
-				"-fdiagnostics-color=always",
-				"-g",
-				"-Wall",
-				"-std=c++17",
-				"-I${workspaceFolder}/include",
-				"-IC:/Users/ramen/Clibrary",
-				"${workspaceFolder}/src/main.cpp",
-				"${workspaceFolder}/src/game.cpp",
-				"${workspaceFolder}/src/window.cpp",
-				"${workspaceFolder}/src/shader.cpp",
-				"${workspaceFolder}/src/texture.cpp",
-				"${workspaceFolder}/src/camera.cpp",
-				"${workspaceFolder}/src/attribute.cpp",
-				"${workspaceFolder}/src/buffer.cpp",
-				"${workspaceFolder}/src/block.cpp",
-				"${workspaceFolder}/src/subtexture.cpp",
-				"${workspaceFolder}/src/renderer.cpp",
-				"${workspaceFolder}/src/lighting.cpp",
-				"${workspaceFolder}/src/ray.cpp",
-				"${workspaceFolder}/src/glmath.cpp",
-				"${workspaceFolder}/src/material.cpp",
-				"-o",
-				"../main.exe",
-				"C:/Users/ramen/Clibrary/public/OpenGL/lib/libglad.a",
-				"C:/Users/ramen/Clibrary/public/OpenGL/lib/libglfw3dll.a"
+				"-all"
 			],
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "C:/Users/ramen/Projects/Minecraft"
 			},
 			"problemMatcher": [
 				"$gcc"

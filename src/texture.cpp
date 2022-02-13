@@ -3,7 +3,12 @@
 #include <GLFW/glfw3.h>
 #include <filesystem>
 #include "mylib/gfx/texture.hpp"
+#pragma GCC diagnostic push 
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
 #include <stb-master/stb_image.h>
+#pragma GCC diagnostic pop
 #include <iostream>
 
 /* Creates a texture from the filepath given with the default wrapping and filtering configurations. */

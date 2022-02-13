@@ -26,8 +26,8 @@ Game::Game(const unsigned int windowWidth, const unsigned int windowHeight)
 /* Executes the game. */  
 void Game::runGame()
 {
-    double deltaTime {0.0f}; // Time between current frame and last frame
-    double lastFrame {0.0f}; // Time of last frame
+    float deltaTime {0.0f}; // Time between current frame and last frame
+    float lastFrame {0.0f}; // Time of last frame
 
     auto renderer = std::make_unique<Renderer>();
 
@@ -36,7 +36,7 @@ void Game::runGame()
     // Main game loop
     while (!glfwWindowShouldClose(glfwWindow))
     {
-        const double currentTime {glfwGetTime()};
+        const float currentTime {static_cast<float>(glfwGetTime())};
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 

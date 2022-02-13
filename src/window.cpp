@@ -6,7 +6,7 @@
 
 GLFWwindow* glfwWindow;
 /* Handles keyboard-input.  */
-void processKeyboardInput(const double deltaTime, Camera* camera)
+void processKeyboardInput(const float deltaTime, Camera* camera)
 {
     camera->movementSpeed = 2.5f * deltaTime;
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
@@ -23,14 +23,6 @@ void processKeyboardInput(const double deltaTime, Camera* camera)
         glfwSetWindowShouldClose(glfwWindow, true);
 }
 
-/* Handles main key events, like exiting the game, etc.*/
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    switch (key)
-    {
-        case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window, true); break;
-    }
-}
 
 /* Enables/disables wireframes. */
 void renderWireframes()
@@ -44,7 +36,7 @@ void renderWireframes()
 
 /* Changes the screen viewport to its appropriate setting upon resize. Should be called once only, and when it is called, it should
    be when the window is being initialized. */
-void framebuffer_size_callBack(GLFWwindow* window, int width, int height)
+void framebuffer_size_callBack([[maybe_unused]] GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }

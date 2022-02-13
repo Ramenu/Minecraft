@@ -112,7 +112,7 @@ void Shader::setFloat(const char* name, const float value) const
 
 void Shader::setVec2(const char* name, const glm::vec2& vec) const
 {
-    glUniform2f(glGetUniformLocation(shaderProgram, "subTextureCoords"), vec.x, vec.y);
+    glUniform2f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y);
 }
 
 void Shader::setVec3(const char* name, const glm::vec3& vec) const

@@ -9,7 +9,7 @@ extern void initWindow(const char* windowName, const double windowWidth, const d
 inline unsigned int screenWidth;
 inline unsigned int screenHeight;
 extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-extern void processKeyboardInput(const double deltaTime, Camera* camera);
+extern void processKeyboardInput(const float deltaTime, Camera* camera);
 extern void renderWireframes();
 extern void destroyWindow();
 inline bool wireframeMode;

@@ -10,5 +10,5 @@ glm::vec3 getBarycentricCoords(const glm::vec3& a, const glm::vec3& b, const glm
     float u {1.0f - v - w};
     
     return glm::vec3{v, w, u};
-};
+}
 
