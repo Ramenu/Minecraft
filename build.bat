@@ -24,7 +24,7 @@ set pathtodir=C:/Users/ramen/Projects/Minecraft/
 if "%1" == "-all" (
     timer.bat ccache g++ -fdiagnostics-color=always -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -Wctor-dtor-privacy ^
     -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override -Wuseless-cast -Wdouble-promotion ^
-    -Wformat -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
+    -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
     -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
     -IC:/Users/ramen/Projects/Minecraft/include ^
     -IC:/Users/ramen/Clibrary ^
@@ -54,7 +54,7 @@ if "%1" == "-all" (
     ) else (
         timer.bat g++ -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -I./include -IC:/Users/ramen/Clibrary -Wctor-dtor-privacy ^
         -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override -Wuseless-cast -Wdouble-promotion ^
-        -Wformat -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
+        -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
         -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
         %files:~1% -c 
         mv %pathtodir%.o ./obj>NUL 2>&1
