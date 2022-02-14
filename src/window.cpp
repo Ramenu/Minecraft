@@ -74,7 +74,7 @@ void initWindow(const char* windowName, const double windowWidth, const double w
     icon[0].pixels = stbi_load("icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
     glfwSetWindowSize(glfwWindow, screenWidth, screenHeight);
     glfwSetWindowIcon(glfwWindow, 1, icon);
-    glfwSetFramebufferSizeCallback(glfwWindow, []([[maybe_unused]] GLFWwindow* window, int width, int height) {glViewport(0, 0, width, height);});
+    glfwSetFramebufferSizeCallback(glfwWindow, [](GLFWwindow*, int width, int height) {glViewport(0, 0, width, height);});
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     stbi_image_free(icon[0].pixels);
 }

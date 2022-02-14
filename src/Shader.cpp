@@ -84,9 +84,10 @@ Shader& Shader::operator=(const Shader& shader)
    learning purposes. Expect it to be removed in the future. */
 Shader& Shader::operator=(Shader&& shader)
 {
+    if (this == &shader)
+        return *this;
     *this=shader;
-
-
+    return *this;
 }
 
 /* Checks if the shader passed has an error in its code, if so it will print an error log containing the errors found within it. */
