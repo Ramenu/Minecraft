@@ -10,6 +10,9 @@ class Shader
 {
     public:
         Shader(const char* vertexShaderSource, const char* fragmentShaderSource);
+        Shader(const Shader& shader); 
+        Shader& operator=(const Shader& shader);
+        Shader& operator=(Shader&& shader);
         ~Shader();
         void useShader() const;
         void setMat4(const char* name, const glm::mat4& matrix) const;

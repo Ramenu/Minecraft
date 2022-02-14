@@ -61,6 +61,34 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     glDeleteShader(fragmentShader);
 }
 
+/* Copy constructor for Shader. Probably worse than the compiler's default, however I added it in just for learning purposes.
+   Expect it to be removed in the future. */
+Shader::Shader(const Shader& shader)
+{
+    *this=shader;
+}
+
+/* Move assignment operator with l-value reference. Probably worse than the compiler's default, however I added it in just for
+   learning purposes. Expect it to be removed in the future. */
+Shader& Shader::operator=(const Shader& shader) 
+{
+    if (this == &shader)
+        return *this;
+    shaderProgram = shader.shaderProgram;
+    vertexShaderPath = shader.vertexShaderPath;
+    fragmentShaderPath = shader.fragmentShaderPath;
+    return *this;
+}
+
+/* Move assignment operator with l-value reference. Probably worse than the compiler's default, however I added it in just for
+   learning purposes. Expect it to be removed in the future. */
+Shader& Shader::operator=(Shader&& shader)
+{
+    *this=shader;
+
+
+}
+
 /* Checks if the shader passed has an error in its code, if so it will print an error log containing the errors found within it. */
 void Shader::checkShaderCompilationErrors(unsigned int &shader, ShaderType shaderType)
 {
