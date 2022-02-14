@@ -34,13 +34,6 @@ void renderWireframes()
     wireframeMode = !wireframeMode;
 }
 
-/* Changes the screen viewport to its appropriate setting upon resize. Should be called once only, and when it is called, it should
-   be when the window is being initialized. */
-void framebuffer_size_callBack([[maybe_unused]] GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
 
 //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
 GLFWwindow* loadWindow(GLFWwindow* window, const char* title)
@@ -81,7 +74,7 @@ void initWindow(const char* windowName, const double windowWidth, const double w
     icon[0].pixels = stbi_load("icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
     glfwSetWindowSize(glfwWindow, screenWidth, screenHeight);
     glfwSetWindowIcon(glfwWindow, 1, icon);
-    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callBack);
+    glfwSetFramebufferSizeCallback(glfwWindow, []([[maybe_unused]] GLFWwindow* window, int width, int height) {glViewport(0, 0, width, height);});
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     stbi_image_free(icon[0].pixels);
 }
