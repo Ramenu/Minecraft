@@ -1,2 +1,1 @@
 *.txt linguist-detectable=false
-include/GLFW/glfw3native.h linguist-detectable=false
