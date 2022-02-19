@@ -4,10 +4,10 @@
 #include <vector>
 #include <cstdint>
 
-extern void setAttributes(std::vector<intptr_t>&& attributeIndices); 
-extern void enableVBOAttributes(unsigned int& buffer, unsigned int upTo);
-extern void disableVBOAttributes(unsigned int& buffer, unsigned int upTo);
-extern void enableVAOAttributes(std::vector<unsigned int>&& indices);
-extern void disableVAOAttributes(std::vector<unsigned int>&& indices);
+extern void setAttributes(const std::vector<intptr_t>& attributeIndices); 
+extern void enableVBOAttributes(uint32_t& buffer, uint32_t upTo);
+extern void disableVBOAttributes(uint32_t& buffer, uint32_t upTo);
+extern void enableVAOAttributes(const std::vector<uint32_t>& indices);
+extern void disableVAOAttributes(const std::vector<uint32_t>& indices);
 
 #endif // ATTRIBUTE_HPP

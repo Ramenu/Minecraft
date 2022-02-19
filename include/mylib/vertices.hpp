@@ -3,7 +3,7 @@
 
 #include "mylib/gfx/texture.hpp"
 
-inline constexpr float cubeVertices[288]
+inline constexpr float cubeVertices[288] =
 {
    -0.5f, -0.5f, 0.0f,    0.0f, yPos,   0.0f, 0.0f,  1.0f,
    -0.5f,  0.5f, 0.0f,    0.0f, 0.0f,   0.0f, 0.0f,  1.0f,

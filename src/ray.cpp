@@ -20,14 +20,14 @@ Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::v
 
     glBindVertexArray(vao);
     glm::vec3 rayEnd{origin + direction * length};
-    const float rayVertices[12]
+    const float rayVertices[12] =
     {
         origin.x, origin.y, origin.z, 1.0f, 1.0f, 1.0f,
         rayEnd.x, rayEnd.y, rayEnd.z, 1.0f, 1.0f, 1.0f
     };
     loadVertexBuffer(vertexBuffer, sizeof(rayVertices), rayVertices);
     setAttributes(std::vector<intptr_t>{3, 3});
-    enableVAOAttributes(std::vector<unsigned int>{0,1});
+    enableVAOAttributes(std::vector<uint32_t>{0,1});
     rayShader.useShader();
     rayShader.setMat4("projection", Renderer::getProjection());
 }

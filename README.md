@@ -1,7 +1,8 @@
-Classic v1.3:
-- Added Lighting class
-- Added light shaders
-- Moved camera from Game to Renderer
-- The original shaders have been renamed to block shaders
-- Block shaders have been changed to handle lighting
+Classic v1.31:
+- Made error handling slightly better:
+  * Have red text whenever a fatal error occurs (Currently Windows only)
+  * Moved error handling function into a new file "glerror.cpp", granted some errors do not belong to OpenGL but I don't think its a big deal at the moment
+
+- Window file has namespace for better organization and clarity
+- Switched from using traditional integers to type aliases for better portability
 

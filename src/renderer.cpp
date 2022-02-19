@@ -15,7 +15,7 @@ glm::mat4 Renderer::proj;
 /* Creates the projection matrix which defines the visible space. */
 void Renderer::initProjection()
 {
-    proj = glm::perspective(glm::radians(45.0f), static_cast<float>(screenWidth)/ static_cast<float>(screenHeight), 0.1f, 100.0f);
+    proj = glm::perspective(glm::radians(45.0f), static_cast<float>(Window::screenWidth)/ static_cast<float>(Window::screenHeight), 0.1f, 100.0f);
 }
 
 Renderer::Renderer() : 

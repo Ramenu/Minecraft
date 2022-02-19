@@ -2,7 +2,7 @@
 
 Material::Material() {}
 
-Material::Material(glm::vec3&& ambientVec, glm::vec3&& specularVec, const unsigned int diffuseNum, const float shineNum) :
+Material::Material(const glm::vec3& ambientVec, const glm::vec3& specularVec, uint16_t diffuseNum, float shineNum) :
 ambient {ambientVec}, specular {specularVec}, diffuse {diffuseNum}, shine {shineNum}
 {
 }

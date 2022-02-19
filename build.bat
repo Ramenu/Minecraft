@@ -43,9 +43,11 @@ if "%1" == "-all" (
     %pathtodir%src/ray.cpp ^
     %pathtodir%src/glmath.cpp ^
     %pathtodir%src/material.cpp ^
+    %pathtodir%src/glerror.cpp ^
     -c 
     mv %pathtodir%/*.o %pathtodir%/obj>NUL 2>&1 
-    g++ -flinker-output=exec %pathtodir%/obj/*.o -o main.exe C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
+    g++ -flinker-output=exec %pathtodir%/obj/*.o -o main.exe ^
+    C:/Users/ramen/Clibrary/public/libterminal.a C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
     %pathtodir%icons/icon.res
 ) else (
 
@@ -58,7 +60,7 @@ if "%1" == "-all" (
         -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
         %files:~1% -c 
         mv %pathtodir%.o ./obj>NUL 2>&1
-        g++ ./obj/*.o -o main.exe C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
+        g++ ./obj/*.o -o main.exe C:/Users/ramen/Clibrary/public/libterminal.a C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
         C:/Users/ramen/Projects/Minecraft/icons/icon.res
     )
 )

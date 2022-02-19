@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 #include "mylib/shader.hpp"
-#include <iostream>
+#include "mylib/glerror.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -32,19 +32,19 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     }
     catch (std::ifstream::failure& e)
     {
-        std::cerr << "ERROR: Failed to read shader file: " << e.what() << '\n';
+
     }
 
     std::string vertexShaderCode {vertexShaderStream.str()};
     const char* cstrVertexShaderCode {vertexShaderCode.c_str()};
-    unsigned int vertexShader {glCreateShader(GL_VERTEX_SHADER)};
+    uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
     checkShaderCompilationErrors(vertexShader, ShaderType::VERTEX);
 
     std::string fragmentShaderCode {fragmentShaderStream.str()};
     const char* cstrFragmentShaderCode {fragmentShaderCode.c_str()};
-    unsigned int fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
+    uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);
     checkShaderCompilationErrors(fragmentShader, ShaderType::FRAGMENT);
@@ -91,7 +91,7 @@ Shader& Shader::operator=(Shader&& shader)
 }
 
 /* Checks if the shader passed has an error in its code, if so it will print an error log containing the errors found within it. */
-void Shader::checkShaderCompilationErrors(unsigned int &shader, ShaderType shaderType)
+void Shader::checkShaderCompilationErrors(uint32_t &shader, ShaderType shaderType)
 {
     int success;
     char infoLog[512];
@@ -100,7 +100,7 @@ void Shader::checkShaderCompilationErrors(unsigned int &shader, ShaderType shade
     if (!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cerr << "\nERROR: failed to compile shader \"" << shaderPath << "\":\n" << infoLog;
+        GLError::error_message("Failed to compile shader \"" + std::string{shaderPath} + "\". " + std::string{infoLog});
     }
 }
 
@@ -113,7 +113,8 @@ void Shader::checkLinkageErrors()
     if (!success)
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cerr << "\nERROR: Failed to link shader program:\n" << infoLog;
+        GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
+        throw;
     }
 }
 
@@ -129,12 +130,12 @@ void Shader::useShader() const
     glUseProgram(shaderProgram);
 }
 
-void Shader::setInt(const char* name, const int value) const
+void Shader::setInt(const char* name, int32_t value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setFloat(const char* name, const float value) const
+void Shader::setFloat(const char* name, float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgram, name), value);
 }

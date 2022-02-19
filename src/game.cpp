@@ -2,22 +2,24 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <memory>
 #include "mylib/game.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/renderer.hpp"
 #include "mylib/lighting.hpp"
+#include "mylib/glerror.hpp"
 
 
 /* Game constructor. Initializes the window width and height and GLFW itself. */
-Game::Game(const unsigned int windowWidth, const unsigned int windowHeight) 
+Game::Game(uint16_t windowWidth, uint16_t windowHeight) 
 {
     glfwInit();
-    initWindow("Minecraft", windowWidth, windowHeight);
-    glfwMakeContextCurrent(glfwWindow);
+    Window::initWindow("Minecraft", windowWidth, windowHeight);
+    glfwMakeContextCurrent(Window::glfwWindow);
+    
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        std::cerr << "ERROR: Failed to initialize GLAD\n"; 
+        GLError::error_message("Failed to initialize GLAD");
+
     glViewport(0, 0, windowWidth, windowHeight);
     Lighting::initLightVAO();
     Renderer::initProjection();
@@ -34,7 +36,7 @@ void Game::runGame()
     glEnable(GL_DEPTH_TEST);
     
     // Main game loop
-    while (!glfwWindowShouldClose(glfwWindow))
+    while (!glfwWindowShouldClose(Window::glfwWindow))
     {
         const float currentTime {static_cast<float>(glfwGetTime())};
         deltaTime = currentTime - lastFrame;
@@ -47,18 +49,18 @@ void Game::runGame()
         renderer->updateView();
         renderer->drawBlock({0.0f, 0.0f, 0.0f});
 
-        glfwSwapBuffers(glfwWindow); // Swap color buffer
+        glfwSwapBuffers(Window::glfwWindow); // Swap color buffer
 
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        processKeyboardInput(deltaTime, renderer->playerCamera.get());
+        Window::processKeyboardInput(deltaTime, renderer->playerCamera.get());
     }
     
 }
 
 Game::~Game()
 {
-    destroyWindow();
+    Window::destroyWindow();
     glfwTerminate();
 }
 

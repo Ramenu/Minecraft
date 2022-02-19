@@ -10,7 +10,7 @@
 class Renderer
 {
     public:
-        Renderer();
+        explicit Renderer();
         ~Renderer();
         void bindBlock(BlockName block);
         void drawBlock(glm::vec3&& xyzPos);
@@ -24,8 +24,8 @@ class Renderer
     private:
         Block selectedBlock;
 		std::unique_ptr<Lighting> lightSource;
-        unsigned int blockVao;
-        unsigned int vertexBuffer;
+        uint32_t blockVao;
+        uint32_t vertexBuffer;
         static glm::mat4 proj;
 };
 

@@ -2,12 +2,13 @@
 #define GAME_HPP
 
 #include "window.hpp"
+#include <cstdint>
 #include <memory>
 
 class Game
 {
     public:
-        Game(unsigned int windowWidth, unsigned int windowHeight);
+        explicit Game(uint16_t windowWidth, uint16_t windowHeight);
         ~Game();
         void runGame();
         

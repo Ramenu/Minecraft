@@ -9,10 +9,10 @@
 #pragma GCC diagnostic ignored "-Wuseless-cast"
 #include <stb-master/stb_image.h>
 #pragma GCC diagnostic pop
-#include <iostream>
+#include "mylib/glerror.hpp"
 
 /* Creates a texture from the filepath given with the default wrapping and filtering configurations. */
-void createTexture(const char* filePath, unsigned int& texture)
+void createTexture(const char* filePath, uint32_t& texture)
 {
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -44,9 +44,9 @@ void loadTexture(const char* fileName)
                 glGenerateMipmap(GL_TEXTURE_2D); 
             }
             else 
-                printf("\nERROR: Failed to load JPG texture \"%s\"\n", fileName);
+                GLError::error_message("Failed to load JPG texture \"" + std::string{fileName} + '\"');
         }
-        else 
+        else if (filesystem::path(fileName).extension() == ".png")
         {
             if (data)
             {
@@ -54,10 +54,12 @@ void loadTexture(const char* fileName)
                 glGenerateMipmap(GL_TEXTURE_2D);
             }
             else 
-                printf("\nERROR: Failed to load PNG texture \"%s\"\n", fileName);
+                GLError::error_message("Failed to load PNG texture \"" + std::string{fileName} + "\"\n");
         }
+        else
+            GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Make sure it exists, and it is not a directory!");
         stbi_image_free(data);
     }
     else
-        printf("\nERROR: No file \"%s\" exists!\n", fileName);
+        GLError::error_message("No file \"" + std::string{fileName} + "\" exists!\n");
 }

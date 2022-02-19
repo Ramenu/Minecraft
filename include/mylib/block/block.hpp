@@ -8,8 +8,8 @@
 class Block
 {
     public:
-        Block();
-        Block(BlockName block);
+        explicit Block();
+        explicit Block(BlockName block);
         ~Block();
         void drawBlock() const;
         SubTexture blockTexture;
