@@ -1,3 +1,2 @@
-*.Objective-C linguist-detectable=false
 *.txt linguist-detectable=false
-include/GLFW/glfw3native.h linguist-vendored=true
+include/GLFW/glfw3native.h linguist-detectable=false
