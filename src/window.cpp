@@ -6,6 +6,10 @@
 
 namespace Window
 {
+    static uint32_t screenWidth;
+    static uint32_t screenHeight;
+    static GLFWwindow* glfwWindow;
+    
     /* Handles keyboard-input.  */
     void processKeyboardInput(float deltaTime, Camera* camera)
     {
@@ -28,6 +32,7 @@ namespace Window
     /* Enables/disables wireframes. */
     void renderWireframes()
     {
+        static bool wireframeMode = false;
         if (wireframeMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         else
@@ -78,6 +83,10 @@ namespace Window
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         stbi_image_free(icon[0].pixels);
     }
+
+    GLFWwindow* getWindow() {return glfwWindow;}
+    uint32_t getScreenWidth() {return screenWidth;}
+    uint32_t getScreenHeight() {return screenHeight;}
 }
 
 

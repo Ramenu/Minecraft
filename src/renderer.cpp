@@ -12,7 +12,11 @@ glm::mat4 Renderer::proj;
 /* Creates the projection matrix which defines the visible space. */
 void Renderer::initProjection()
 {
-    proj = glm::perspective(glm::radians(45.0f), static_cast<float>(Window::screenWidth)/ static_cast<float>(Window::screenHeight), 0.1f, 100.0f);
+    proj = glm::perspective(
+        glm::radians(45.0f), 
+        static_cast<float>(Window::getScreenWidth())/ static_cast<float>(Window::getScreenHeight()), 
+        0.1f, 
+        100.0f);
 }
 
 Renderer::Renderer() : 
@@ -83,12 +87,12 @@ void Renderer::drawChunk()
     cubeShader.useShader();
     float x {}, z {};
     glm::mat4 model;
-    for (unsigned int i {}; i < 5; i++)
+    for (uint32_t i {}; i < 5; i++)
     {
         model = glm::translate(glm::mat4(1.0f), {x, 0.0f, 0.0f});
         cubeShader.setMat4("model", model);
         selectedBlock.drawBlock();
-        for (unsigned int j {}; j < 5; j++)
+        for (uint32_t j {}; j < 5; j++)
         {
             model = glm::translate(glm::mat4(1.0f), {x, 0.0f, z});
             cubeShader.setMat4("model", model);

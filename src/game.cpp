@@ -15,7 +15,7 @@ Game::Game(uint16_t windowWidth, uint16_t windowHeight)
 {
     glfwInit();
     Window::initWindow("Minecraft", windowWidth, windowHeight);
-    glfwMakeContextCurrent(Window::glfwWindow);
+    glfwMakeContextCurrent(Window::getWindow());
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         GLError::error_message("Failed to initialize GLAD");
@@ -36,7 +36,7 @@ void Game::runGame()
     glEnable(GL_DEPTH_TEST);
     
     // Main game loop
-    while (!glfwWindowShouldClose(Window::glfwWindow))
+    while (!glfwWindowShouldClose(Window::getWindow()))
     {
         const float currentTime {static_cast<float>(glfwGetTime())};
         deltaTime = currentTime - lastFrame;
@@ -49,7 +49,7 @@ void Game::runGame()
         renderer->updateView();
         renderer->drawBlock({0.0f, 0.0f, 0.0f});
 
-        glfwSwapBuffers(Window::glfwWindow); // Swap color buffer
+        glfwSwapBuffers(Window::getWindow()); // Swap color buffer
 
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 

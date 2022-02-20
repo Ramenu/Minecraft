@@ -37,7 +37,7 @@ void Camera::updateCameraPos()
 
 	double xPos, yPos;
 
-	glfwGetCursorPos(Window::glfwWindow, &xPos, &yPos);
+	glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
 
     if (firstMouseMovement)
     {
