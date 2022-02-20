@@ -16,24 +16,12 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     std::ifstream vertexShaderFile {vertexShaderSource};
     std::ifstream fragmentShaderFile {fragmentShaderSource};
     std::stringstream vertexShaderStream, fragmentShaderStream;
-
-    // Ensure the ifstreams can throw exceptions
-    vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     
-    try 
-    {
-        // Read file's contents into string stream
-        vertexShaderStream << vertexShaderFile.rdbuf();
-        fragmentShaderStream << fragmentShaderFile.rdbuf();
+    vertexShaderStream << vertexShaderFile.rdbuf();
+    fragmentShaderStream << fragmentShaderFile.rdbuf();
 
-        vertexShaderFile.close();
-        fragmentShaderFile.close();
-    }
-    catch (std::ifstream::failure& e)
-    {
-
-    }
+    vertexShaderFile.close();
+    fragmentShaderFile.close();
 
     std::string vertexShaderCode {vertexShaderStream.str()};
     const char* cstrVertexShaderCode {vertexShaderCode.c_str()};
@@ -114,7 +102,6 @@ void Shader::checkLinkageErrors()
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
-        throw;
     }
 }
 
