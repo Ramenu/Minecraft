@@ -1,6 +1,6 @@
-Classic v1.32:
-- Removed GLAD and GLFW3 from the directory and put them into public directory instead
-- Removed unnecessary headers
-- Enabled exceptions again (I figured they are useful from time to time, plus I am still learning about them)
-- Removed unnecessary header includes
+This update is not an official update, just an update to the build system mostly. I switched to using CMake instead of my
+batch script, and now I absolutely love it. Much easier to build and more efficient as well, regret turning it down when
+I started off earlier, but oh well. 
+
+
 

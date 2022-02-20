@@ -2,23 +2,26 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "cppbuild",
+			"type": "shell",
 			"label": "Minecraft Build",
-			"command": "C:/Users/ramen/Projects/Minecraft/build.bat",
-			"args": [
-				"-all"
-			],
+			"command": "make all",
+			"args": [],
 			"options": {
-				"cwd": "C:/Users/ramen/Projects/Minecraft"
+				"cwd": "C:/Users/ramen/Projects/Minecraft/build"
 			},
-			"problemMatcher": [
-				"$gcc"
-			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "compiler: C:\\msys64\\mingw64\\bin\\g++.exe"
-		}
-	]
+			"presentation": 
+			{
+				"echo": false,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+        	}
+		},
+	],
 }

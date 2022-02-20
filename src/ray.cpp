@@ -17,7 +17,6 @@ Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::v
     // Create vertex array and buffer
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vertexBuffer);
-
     glBindVertexArray(vao);
     glm::vec3 rayEnd{origin + direction * length};
     const float rayVertices[12] =
