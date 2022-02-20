@@ -1,7 +1,7 @@
 #ifndef SUBTEXTURE_HPP
 #define SUBTEXTURE_HPP
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 #include "mylib/block/blockname.hpp"
 
 class SubTexture

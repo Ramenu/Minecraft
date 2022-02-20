@@ -1,4 +1,4 @@
-#include "public/OpenGL/glad/glad.h"
+#include "glad/glad.h"
 #include "mylib/physics/ray.hpp"
 #include "mylib/math/glmath.hpp"
 #include "mylib/window.hpp"

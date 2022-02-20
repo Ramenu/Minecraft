@@ -1,7 +1,7 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 class Material
 {

@@ -2,7 +2,6 @@
 #define RENDERER_HPP
 
 #include "mylib/block/block.hpp"
-#include "mylib/shader.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/lighting.hpp"
 #include <memory>

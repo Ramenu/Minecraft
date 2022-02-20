@@ -1,5 +1,4 @@
-#include <Glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Glad/glad.h"
 #include "mylib/attribute.hpp"
 
 
@@ -20,7 +19,6 @@ void setAttributes(const std::vector<intptr_t>& attributeIndices)
 /* Enables all of the attributes in the buffer (only up to the number passed). */
 void enableVBOAttributes(uint32_t& buffer, uint32_t upTo)
 {
-    //static_assert(upTo < 4, "Only up to 3")
     for (uint32_t i {}; i < upTo; i++)
         glEnableVertexArrayAttrib(buffer, i);
 }

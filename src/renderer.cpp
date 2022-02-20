@@ -1,14 +1,11 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include "glad/glad.h"
+#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "mylib/window.hpp"
 #include "mylib/renderer.hpp"
 #include "mylib/attribute.hpp"
 #include "mylib/vertices.hpp"
 #include "mylib/buffers/buffer.hpp"
-#include "mylib/gfx/texture.hpp"
-#include "mylib/camera.hpp"
 
 glm::mat4 Renderer::proj;
 

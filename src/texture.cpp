@@ -1,6 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glad/glad.h"
 #include <filesystem>
 #include "mylib/gfx/texture.hpp"
 #pragma GCC diagnostic push 
@@ -38,7 +37,7 @@ void loadTexture(const char* fileName)
     {
         if (fs::path(fileName).extension() == ".jpg")
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
-        else if (fs::path(fileName).extension() == ".png")
+        else
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }

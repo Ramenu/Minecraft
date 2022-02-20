@@ -1,5 +1,4 @@
 #include "glad/glad.h"
-#include <GLFW/glfw3.h>
 #include "mylib/buffers/buffer.hpp"
 
 /* Loads the data into the vertex buffer passed. */

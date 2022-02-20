@@ -1,5 +1,4 @@
-#include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include "glad/glad.h"
 #include "mylib/shader.hpp"
 #include "mylib/glerror.hpp"
 #include <fstream>
@@ -12,17 +11,31 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     vertexShaderPath = vertexShaderSource;
     fragmentShaderPath = fragmentShaderSource;
 
-    // Open the files
-    std::ifstream vertexShaderFile {vertexShaderSource};
-    std::ifstream fragmentShaderFile {fragmentShaderSource};
     std::stringstream vertexShaderStream, fragmentShaderStream;
+    std::ifstream vertexShaderFile, fragmentShaderFile;
+
+    try
+    {
+        // Set exceptions to be thrown
+        vertexShaderFile.exceptions(std::ios::failbit | std::ifstream::failbit);
+        fragmentShaderFile.exceptions(std::ios::failbit | std::ifstream::failbit);
+
+        vertexShaderFile.open(vertexShaderPath);
+        fragmentShaderFile.open(fragmentShaderPath);
+
+        // Read file contents into the string streams
+        vertexShaderStream << vertexShaderFile.rdbuf();
+        fragmentShaderStream << fragmentShaderFile.rdbuf();
+
+        vertexShaderFile.close();
+        fragmentShaderFile.close();
+    }
+    catch (const std::exception& e)
+    {
+        GLError::error_message("Shader compilation failed:\n" + std::string{e.what()});
+    }
     
-    vertexShaderStream << vertexShaderFile.rdbuf();
-    fragmentShaderStream << fragmentShaderFile.rdbuf();
-
-    vertexShaderFile.close();
-    fragmentShaderFile.close();
-
+    // Compile vertex shader
     std::string vertexShaderCode {vertexShaderStream.str()};
     const char* cstrVertexShaderCode {vertexShaderCode.c_str()};
     uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
@@ -30,6 +43,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     glCompileShader(vertexShader);
     checkShaderCompilationErrors(vertexShader, ShaderType::VERTEX);
 
+    // Compile fragment shader
     std::string fragmentShaderCode {fragmentShaderStream.str()};
     const char* cstrFragmentShaderCode {fragmentShaderCode.c_str()};
     uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};

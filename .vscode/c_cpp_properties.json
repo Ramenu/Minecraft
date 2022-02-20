@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/include/**",
-                "C:/Users/ramen/Clibrary/**"
+                "C:/Users/ramen/Clibrary/public/OpenGL/**",
+                "C:/Users/ramen/Clibrary"
             ],
             "defines": [
                 "_DEBUG",

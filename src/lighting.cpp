@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include "mylib/lighting.hpp"
 
 uint32_t Lighting::lightVao {};

@@ -26,8 +26,9 @@ if "%1" == "-all" (
     timer.bat ccache g++ -fdiagnostics-color=always -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -Wctor-dtor-privacy ^
     -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override -Wuseless-cast -Wdouble-promotion ^
     -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
-    -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization -fno-exceptions ^
+    -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization -fexceptions ^
     -IC:/Users/ramen/Projects/Minecraft/include ^
+    -IC:/Users/ramen/Clibrary/public/OpenGL ^
     -IC:/Users/ramen/Clibrary ^
     %pathtodir%src/main.cpp ^
     %pathtodir%src/game.cpp ^
@@ -46,7 +47,7 @@ if "%1" == "-all" (
     %pathtodir%src/material.cpp ^
     %pathtodir%src/glerror.cpp ^
     -c 
-    mv %pathtodir%/*.o %pathtodir%/obj>NUL 2>&1 
+    mv %pathtodir%*.o %pathtodir%/obj>NUL 2>&1 
     g++ -flinker-output=exec -L%pathtopublic%OpenGL/lib -L%pathtopublic% %pathtodir%/obj/*.o -o main.exe ^
     -lterminal -lglad -lglfw3 -lgdi32 ^
     %pathtodir%icons/icon.res
@@ -55,12 +56,12 @@ if "%1" == "-all" (
     if "%files%" == "" (
         echo Please pass a name of one or more files as arguments.
     ) else (
-        timer.bat g++ -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -I./include -IC:/Users/ramen/Clibrary -Wctor-dtor-privacy ^
-        -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override -Wuseless-cast -Wdouble-promotion ^
-        -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
-        -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
+        timer.bat g++ -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -I./include -IC:/Users/ramen/Clibrary/public/OpenGL ^
+        -IC:/Users/ramen/Clibrary -Wctor-dtor-privacy -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods ^
+        -Wsuggest-override -Wuseless-cast -Wdouble-promotion -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow ^
+        -Wcast-qual -Wdangling-else -Winvalid-pch -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization -fexceptions ^
         %files:~1% -c 
-        mv %pathtodir%.o ./obj>NUL 2>&1
+        mv %pathtodir%*.o ./obj>NUL 2>&1
         g++ -flinker-output=exec -L%pathtopublic%OpenGL/lib -L%pathtopublic% %pathtodir%/obj/*.o -o main.exe ^
         %pathtopublic%libterminal.a -lglad -lglfw3 -lgdi32 ^
         %pathtodir%icons/icon.res

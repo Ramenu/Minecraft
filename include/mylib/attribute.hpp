@@ -2,7 +2,6 @@
 #define ATTRIBUTE_HPP
 
 #include <vector>
-#include <cstdint>
 
 extern void setAttributes(const std::vector<intptr_t>& attributeIndices); 
 extern void enableVBOAttributes(uint32_t& buffer, uint32_t upTo);

@@ -2,8 +2,6 @@
 #define GAME_HPP
 
 #include "window.hpp"
-#include <cstdint>
-#include <memory>
 
 class Game
 {

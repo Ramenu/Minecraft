@@ -1,7 +1,7 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 #include "mylib/camera.hpp"
 
 namespace Window
