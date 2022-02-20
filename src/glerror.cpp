@@ -13,6 +13,6 @@ namespace GLError
         std::cerr << "\nFATAL ERROR: ";
         enableTerminalColor(WHITE);
         std::cerr << error << '\n';
-        exit(-1);
+        abort();
     }
 } 
