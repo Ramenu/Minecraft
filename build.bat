@@ -19,6 +19,7 @@ for %%x in (%*) do (
 for /l %%a in (1,1,%argCount%) do call set "files=%%files%% !argVec[%%a]!"
 
 set pathtodir=C:/Users/ramen/Projects/Minecraft/
+set pathtopublic=C:/Users/ramen/Clibrary/public/
 
 :: Compiles all of the files in the ./src directory
 if "%1" == "-all" (
@@ -46,8 +47,8 @@ if "%1" == "-all" (
     %pathtodir%src/glerror.cpp ^
     -c 
     mv %pathtodir%/*.o %pathtodir%/obj>NUL 2>&1 
-    g++ -flinker-output=exec %pathtodir%/obj/*.o -o main.exe ^
-    C:/Users/ramen/Clibrary/public/libterminal.a C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
+    g++ -flinker-output=exec -L%pathtopublic%OpenGL/lib -L%pathtopublic% %pathtodir%/obj/*.o -o main.exe ^
+    -lterminal -lglad -lglfw3 -lgdi32 ^
     %pathtodir%icons/icon.res
 ) else (
 
@@ -60,7 +61,8 @@ if "%1" == "-all" (
         -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
         %files:~1% -c 
         mv %pathtodir%.o ./obj>NUL 2>&1
-        g++ ./obj/*.o -o main.exe C:/Users/ramen/Clibrary/public/libterminal.a C:/Users/ramen/Clibrary/public/OpenGL/lib/*.a ^
-        C:/Users/ramen/Projects/Minecraft/icons/icon.res
+        g++ -flinker-output=exec -L%pathtopublic%OpenGL/lib -L%pathtopublic% %pathtodir%/obj/*.o -o main.exe ^
+        %pathtopublic%libterminal.a -lglad -lglfw3 -lgdi32 ^
+        %pathtodir%icons/icon.res
     )
 )
