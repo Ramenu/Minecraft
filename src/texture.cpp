@@ -52,12 +52,10 @@ void loadImage(const char* fileName, ImageData& image)
     if (fs::exists(fileName))
     {
         if (fs::path(fileName).extension() == ".jpg" || fs::path(fileName).extension() == ".png")
-        {
-            image.data= stbi_load(fileName, &image.width, &image.height, &image.colorChannels, 0);
-            return;
-        }
-        GLError::error_message("File format must be .png or .jpg");
+            image.data = stbi_load(fileName, &image.width, &image.height, &image.colorChannels, 0);
+        else
+            GLError::error_message("File format must be .png or .jpg");
     }
     else
-        GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Make sure it exists, and it is not a directory.\n");
+        GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Double check to make sure it exists.\n");
 }
