@@ -19,7 +19,7 @@ void Renderer::initProjection()
 }
 
 Renderer::Renderer() : 
-cubeShader {"shaders/block/blockvertexshader.vs", "shaders/block/blockfragmentshader.fs"},
+cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 playerCamera {std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)},
 lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(1.0f, 3.0f, 1.0f))}
 {
