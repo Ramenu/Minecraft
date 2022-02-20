@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "Minecraft Build",
+			"command": "C:/Users/ramen/Projects/Minecraft/build.bat",
+			"args": [
+				"-all"
+			],
+			"options": {
+				"cwd": "C:/Users/ramen/Projects/Minecraft"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:\\msys64\\mingw64\\bin\\g++.exe"
+		}
+	]
+}
