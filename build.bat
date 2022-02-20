@@ -26,7 +26,7 @@ if "%1" == "-all" (
     timer.bat ccache g++ -fdiagnostics-color=always -g -Wall -Werror -Wextra -Wpedantic -fstrict-enums -std=c++17 -Wctor-dtor-privacy ^
     -Wmismatched-tags -Wextra-semi -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override -Wuseless-cast -Wdouble-promotion ^
     -Wimplicit-fallthrough -Wmissing-include-dirs -Wduplicated-cond -Wshadow -Wcast-qual -Wdangling-else -Winvalid-pch ^
-    -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization ^
+    -Wlogical-op -Wno-aggressive-loop-optimizations -Wdisabled-optimization -fno-exceptions ^
     -IC:/Users/ramen/Projects/Minecraft/include ^
     -IC:/Users/ramen/Clibrary ^
     %pathtodir%src/main.cpp ^
