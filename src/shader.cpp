@@ -125,12 +125,6 @@ Shader::~Shader()
     glDeleteProgram(shaderProgram);
 }
 
-/* Uses this shader program. */
-void Shader::useShader() const
-{
-    glUseProgram(shaderProgram);
-}
-
 void Shader::setInt(const char* name, int32_t value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
