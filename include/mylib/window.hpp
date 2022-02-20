@@ -8,14 +8,13 @@ namespace Window
 {
     extern GLFWwindow* loadWindow(GLFWwindow* window, const char* title);
     extern void initWindow(const char* windowName, double windowWidth, double windowHeight);
-    inline uint32_t screenWidth;
-    inline uint32_t screenHeight;
     extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
     extern void processKeyboardInput(float deltaTime, Camera* camera);
     extern void renderWireframes();
     extern void destroyWindow();
-    inline bool wireframeMode;
-    inline GLFWwindow* glfwWindow;
+    extern GLFWwindow* getWindow();
+    extern uint32_t getScreenWidth();
+    extern uint32_t getScreenHeight();
 }
 
 #endif // WINDOW_HPP
