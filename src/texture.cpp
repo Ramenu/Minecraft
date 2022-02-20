@@ -11,6 +11,8 @@
 #pragma GCC diagnostic pop
 #include "mylib/glerror.hpp"
 
+namespace fs = std::filesystem;
+
 /* Creates a texture from the filepath given with the default wrapping and filtering configurations. */
 void createTexture(const char* filePath, uint32_t& texture)
 {
@@ -30,36 +32,32 @@ void createTexture(const char* filePath, uint32_t& texture)
 /* Loads the texture from the filename passed. */
 void loadTexture(const char* fileName)
 {
-    using namespace std;
-    if (filesystem::exists(fileName))
+    ImageData img;
+    loadImage(fileName, img);
+    if (img.data)
     {
-        int width, height, colourChannels; 
-        unsigned char* data = stbi_load(fileName, &width, &height, &colourChannels, 0); // Retrieve image data
-        if (filesystem::path(fileName).extension() == ".jpg")
-        {
-            if (data)
-            {
-                // Once glTexImage2D is called, the currently bounded texture will have the data attached onto it
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); 
-                glGenerateMipmap(GL_TEXTURE_2D); 
-            }
-            else 
-                GLError::error_message("Failed to load JPG texture \"" + std::string{fileName} + '\"');
-        }
-        else if (filesystem::path(fileName).extension() == ".png")
-        {
-            if (data)
-            {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-                glGenerateMipmap(GL_TEXTURE_2D);
-            }
-            else 
-                GLError::error_message("Failed to load PNG texture \"" + std::string{fileName} + "\"\n");
-        }
-        else
-            GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Make sure it exists, and it is not a directory!");
-        stbi_image_free(data);
+        if (fs::path(fileName).extension() == ".jpg")
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
+        else if (fs::path(fileName).extension() == ".png")
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
-        GLError::error_message("No file \"" + std::string{fileName} + "\" exists!\n");
+        GLError::error_message("Failed to load image data from \"" + std::string{fileName} + '\"');
+}
+
+/* Returns a pointer to the image loaded, if successful, otherwise will return a nullptr. */
+void loadImage(const char* fileName, ImageData& image) 
+{
+    if (fs::exists(fileName))
+    {
+        if (fs::path(fileName).extension() == ".jpg" || fs::path(fileName).extension() == ".png")
+        {
+            image.data= stbi_load(fileName, &image.width, &image.height, &image.colorChannels, 0);
+            return;
+        }
+        GLError::error_message("File format must be .png or .jpg");
+    }
+    else
+        GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Make sure it exists, and it is not a directory.\n");
 }
