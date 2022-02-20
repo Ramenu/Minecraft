@@ -19,6 +19,9 @@ project(Minecraft)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Directories to search for libraries
+link_directories(C:/Users/ramen/Clibrary/public C:/Users/ramen/Clibrary/public/OpenGL/lib)
+
 add_executable(main
 ./src/attribute.cpp
 ./src/block.cpp
@@ -37,10 +40,8 @@ add_executable(main
 ./src/texture.cpp
 ./src/window.cpp)
 
-link_directories(C:/Users/ramen/Clibrary/public)
-link_directories(C:/Users/ramen/Clibrary/OpenGL/lib)
 
-# Compile options
+# Compiler flags
 target_compile_options(main PRIVATE 
 -g
 -Wall
@@ -67,12 +68,8 @@ target_compile_options(main PRIVATE
 -Wdisabled-optimization
 -fexceptions)
 
-# Linker options
-target_link_options(main PUBLIC
--LC:/Users/ramen/Clibrary/public/OpenGL/lib
--LC:/Users/ramen/Clibrary/public
-../icons/icon.res
-)
+# Linker flags
+target_link_options(main PUBLIC ../icons/icon.res)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
