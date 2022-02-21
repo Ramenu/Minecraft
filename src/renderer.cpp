@@ -65,6 +65,7 @@ Renderer::~Renderer()
     glDeleteVertexArrays(1, &blockVao);
 }
 
+/* Binds the name of the block passed. */
 void Renderer::bindBlock(BlockName block)
 {
     selectedBlock = Block(block);
