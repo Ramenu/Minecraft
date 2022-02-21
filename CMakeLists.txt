@@ -43,6 +43,7 @@ add_executable(main
 
 # Compiler flags
 target_compile_options(main PRIVATE 
+-fdiagnostics-color
 -g
 -Wall
 -Werror
