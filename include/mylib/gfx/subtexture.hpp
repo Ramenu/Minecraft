@@ -9,7 +9,6 @@ class SubTexture
     public:
         SubTexture();
         SubTexture(float column, float row);
-        ~SubTexture();
         glm::vec2 texCoords;
 };
 
