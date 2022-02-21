@@ -8,7 +8,6 @@
 class Block
 {
     public:
-        Block();
         explicit Block(BlockName block);
         ~Block() = default;
         void drawBlock() const;
