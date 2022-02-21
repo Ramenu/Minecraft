@@ -31,14 +31,13 @@ void createTexture(const char* filePath, uint32_t& texture)
 /* Loads the texture from the filename passed. */
 void loadTexture(const char* fileName)
 {
-    ImageData img;
-    loadImage(fileName, img);
+    ImageData img {loadImage(fileName)};
     if (img.data)
     {
         if (fs::path(fileName).extension() == ".jpg")
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
         else
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,img.data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -46,15 +45,20 @@ void loadTexture(const char* fileName)
 }
 
 /* Returns a pointer to the image loaded, if successful, otherwise will return a nullptr. */
-void loadImage(const char* fileName, ImageData& image) 
+[[nodiscard]] ImageData loadImage(const char* fileName) 
 {
     if (fs::exists(fileName))
     {
         if (fs::path(fileName).extension() == ".jpg" || fs::path(fileName).extension() == ".png")
+        {
+            ImageData image;
             image.data = stbi_load(fileName, &image.width, &image.height, &image.colorChannels, 0);
+            return image;
+        }
         else
             GLError::error_message("File format must be .png or .jpg");
     }
     else
         GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Double check to make sure it exists.\n");
+    throw; // Impossible to reach here, but put a throw here anyway just so the compiler does not complain about a return missing
 }
