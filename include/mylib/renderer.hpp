@@ -12,7 +12,7 @@ class Renderer
         Renderer();
         ~Renderer();
         void bindBlock(BlockName block);
-        void drawBlock(glm::vec3&& xyzPos);
+        void drawBlock(const glm::vec3& xyzPos);
         void drawChunk();
         void drawLightSource();
         void updateView();

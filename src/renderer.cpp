@@ -72,7 +72,7 @@ void Renderer::bindBlock(BlockName block)
 }
 
 /* Draws the selected block on the (X, Y, Z) position passed. */
-void Renderer::drawBlock(glm::vec3&& xyzPos)
+void Renderer::drawBlock(const glm::vec3& xyzPos)
 {
     glBindVertexArray(blockVao);
     cubeShader.useShader();
