@@ -8,7 +8,7 @@ class Camera
 {
     public:
     	Camera(float yaw, float pitch, float speed, float sensitivity, float zoom);
-		~Camera();
+		~Camera() = default;
 		glm::vec3 cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)};
 		glm::vec3 cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)};
 		glm::vec3 cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed};

@@ -15,11 +15,6 @@ lightPos {light}
 	
 }
 
-/* Class destructor for lighting. */
-Lighting::~Lighting()
-{
-
-}
 
 /* Deletes all the light vertex arrays, should be called only when the game process has exited. */
 void Lighting::removeAllLights()

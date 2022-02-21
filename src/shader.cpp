@@ -120,7 +120,8 @@ void Shader::checkLinkageErrors()
 }
 
 /* Uses this shader. */
-void Shader::useShader() const {
+void Shader::useShader() const 
+{
     glUseProgram(shaderProgram);
 }
 

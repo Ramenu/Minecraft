@@ -19,11 +19,7 @@ Block::Block(BlockName block)
 }
 
 
-/* Class destructor for Block. */
-Block::~Block()
-{
 
-}
 
 /* Draws this block. */
 void Block::drawBlock() const

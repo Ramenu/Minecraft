@@ -15,12 +15,6 @@ mouseSensitivity {cameraSensitivity},
 zoom {cameraZoom}{}
 
 
-/* */
-Camera::~Camera()
-{
-
-}
-
 /* Updates the position of the camera. */
 void Camera::updateCameraPos()
 {

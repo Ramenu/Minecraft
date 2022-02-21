@@ -10,7 +10,7 @@ class Block
     public:
         Block();
         explicit Block(BlockName block);
-        ~Block();
+        ~Block() = default;
         void drawBlock() const;
         SubTexture blockTexture;
         Material blockMaterial;

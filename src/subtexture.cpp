@@ -8,8 +8,4 @@ SubTexture::SubTexture() {}
 SubTexture::SubTexture(float column, float row) :
 texCoords {column * xPos, row * yPos} {}
 
-/* Destructor for the sub texture. */
-SubTexture::~SubTexture()
-{
 
-}
