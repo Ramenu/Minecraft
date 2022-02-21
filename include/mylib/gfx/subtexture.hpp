@@ -7,8 +7,8 @@
 class SubTexture
 {
     public:
-        explicit SubTexture();
-        explicit SubTexture(float column, float row);
+        SubTexture();
+        SubTexture(float column, float row);
         ~SubTexture();
         glm::vec2 texCoords;
 };

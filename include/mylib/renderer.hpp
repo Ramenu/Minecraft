@@ -9,7 +9,7 @@
 class Renderer
 {
     public:
-        explicit Renderer();
+        Renderer();
         ~Renderer();
         void bindBlock(BlockName block);
         void drawBlock(glm::vec3&& xyzPos);

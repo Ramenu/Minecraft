@@ -119,6 +119,11 @@ void Shader::checkLinkageErrors()
     }
 }
 
+/* Uses this shader. */
+void Shader::useShader() const {
+    glUseProgram(shaderProgram);
+}
+
 /* Destructor for Shader. */
 Shader::~Shader()
 {

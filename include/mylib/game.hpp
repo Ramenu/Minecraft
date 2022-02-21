@@ -6,7 +6,7 @@
 class Game
 {
     public:
-        explicit Game(uint16_t windowWidth, uint16_t windowHeight);
+        Game(uint16_t windowWidth, uint16_t windowHeight);
         ~Game();
         void runGame();
         
