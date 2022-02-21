@@ -45,7 +45,7 @@ void Ray::drawRay()
     rayShader.useShader();
 
     ray = glm::vec3(origin.x, origin.y - 0.1f, origin.z - 3.2f);
-    glm::mat4 model {glm::mat4(1.0f)};
+    glm::mat4 model {glm::mat4{1.0f}};
     model = glm::translate(model, ray);
 
     rayShader.setMat4("model", model);

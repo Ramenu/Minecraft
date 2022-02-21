@@ -22,7 +22,8 @@ void Renderer::initProjection()
 Renderer::Renderer() : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 playerCamera {std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)},
-lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(1.0f, 3.0f, 1.0f))}
+selectedBlock {BlockName::Grass_Block},
+lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f})}
 {
     // Create our buffers and store the attribute data in them
     glGenVertexArrays(1, &blockVao);
@@ -76,7 +77,7 @@ void Renderer::drawBlock(const glm::vec3& xyzPos)
 {
     glBindVertexArray(blockVao);
     cubeShader.useShader();
-    glm::mat4 model {glm::translate(glm::mat4(1.0f), xyzPos)};
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, xyzPos)};
     cubeShader.setMat4("model", model);
     selectedBlock.drawBlock();
 }
@@ -90,12 +91,12 @@ void Renderer::drawChunk()
     glm::mat4 model;
     for (uint32_t i {}; i < 5; i++)
     {
-        model = glm::translate(glm::mat4(1.0f), {x, 0.0f, 0.0f});
+        model = glm::translate(glm::mat4{1.0f}, {x, 0.0f, 0.0f});
         cubeShader.setMat4("model", model);
         selectedBlock.drawBlock();
         for (uint32_t j {}; j < 5; j++)
         {
-            model = glm::translate(glm::mat4(1.0f), {x, 0.0f, z});
+            model = glm::translate(glm::mat4{1.0f}, {x, 0.0f, z});
             cubeShader.setMat4("model", model);
             selectedBlock.drawBlock();
             z += 0.5f;
@@ -111,7 +112,7 @@ void Renderer::drawLightSource()
 {
     Lighting::bindLightVAO();
     lightSource->lightShader.useShader();
-    glm::mat4 model {glm::translate(glm::mat4(1.0f), lightSource->lightPos)};
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, lightSource->lightPos)};
     lightSource->lightShader.setMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
