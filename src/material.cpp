@@ -2,7 +2,9 @@
 
 Material::Material() {}
 
-Material::Material(const glm::vec3& ambientVec, const glm::vec3& specularVec, uint16_t diffuseNum, float shineNum) :
-ambient {ambientVec}, specular {specularVec}, diffuse {diffuseNum}, shine {shineNum}
-{
-}
+/* Initializes the material. */
+Material::Material(const glm::vec3& materialAmb, const glm::vec3& materialSpec, uint16_t materialDiff, float materialShine) :
+ambient {materialAmb},
+specular {materialSpec},
+diffuse {materialDiff},
+shine {materialShine} {}

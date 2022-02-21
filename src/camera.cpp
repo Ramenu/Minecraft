@@ -4,16 +4,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-/* Constructor for Camera class. */
+/* Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
+   The other members are automatically initialized upon construction. */
 Camera::Camera(float cameraYaw, float cameraPitch, 
-                float cameraMovementSpeed, float cameraMouseSensitivity, float cameraZoom) : 
-   cameraPos {glm::vec3(0.0f, 0.0f, 3.0f)}, cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)}, cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed},
-   view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)}, movementSpeed {cameraMovementSpeed}, deltaTime {0.0f}, lastFrame {0.0f}, 
-   yaw {cameraYaw}, pitch {cameraPitch}, mouseSensitivity {cameraMouseSensitivity}, zoom {cameraZoom}, firstMouseMovement {true}, lastX {}, lastY {}, cameraUp {glm::vec3(0.0f, 1.0f, 0.0f)},
-   cameraRay {cameraPos, cameraFront, glm::vec3(0.0f, 0.0f, 2.0f)}  {}
+               float cameraSpeed, float cameraSensitivity, float cameraZoom) :
+yaw {cameraYaw}, 
+pitch {cameraPitch}, 
+movementSpeed {cameraSpeed}, 
+mouseSensitivity {cameraSensitivity}, 
+zoom {cameraZoom}{}
 
 
-/* Camera class destructor. */
+/* */
 Camera::~Camera()
 {
 
