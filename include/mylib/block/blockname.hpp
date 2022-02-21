@@ -3,8 +3,8 @@
 
 enum class BlockName
 {
-    GRASS_BLOCK,
-    COBBLESTONE_BLOCK
+    Grass_Block,
+    Cobblestone_Block
 };
 
 #endif // BLOCKNAME_HPP
