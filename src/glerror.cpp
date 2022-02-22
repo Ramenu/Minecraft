@@ -7,12 +7,12 @@ extern "C"
 
 namespace GLError
 {
-    void error_message(const char* error) 
+    void error_message(std::string_view error) 
     {
         enableTerminalColor(BRIGHTRED);
         std::cerr << "\nFATAL ERROR: ";
         enableTerminalColor(WHITE);
         std::cerr << error << '\n';
-        abort();
+        exit(-1);
     }
 } 
