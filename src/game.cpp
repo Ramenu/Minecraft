@@ -1,9 +1,7 @@
 #define GLFW_INCLUDE_NONE
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "mylib/game.hpp"
-#include "mylib/camera.hpp"
 #include "mylib/renderer.hpp"
 #include "mylib/lighting.hpp"
 #include "mylib/glerror.hpp"
