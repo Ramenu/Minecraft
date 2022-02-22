@@ -38,6 +38,7 @@ add_executable(main
 ./src/shader.cpp
 ./src/subtexture.cpp
 ./src/texture.cpp
+./src/vertices.cpp
 ./src/window.cpp)
 
 
