@@ -6,6 +6,6 @@ SubTexture::SubTexture() {}
 
 /* Constructor for the sub texture. */
 SubTexture::SubTexture(float column, float row) :
-texCoords {column * xPos, row * yPos} {}
+texCoords {column * Texture::xPos, row * Texture::yPos} {}
 
 

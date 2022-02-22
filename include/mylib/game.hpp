@@ -1,7 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "window.hpp"
+#include <cstdint>
 
 class Game
 {

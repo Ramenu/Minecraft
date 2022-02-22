@@ -93,7 +93,7 @@ Shader& Shader::operator=(Shader&& shader)
 }
 
 /* Checks if the shader passed has an error in its code, if so it will print an error log containing the errors found within it. */
-void Shader::checkShaderCompilationErrors(uint32_t &shader, ShaderType shaderType)
+void Shader::checkShaderCompilationErrors(const uint32_t& shader, ShaderType shaderType)
 {
     int success;
     char infoLog[512];

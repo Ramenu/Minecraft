@@ -17,14 +17,14 @@ void setAttributes(const std::vector<intptr_t>& attributeIndices)
 }
     
 /* Enables all of the attributes in the buffer (only up to the number passed). */
-void enableVBOAttributes(uint32_t& buffer, uint32_t upTo)
+void enableVBOAttributes(const uint32_t& buffer, uint32_t upTo)
 {
     for (uint32_t i {}; i < upTo; i++)
         glEnableVertexArrayAttrib(buffer, i);
 }
 
 /* Disables all of the attributes in the buffer (only up to the number passed). */
-void disableVBOAttributes(uint32_t& buffer, uint32_t upTo)
+void disableVBOAttributes(const uint32_t& buffer, uint32_t upTo)
 {
     for (uint32_t i {}; i < upTo; i++)
         glDisableVertexArrayAttrib(buffer, i);

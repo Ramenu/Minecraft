@@ -5,7 +5,6 @@
 #include "mylib/buffers/buffer.hpp"
 #include "mylib/attribute.hpp"
 #include "mylib/renderer.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #if 0
     #include <iostream>
 #endif
@@ -27,7 +26,7 @@ length{rayLength}
         origin.x, origin.y, origin.z, 1.0f, 1.0f, 1.0f,
         rayEnd.x, rayEnd.y, rayEnd.z, 1.0f, 1.0f, 1.0f
     };
-    loadVertexBuffer(vertexBuffer, sizeof(rayVertices), rayVertices);
+    Buffer::loadVertexBuffer(vertexBuffer, sizeof(rayVertices), rayVertices);
     setAttributes(std::vector<intptr_t>{3, 3});
     enableVAOAttributes(std::vector<uint32_t>{0,1});
     rayShader.useShader();

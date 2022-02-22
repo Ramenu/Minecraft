@@ -29,7 +29,7 @@ lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 
     glGenVertexArrays(1, &blockVao);
     glGenBuffers(1, &vertexBuffer);
     glBindVertexArray(blockVao);
-    loadVertexBuffer(vertexBuffer, sizeof(cubeVertices), cubeVertices);
+    Buffer::loadVertexBuffer(vertexBuffer, sizeof(cubeVertices), cubeVertices);
     setAttributes(std::vector<intptr_t>{3, 2, 3}); // 1 = Position coordinates, 2 = Texture coordinates
     enableVAOAttributes({0, 1, 2});
 
@@ -39,10 +39,6 @@ lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
     lightSource.shaderProgramLightSource(cubeShader);
 
-    // Load in the texture atlas
-    unsigned int textureAtlas;
-    glGenTextures(1, &textureAtlas);
-    createTexture("textures/textureatlas.jpg", textureAtlas);
     cubeShader.setInt("allTextures", 0);
     cubeShader.setMat4("projection", proj);
 

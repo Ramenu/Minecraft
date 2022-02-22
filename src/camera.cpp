@@ -1,7 +1,6 @@
 #include "GLFW/glfw3.h"
 #include "mylib/camera.hpp"
 #include "mylib/window.hpp"
-#include <glm/gtc/matrix_transform.hpp>
 
 
 /* Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.

@@ -1,8 +1,7 @@
 #ifndef SUBTEXTURE_HPP
 #define SUBTEXTURE_HPP
 
-#include "glm/glm.hpp"
-#include "mylib/block/blockname.hpp"
+#include "glm/vec2.hpp"
 
 class SubTexture
 {
@@ -10,6 +9,7 @@ class SubTexture
         SubTexture();
         SubTexture(float column, float row);
         glm::vec2 texCoords;
+
 };
 
 #endif // SUBTEXTURE_HPP

@@ -7,6 +7,8 @@
 #include "mylib/renderer.hpp"
 #include "mylib/lighting.hpp"
 #include "mylib/glerror.hpp"
+#include "mylib/window.hpp"
+#include "mylib/gfx/texture.hpp"
 
 
 /* Game constructor. Initializes the window width and height and GLFW itself. */
@@ -20,6 +22,7 @@ Game::Game(uint16_t windowWidth, uint16_t windowHeight)
         GLError::error_message("Failed to initialize GLAD");
 
     glViewport(0, 0, windowWidth, windowHeight);
+    Texture::initTextureAtlas();
     Lighting::initLightVAO();
     Renderer::initProjection();
 }
@@ -59,6 +62,7 @@ void Game::runGame()
 
 Game::~Game()
 {
+    Texture::deleteTextureAtlas();
     Window::destroyWindow();
     glfwTerminate();
 }

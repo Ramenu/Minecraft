@@ -2,7 +2,7 @@
 #define GLMATH_HPP
 
 #include <cmath>
-#include "glm/glm.hpp"
+#include "glm/vec3.hpp"
 
 extern glm::vec3 getBarycentricCoords(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& p);
 

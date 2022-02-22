@@ -1,7 +1,8 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include "glm/glm.hpp"
+#include "glm/vec3.hpp"
+#include "glm/mat4x4.hpp"
 
 enum class ShaderType {VERTEX, FRAGMENT};
 
@@ -26,7 +27,7 @@ class Shader
         uint32_t shaderProgram;
         const char* vertexShaderPath;
         const char* fragmentShaderPath;
-        void checkShaderCompilationErrors(uint32_t& shader, ShaderType shaderType);
+        void checkShaderCompilationErrors(const uint32_t& shader, ShaderType shaderType);
         void checkLinkageErrors();
 };
 
