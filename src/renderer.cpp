@@ -21,9 +21,9 @@ void Renderer::initProjection()
 
 Renderer::Renderer() : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
-playerCamera {std::make_unique<Camera>(-90.0f, 0.0f, 2.5f, 0.1f, 45.0f)},
+playerCamera {-90.0f, 0.0f, 2.5f, 0.1f, 45.0f},
 selectedBlock {BlockName::Grass_Block},
-lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f})}
+lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f}}
 {
     // Create our buffers and store the attribute data in them
     glGenVertexArrays(1, &blockVao);
@@ -36,8 +36,8 @@ lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
     cubeShader.useShader(); 
     cubeShader.setMat3("normalMatrix", normalMatrix);
-    cubeShader.setVec3("viewPos", playerCamera->cameraPos);
-    lightSource->shaderProgramLightSource(cubeShader);
+    cubeShader.setVec3("viewPos", playerCamera.cameraPos);
+    lightSource.shaderProgramLightSource(cubeShader);
 
     // Load in the texture atlas
     unsigned int textureAtlas;
@@ -61,7 +61,7 @@ lightSource {std::make_unique<Lighting>(0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0
 /* Class destructor for Renderer. */
 Renderer::~Renderer()
 {
-    lightSource->removeAllLights();
+    lightSource.removeAllLights();
     glDeleteBuffers(1, &vertexBuffer);
     glDeleteVertexArrays(1, &blockVao);
 }
@@ -111,19 +111,19 @@ void Renderer::drawChunk()
 void Renderer::drawLightSource()
 {
     Lighting::bindLightVAO();
-    lightSource->lightShader.useShader();
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, lightSource->lightPos)};
-    lightSource->lightShader.setMat4("model", model);
+    lightSource.lightShader.useShader();
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, lightSource.lightPos)};
+    lightSource.lightShader.setMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 /* Updates the camera view for the player. */
 void Renderer::updateView()
 {
-    playerCamera->updateCameraPos();
+    playerCamera.updateCameraPos();
     cubeShader.useShader();
-    cubeShader.setMat4("view", playerCamera->view);
-    cubeShader.setVec3("viewPos", playerCamera->cameraPos);
+    cubeShader.setMat4("view", playerCamera.view);
+    cubeShader.setVec3("viewPos", playerCamera.cameraPos);
     #if 0
         lightSource->lightShader.useShader();
         lightSource->lightShader.setMat4("view", playerCamera->view);

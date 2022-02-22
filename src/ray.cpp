@@ -11,8 +11,11 @@
 #endif
 
 /* Constructor for the Ray object. */
-Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength)
-    : origin{rayOrigin}, direction{rayDirection}, rayShader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, length{rayLength}
+Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) : 
+origin{rayOrigin}, 
+direction{rayDirection}, 
+rayShader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, 
+length{rayLength}
 {
     // Create vertex array and buffer
     glGenVertexArrays(1, &vao);

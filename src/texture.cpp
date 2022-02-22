@@ -41,7 +41,7 @@ void loadTexture(const char* fileName)
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
-        GLError::error_message("Failed to load image data from \"" + std::string{fileName} + '\"');
+        GLError::error_message(std::string{"Failed to load image data from \"" + std::string{fileName} + '\"'}.c_str());
 }
 
 /* Returns a pointer to the image loaded, if successful, otherwise will return a nullptr. */
@@ -59,6 +59,6 @@ void loadTexture(const char* fileName)
             GLError::error_message("File format must be .png or .jpg");
     }
     else
-        GLError::error_message("No file \"" + std::string{fileName} + "\" could be found. Double check to make sure it exists.\n");
+        GLError::error_message(std::string{"No file \"" + std::string{fileName} + "\" could be found. Double check to make sure it exists.\n"}.c_str());
     throw; // Impossible to reach here, but put a throw here anyway just so the compiler does not complain about a return missing
 }

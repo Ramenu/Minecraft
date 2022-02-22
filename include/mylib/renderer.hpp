@@ -4,7 +4,6 @@
 #include "mylib/block/block.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/lighting.hpp"
-#include <memory>
 
 class Renderer
 {
@@ -17,12 +16,12 @@ class Renderer
         void drawLightSource();
         void updateView();
         Shader cubeShader;
-        std::unique_ptr<Camera> playerCamera;
+        Camera playerCamera;
         static void initProjection();
         static inline glm::mat4 getProjection() {return proj;}
     private:
         Block selectedBlock;
-		std::unique_ptr<Lighting> lightSource;
+		Lighting lightSource;
         uint32_t blockVao;
         uint32_t vertexBuffer;
         static glm::mat4 proj;

@@ -7,7 +7,7 @@ extern "C"
 
 namespace GLError
 {
-    void error_message(const std::string& error) 
+    void error_message(const char* error) 
     {
         enableTerminalColor(BRIGHTRED);
         std::cerr << "\nFATAL ERROR: ";

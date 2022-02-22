@@ -32,7 +32,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     }
     catch (const std::exception& e)
     {
-        GLError::error_message("Shader compilation failed:\n" + std::string{e.what()});
+        GLError::error_message(std::string{"Shader compilation failed:\n" + std::string{e.what()}}.c_str());
     }
     
     // Compile vertex shader
@@ -102,7 +102,7 @@ void Shader::checkShaderCompilationErrors(uint32_t &shader, ShaderType shaderTyp
     if (!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        GLError::error_message("Failed to compile shader \"" + std::string{shaderPath} + "\". " + std::string{infoLog});
+        GLError::error_message(std::string{"Failed to compile shader \"" + std::string{shaderPath} + "\". " + std::string{infoLog}}.c_str());
     }
 }
 
@@ -115,7 +115,7 @@ void Shader::checkLinkageErrors()
     if (!success)
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
+        GLError::error_message(std::string{"Failed to link shader program:\n" + std::string{infoLog}}.c_str());
     }
 }
 

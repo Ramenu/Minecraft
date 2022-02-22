@@ -6,10 +6,10 @@ uint32_t Lighting::lightVao {};
 /* Constructor for lighting. Initializes the ambient, specular vector and the shader for the light as well. */
 Lighting::Lighting(float ambient, float specular, float diffuse, const glm::vec3& direction, const glm::vec3& light) :
 lightShader {"shaders/light/lightvertexshader.vert", "shaders/light/lightfragmentshader.frag"},
-ambientVec {glm::vec3(ambient)}, 
-specularVec {glm::vec3(specular)}, 
-diffuseVec {glm::vec3(diffuse)},
-directionVec {glm::vec3(direction)},
+ambientVec {ambient}, 
+specularVec {specular}, 
+diffuseVec {diffuse},
+directionVec {direction},
 lightPos {light}
 {
 	

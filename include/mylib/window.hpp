@@ -9,7 +9,7 @@ namespace Window
     extern GLFWwindow* loadWindow(GLFWwindow* window, const char* title);
     extern void initWindow(const char* windowName, double windowWidth, double windowHeight);
     extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-    extern void processKeyboardInput(float deltaTime, Camera* camera);
+    extern void processKeyboardInput(float deltaTime, Camera& camera);
     extern void renderWireframes();
     extern void destroyWindow();
     extern GLFWwindow* getWindow();

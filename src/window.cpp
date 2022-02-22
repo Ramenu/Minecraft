@@ -11,17 +11,17 @@ namespace Window
     static GLFWwindow* glfwWindow;
     
     /* Handles keyboard-input.  */
-    void processKeyboardInput(float deltaTime, Camera* camera)
+    void processKeyboardInput(float deltaTime, Camera& camera)
     {
-        camera->movementSpeed = 2.5f * deltaTime;
+        camera.movementSpeed = 2.5f * deltaTime;
         if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
-            camera->cameraPos += camera->movementSpeed * camera->cameraFront;
+            camera.cameraPos += camera.movementSpeed * camera.cameraFront;
         if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
-            camera->cameraPos -= camera->movementSpeed * camera->cameraFront;
+            camera.cameraPos -= camera.movementSpeed * camera.cameraFront;
         if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
-            camera->cameraPos -= camera->movementSpeed * camera->cameraRight;
+            camera.cameraPos -= camera.movementSpeed * camera.cameraRight;
         if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
-            camera->cameraPos += camera->movementSpeed * camera->cameraRight;
+            camera.cameraPos += camera.movementSpeed * camera.cameraRight;
         if (glfwGetKey(glfwWindow, GLFW_KEY_Q) == GLFW_PRESS)
             renderWireframes();
         if (glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)

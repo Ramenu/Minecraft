@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <memory>
 #include "mylib/game.hpp"
 #include "mylib/camera.hpp"
 #include "mylib/renderer.hpp"
@@ -31,7 +30,7 @@ void Game::runGame()
     float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
-    auto renderer = std::make_unique<Renderer>();
+    Renderer renderer;
 
     glEnable(GL_DEPTH_TEST);
     
@@ -46,14 +45,14 @@ void Game::runGame()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderer->updateView();
-        renderer->drawBlock({0.0f, 0.0f, 0.0f});
+        renderer.updateView();
+        renderer.drawBlock({0.0f, 0.0f, 0.0f});
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
 
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        Window::processKeyboardInput(deltaTime, renderer->playerCamera.get());
+        Window::processKeyboardInput(deltaTime, renderer.playerCamera);
     }
     
 }
