@@ -17,13 +17,13 @@ class Ray
         Shader rayShader;
         float rayPitch;
         float rayYaw;
+        bool intersectsWith(const glm::vec3& b);
     private:
-        unsigned int vao;
+        glm::vec3 ray;
+        uint32_t vao;
         BufferData vertexBuffer;
         glm::vec3 length;
-        glm::vec3 ray;
-        glm::vec3 originalOrigin;
-        glm::vec3 originalEnd;
+        uint32_t intersectionCount;
 };
 
 #endif // RAY_HPP
