@@ -47,7 +47,7 @@ void Game::runGame()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.updateView();
-        renderer.drawBlock({0.0f, 0.0f, 0.0f});
+        renderer.drawChunk();
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
 
