@@ -21,12 +21,12 @@ class Camera
 		float zoom;
 		float deltaTime {0.0f};
 		float lastFrame {0.0f};
+		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
 	private:
 		bool firstMouseMovement {true};
 		double lastX;
 		double lastY;
 		glm::vec3 cameraUp {0.0f, 1.0f, 0.0f};
-		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 2.0f}};
 };
 
 #endif // CAMERA_HPP
