@@ -23,7 +23,7 @@ class Renderer
         Block selectedBlock;
 		Lighting lightSource;
         uint32_t blockVao;
-        uint32_t vertexBuffer;
+        BufferData vertexBuffer;
         static glm::mat4 proj;
 };
 
