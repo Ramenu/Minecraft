@@ -14,9 +14,9 @@ namespace fs = std::filesystem;
 
 namespace Texture
 {
-    static unsigned int textureAtlas;
+    static uint32_t textureAtlas;
 
-    unsigned int getTextureAtlas() {return textureAtlas;}
+    uint32_t getTextureAtlas() {return textureAtlas;}
 
     /* Initializes the texture atlas, should be called when the game starts. */
     void initTextureAtlas()
@@ -44,13 +44,13 @@ namespace Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        loadTexture(filePath); // Load the texture data 
+        loadTexture(filePath); 
     }
 
     /* Loads the texture from the filename passed. */
     void loadTexture(const char* fileName)
     {
-        ImageData img {loadImage(fileName)};
+        const ImageData img {loadImage(fileName)};
         if (img.data)
         {
             if (fs::path(fileName).extension() == ".jpg")

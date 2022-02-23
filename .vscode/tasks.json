@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "Minecraft Build",
-			"command": "make all",
+			"command": "timer.bat make all",
 			"args": [],
 			"options": {
 				"cwd": "C:/Users/ramen/Projects/Minecraft/build"

@@ -31,7 +31,6 @@ void Camera::updateCameraPos()
 	cameraFront = glm::normalize(direction);
 
 	double xPos, yPos;
-
 	glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
 
     if (firstMouseMovement)
@@ -64,7 +63,11 @@ void Camera::updateCameraPos()
     cameraRay.rayShader.useShader();
     cameraRay.origin = cameraPos;
     cameraRay.direction = cameraFront;
+    cameraRay.rayYaw = yaw;
+    cameraRay.rayPitch = pitch;
     cameraRay.rayShader.setMat4("view", view);
-    cameraRay.drawRay();
+    #if 0
+        cameraRay.drawRay();
+    #endif
 
 }
