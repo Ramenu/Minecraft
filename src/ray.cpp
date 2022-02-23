@@ -2,7 +2,6 @@
 #include "mylib/physics/ray.hpp"
 #include "mylib/math/glmath.hpp"
 #include "mylib/window.hpp"
-#include "mylib/buffers/buffer.hpp"
 #include "mylib/attribute.hpp"
 #include "mylib/renderer.hpp"
 #if 0
@@ -10,7 +9,7 @@
 #endif
 
 /* Constructor for the Ray object. */
-Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) : 
+Ray::Ray(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& rayLength) : 
 origin{rayOrigin}, 
 direction{rayDirection}, 
 rayShader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, 
@@ -18,25 +17,31 @@ length{rayLength}
 {
     // Create vertex array and buffer
     glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vertexBuffer);
     glBindVertexArray(vao);
     glm::vec3 rayEnd{origin + direction * length};
-    const float rayVertices[12] =
+    const float rayVertices[6] =
     {
-        origin.x, origin.y, origin.z, 1.0f, 1.0f, 1.0f,
-        rayEnd.x, rayEnd.y, rayEnd.z, 1.0f, 1.0f, 1.0f
+        origin.x, origin.y, origin.z,
+        rayEnd.x, rayEnd.y, rayEnd.z
     };
-    Buffer::loadVertexBuffer(vertexBuffer, sizeof(rayVertices), rayVertices);
-    setAttributes(std::vector<intptr_t>{3, 3});
-    enableVAOAttributes(std::vector<uint32_t>{0,1});
+    uint32_t buffer {};
+    bool doStaticDraw {true}, isVertexBuffer {true};
+    vertexBuffer = BufferData{buffer, sizeof(rayVertices), rayVertices, doStaticDraw, isVertexBuffer};
+    Buffer::createBuffer(vertexBuffer);
+    setAttributes(std::vector<intptr_t>{3});
+    enableVAOAttributes({0,1});
     rayShader.useShader();
     rayShader.setMat4("projection", Renderer::getProjection());
+
+    // Used only for debugging
+    originalOrigin = origin;
+    originalEnd = rayEnd;
 }
 
 /* Destructor for the Ray object. Deallocates the ray's buffer and deletes the vertex array. */
 Ray::~Ray()
 {
-    glDeleteBuffers(1, &vertexBuffer);
+    glDeleteBuffers(1, &vertexBuffer.buffer);
     glDeleteVertexArrays(1, &vao);
 }
 
@@ -46,7 +51,8 @@ void Ray::drawRay()
     glBindVertexArray(vao);
     rayShader.useShader();
 
-    ray = glm::vec3(origin.x, origin.y - 0.1f, origin.z - 3.2f);
+    //ray = glm::vec3(origin.x, origin.y - 0.1f, origin.z - 3.2f);
+    ray = direction;
     glm::mat4 model {glm::mat4{1.0f}};
     model = glm::translate(model, ray);
 

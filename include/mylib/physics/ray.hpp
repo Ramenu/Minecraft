@@ -2,6 +2,7 @@
 #define RAY_HPP
 
 #include "mylib/shader.hpp"
+#include "mylib/buffers/buffer.hpp"
 
 class Ray
 {
@@ -18,9 +19,11 @@ class Ray
         float rayYaw;
     private:
         unsigned int vao;
-        unsigned int vertexBuffer;
+        BufferData vertexBuffer;
         glm::vec3 length;
         glm::vec3 ray;
+        glm::vec3 originalOrigin;
+        glm::vec3 originalEnd;
 };
 
 #endif // RAY_HPP
