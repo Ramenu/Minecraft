@@ -22,7 +22,7 @@ void Lighting::removeAllLights()
 	glDeleteVertexArrays(1, &lightVao);
 }
 
-void Lighting::shaderProgramLightSource(const Shader& shader)
+void Lighting::shaderProgramLightSource(const Shader& shader) const
 {
 	shader.setVec3("light.ambient", ambientVec);
 	shader.setVec3("light.diffuse", diffuseVec);
