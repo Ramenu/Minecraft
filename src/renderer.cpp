@@ -79,23 +79,32 @@ void Renderer::bindBlock(BlockName block)
     selectedBlock = Block{block};
 }
 
+bool Renderer::canHighlightBlock(const glm::vec3& blockCoords)
+{
+    const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
+    if (distance <= 2.0f)
+    {
+        // Use z-coordinate and check which block is in the same area as the player
+        if (playerCamera.cameraRay.intersectsWith(blockCoords))
+        {
+            const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
+            const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + 0.5f})};
+            return (distanceBetween <= 0.5f && distanceBetween <= nextBlock);
+        }
+    }
+    return false;
+}
+
 /* Draws the selected block on the (X, Y, Z) position passed. */
 void Renderer::drawBlock(const glm::vec3& xyzPos)
 {
-    cubeShader.useShader();
     float ambient {selectedBlock.blockMaterial.ambient};
-    if (glm::distance(xyzPos, playerCamera.cameraPos) <= 3.0f)
-    {
-        // TODO: When the player gets closer to block, make the hitbox wider
-        const float dot = glm::dot(glm::normalize(playerCamera.cameraFront), glm::vec3{1.0f, 0.0f, 0.0f});
-        glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(dot)}.c_str());
-        if (dot > 0.0f && dot < 0.5f)
-            ambient = 1.8f;
-    }
+    if (canHighlightBlock(xyzPos))
+        ambient = 1.8f;
     glm::mat4 model {glm::translate(glm::mat4{1.0f}, xyzPos)};
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
-    selectedBlock.drawBlock();
+    glDrawArrays(GL_TRIANGLES, 0, 36); // Draw cube
 }
 
 /* Draws a 5x0x5 chunk of the selected block. */
@@ -104,17 +113,12 @@ void Renderer::drawChunk()
     glBindVertexArray(blockVao);
     cubeShader.useShader();
     float x {}, z {};
-    glm::mat4 model;
     for (uint32_t i {}; i < 5; i++)
     {
-        model = glm::translate(glm::mat4{1.0f}, {x, 0.0f, 0.0f});
-        cubeShader.setMat4("model", model);
-        selectedBlock.drawBlock();
+        drawBlock({x, 0.0f, 0.0f});
         for (uint32_t j {}; j < 5; j++)
         {
-            model = glm::translate(glm::mat4{1.0f}, {x, 0.0f, z});
-            cubeShader.setMat4("model", model);
-            selectedBlock.drawBlock();
+            drawBlock({x, 0.0f, z});
             z += 0.5f;
         }
         x += 0.5f;
@@ -133,7 +137,7 @@ void Renderer::drawLightSource()
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-/* Updates the camera view for the player. */
+/* Updates the camera view for the player, and updates all the shaders to the updated position of the camera. */
 void Renderer::updateView()
 {
     playerCamera.updateCameraPos();
