@@ -5,6 +5,7 @@ struct Material
     sampler2D diffuse;
     vec3 specular;
     float shine;
+    float ambient;
 };
 
 struct Light
@@ -33,7 +34,7 @@ void main()
     //fragColor = texture(allTextures, TexCoord) * (ambient * objectColor, 1.0);
 
     /* Ambient */
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord));
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * material.ambient;
   	
     /* Diffuse */
     vec3 norm = normalize(Normal);
