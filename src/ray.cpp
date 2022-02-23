@@ -48,26 +48,28 @@ Ray::~Ray()
 /* Draws this Ray from its origin to the direction its facing, with the distance of its length. */
 void Ray::drawRay()
 {
-    #if 1
+    /* NOTE: If we make the ray offset from the block z-axis the same as the x-axis it
+            will probably appear exactly the same. */
+    ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;
+    #if 0
         glBindVertexArray(vao);
         rayShader.useShader();
 
-        glm::vec3 drawnRay {origin.x, origin.y - 0.1f, origin.z};
         glm::mat4 model {glm::mat4{1.0f}};
-        model = glm::translate(model, drawnRay + direction);
-        #if 0
-            model = glm::rotate(model, direction.x, {0.0f, -1.0f, 0.0f});
-            model = glm::rotate(model, direction.y, {1.0f, 0.0f, 0.0f});
-            model = glm::rotate(model, direction.z, {0.0f, 0.0f, -1.0f});
-        #endif
-        // glm::vec4 result {glm::vec4{drawnRay, 1.0f} * model};
-        // ray = {result.x, result.y, result.z};
-        // glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.x) + ',' + std::to_string(ray.y)}.c_str());
-        // glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.x)}.c_str());
+        model = glm::translate(model, ray);
         rayShader.setMat4("model", model);
 
         glDrawArrays(GL_LINES, 0, 2);
     #endif
+}
+
+/* Returns true if the ray intersects with vector B, within 
+   the range of -0.5 and 0.5. */
+bool Ray::intersectsWith(const glm::vec3& b)
+{
+    return (
+        (ray.x >= b.x - 0.5f && ray.x < b.x) &&
+        (ray.y >= b.y - 0.5f && ray.y < b.y + 0.5f));
 }
 
 
