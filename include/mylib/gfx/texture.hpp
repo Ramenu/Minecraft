@@ -11,7 +11,7 @@ namespace Texture
     extern void createTexture(const char* filePath, uint32_t& texture);
     constexpr uint16_t atlasWidth {2}, atlasHeight {2};
     constexpr float xPos {1.0f / atlasWidth}, yPos {1.0f / atlasHeight};
-    extern unsigned int getTextureAtlas();
+    extern uint32_t getTextureAtlas();
     extern void initTextureAtlas();
     extern void deleteTextureAtlas();
 }
