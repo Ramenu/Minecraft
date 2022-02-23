@@ -14,8 +14,3 @@ Block::Block(BlockName block)
 }
 
 
-/* Draws this block. */
-void Block::drawBlock() const
-{ 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-}
