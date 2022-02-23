@@ -7,6 +7,7 @@
 #if 0
     #include <iostream>
 #endif
+#include <string>
 
 /* Constructor for the Ray object. */
 Ray::Ray(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& rayLength) : 
@@ -19,11 +20,13 @@ length{rayLength}
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glm::vec3 rayEnd{origin + direction * length};
-    const float rayVertices[6] =
-    {
-        origin.x, origin.y, origin.z,
-        rayEnd.x, rayEnd.y, rayEnd.z
-    };
+    #if 1
+        const float rayVertices[6] =
+        {
+            origin.x, origin.y, origin.z,
+            rayEnd.x, rayEnd.y, 0.0f
+        };
+    #endif
     uint32_t buffer {};
     bool doStaticDraw {true}, isVertexBuffer {true};
     vertexBuffer = BufferData{buffer, sizeof(rayVertices), rayVertices, doStaticDraw, isVertexBuffer};
@@ -33,9 +36,6 @@ length{rayLength}
     rayShader.useShader();
     rayShader.setMat4("projection", Renderer::getProjection());
 
-    // Used only for debugging
-    originalOrigin = origin;
-    originalEnd = rayEnd;
 }
 
 /* Destructor for the Ray object. Deallocates the ray's buffer and deletes the vertex array. */
@@ -48,17 +48,26 @@ Ray::~Ray()
 /* Draws this Ray from its origin to the direction its facing, with the distance of its length. */
 void Ray::drawRay()
 {
-    glBindVertexArray(vao);
-    rayShader.useShader();
+    #if 1
+        glBindVertexArray(vao);
+        rayShader.useShader();
 
-    //ray = glm::vec3(origin.x, origin.y - 0.1f, origin.z - 3.2f);
-    ray = direction;
-    glm::mat4 model {glm::mat4{1.0f}};
-    model = glm::translate(model, ray);
+        glm::vec3 drawnRay {origin.x, origin.y - 0.1f, origin.z};
+        glm::mat4 model {glm::mat4{1.0f}};
+        model = glm::translate(model, drawnRay + direction);
+        #if 0
+            model = glm::rotate(model, direction.x, {0.0f, -1.0f, 0.0f});
+            model = glm::rotate(model, direction.y, {1.0f, 0.0f, 0.0f});
+            model = glm::rotate(model, direction.z, {0.0f, 0.0f, -1.0f});
+        #endif
+        // glm::vec4 result {glm::vec4{drawnRay, 1.0f} * model};
+        // ray = {result.x, result.y, result.z};
+        // glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.x) + ',' + std::to_string(ray.y)}.c_str());
+        // glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.x)}.c_str());
+        rayShader.setMat4("model", model);
 
-    rayShader.setMat4("model", model);
-
-    glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_LINES, 0, 2);
+    #endif
 }
 
 
