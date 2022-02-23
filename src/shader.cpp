@@ -41,7 +41,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
-    checkShaderCompilationErrors(vertexShader, ShaderType::VERTEX);
+    checkShaderCompilationErrors(vertexShader, ShaderType::Vertex);
 
     // Compile fragment shader
     std::string fragmentShaderCode {fragmentShaderStream.str()};
@@ -49,7 +49,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);
-    checkShaderCompilationErrors(fragmentShader, ShaderType::FRAGMENT);
+    checkShaderCompilationErrors(fragmentShader, ShaderType::Fragment);
     
     shaderProgram = glCreateProgram();
 
@@ -97,7 +97,7 @@ void Shader::checkShaderCompilationErrors(const uint32_t& shader, ShaderType sha
 {
     int success;
     char infoLog[512];
-    const char* shaderPath {(shaderType == ShaderType::VERTEX) ? vertexShaderPath : fragmentShaderPath};
+    const char* shaderPath {(shaderType == ShaderType::Vertex) ? vertexShaderPath : fragmentShaderPath};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
