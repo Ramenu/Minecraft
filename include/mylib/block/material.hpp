@@ -6,12 +6,12 @@
 class Material
 {
     public:
-        Material();
-        Material(const glm::vec3& ambient, const glm::vec3& specular, uint16_t diffuse, float shine);
-        glm::vec3 ambient {};
-        glm::vec3 specular {};
-        uint16_t diffuse {};
-        float shine {};
+        Material() = default;
+        Material(const glm::vec3& specular, uint16_t diffuse, float shine);
+        glm::vec3 specular {0.8f, 0.8f, 0.8f};
+        uint16_t diffuse {0};
+        float shine {32.0f};
+        float ambient {1.0f};
 };
 
 #endif // MATERIAL_HPP
