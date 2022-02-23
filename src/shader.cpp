@@ -32,7 +32,7 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
     }
     catch (const std::exception& e)
     {
-        GLError::error_message(std::string{"Shader compilation failed:\n" + std::string{e.what()}}.c_str());
+        GLError::error_message(std::string{"Shader compilation failed:\n" + std::string{e.what()}});
     }
     
     // Compile vertex shader
