@@ -53,20 +53,18 @@ void Camera::updateCameraPos()
     yaw += xOffset;
     pitch += yOffset;
 
-    // To prevent the player from turning past a certain angle
-    if (pitch > 180.0f)
-        pitch = 180.0f;
-    else if (pitch < -180.0f)
-        pitch = -180.0f;
+    #if 1
+        // To prevent the player from turning past a certain angle
+        if (pitch > 180.0f)
+            pitch = 180.0f;
+        else if (pitch < -180.0f)
+            pitch = -180.0f;
+    #endif
 
 
-    cameraRay.rayShader.useShader();
     cameraRay.origin = cameraPos;
     cameraRay.direction = cameraFront;
-    cameraRay.rayYaw = yaw;
-    cameraRay.rayPitch = pitch;
-    cameraRay.rayShader.setMat4("view", view);
-    #if 0
+    #if 1
         cameraRay.drawRay();
     #endif
 
