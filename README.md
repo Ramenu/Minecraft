@@ -1,14 +1,15 @@
-CLASSIC V1.4
+CLASSIC V1.5
 ------------
-- Added block highlighting functionality upon hovering cursor over block
-- Chunk is now drawn instead of a single block
+- Added block destroying functionality
+- Added block placement functionality (cobblestone blocks), only on the y-axis though
+- Added SFX for individual blocks, so whenever they are placed or destroyed by a player, a sound effect is played
+- Changed the default Minecraft textures and added in my own (it was too difficult to find the classic Minecraft assets)
 
-This took a lot of time, and yet the ray isn't as promising as I hoped. Still, I think it's pretty ok for what it is. Next update
-will probably include block breaking and block placement, maybe even SFX. 
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
 - Camera will make weird turns 
+- Pressing 'Q' may enable wireframe mode really fast, which will cause it to go off and on (may depend on hardware platform)
 
 
 
