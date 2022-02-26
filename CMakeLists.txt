@@ -15,28 +15,30 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 
 project(Minecraft)
 
-# Use C++17 standard
+# Use C++20 standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Directories to search for libraries
-link_directories(C:/Users/ramen/Clibrary/public C:/Users/ramen/Clibrary/public/OpenGL/lib)
+link_directories(C:/Users/ramen/Clibrary/public)
+link_directories(C:/Users/ramen/Clibrary/public/OpenGL/lib)
+link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
 
 add_executable(main
 ./src/attribute.cpp
 ./src/block.cpp
+./src/blocksound.cpp
 ./src/buffer.cpp
 ./src/camera.cpp
 ./src/game.cpp
 ./src/glerror.cpp
-./src/glmath.cpp
 ./src/lighting.cpp
 ./src/main.cpp
 ./src/material.cpp
 ./src/ray.cpp
 ./src/renderer.cpp
 ./src/shader.cpp
-./src/subtexture.cpp
+./src/sound.cpp
 ./src/texture.cpp
 ./src/vertices.cpp
 ./src/window.cpp)
@@ -66,7 +68,6 @@ target_compile_options(main PRIVATE
 -Wdangling-else
 -Winvalid-pch
 -Wlogical-op
--Wno-aggressive-loop-optimizations
 -Wdisabled-optimization
 -fexceptions)
 
@@ -80,6 +81,7 @@ set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time"
 target_include_directories(main PUBLIC "./include")
 target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/OpenGL")
 target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary")
+target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/SFML")
 
 
 # Link libraries
@@ -87,6 +89,8 @@ target_link_libraries(main PUBLIC terminal)
 target_link_libraries(main PUBLIC glad)
 target_link_libraries(main PUBLIC glfw3)
 target_link_libraries(main PUBLIC gdi32)
+target_link_libraries(main PUBLIC sfml-system-3)
+target_link_libraries(main PUBLIC sfml-audio-3)
 
 
 
