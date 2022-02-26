@@ -1,11 +1,11 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "mylib/window.hpp"
-#include "mylib/renderer.hpp"
-#include "mylib/attribute.hpp"
-#include "mylib/vertices.hpp"
-#include "mylib/buffers/buffer.hpp"
+#include "minecraft/window.hpp"
+#include "minecraft/renderer.hpp"
+#include "minecraft/attribute.hpp"
+#include "minecraft/vertices.hpp"
+#include "minecraft/buffers/buffer.hpp"
 #include <string>
 
 glm::mat4 Renderer::proj;
@@ -23,9 +23,31 @@ void Renderer::initProjection()
 Renderer::Renderer() : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 playerCamera {-90.0f, 0.0f, 2.5f, 0.1f, 45.0f},
-selectedBlock {BlockName::Grass_Block},
-lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f}}
+selectedBlock {BlockName::Grass_Block, false},
+lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f}},
+blocks {25}
 {
+    bool playCreationSFX {false};
+    std::fill(blocks.begin(), blocks.end(), Block{BlockName::Grass_Block, playCreationSFX}); // Initialize a vector of 25 grass blocks
+
+    /* Initialize the position of the blocks at their respective positions. This is far from the most efficient, clean and practical solution, 
+       but this is only for prototyping and checking that it works. Besides, this is called in this constructor only. */
+    float x {}, z {};
+    uint32_t i {};
+    for (uint32_t k {}; k < 5; k++)
+    {
+        blocks.at(i).position = {x, 0.0f, 0.0f};
+        for (uint32_t j {}; j < 5; j++)
+        {
+            blocks.at(i).position = {x, 0.0f, z};
+            z += 0.5f;
+            i++;
+        }
+        x += 0.5f;
+        z = 0;
+    }
+
+
     // Create vertex array and bind for the upcoming vertex buffer
     glGenVertexArrays(1, &blockVao);
     glBindVertexArray(blockVao);
@@ -76,15 +98,15 @@ Renderer::~Renderer()
 /* Binds the name of the block passed. */
 void Renderer::bindBlock(BlockName block)
 {
-    selectedBlock = Block{block};
+    selectedBlock = Block{block, false};
 }
 
+/* Returns true if the block located at 'blockCoords' intersects with the camera ray. */
 bool Renderer::canHighlightBlock(const glm::vec3& blockCoords)
 {
     const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
     if (distance <= 2.0f)
     {
-        // Use z-coordinate and check which block is in the same area as the player
         if (playerCamera.cameraRay.intersectsWith(blockCoords))
         {
             const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
@@ -96,33 +118,48 @@ bool Renderer::canHighlightBlock(const glm::vec3& blockCoords)
 }
 
 /* Draws the selected block on the (X, Y, Z) position passed. */
-void Renderer::drawBlock(const glm::vec3& xyzPos)
+void Renderer::drawBlock(Block& block)
 {
     float ambient {selectedBlock.blockMaterial.ambient};
-    if (canHighlightBlock(xyzPos))
+    if (canHighlightBlock(block.position))
+    {
+        static int oldState = GLFW_RELEASE;
+        int newState = glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_RIGHT);
         ambient = 1.8f;
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, xyzPos)};
+
+        // Destroy the block on click
+        if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        {
+            block.playDestroyedSound();
+            block.isDestroyed = true;
+            return;
+        }
+        else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
+        {
+            bool playSFX = true;
+            Block blockPlaced {BlockName::Cobblestone_Block, playSFX};
+            blockPlaced.position = {block.position.x, block.position.y + 1.0f, block.position.z};
+            blocks.emplace_back(blockPlaced);
+        }
+        oldState = newState;
+    }
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, block.position)};
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
-    glDrawArrays(GL_TRIANGLES, 0, 36); // Draw cube
+    cubeShader.setFloat("textureY", block.getTextureID());
+    block.draw();
 }
 
-/* Draws a 5x0x5 chunk of the selected block. */
-void Renderer::drawChunk()
+/* Draws all of the blocks available in the vector. */
+void Renderer::drawAllBlocks()
 {
-    glBindVertexArray(blockVao);
-    cubeShader.useShader();
-    float x {}, z {};
-    for (uint32_t i {}; i < 5; i++)
+    for (size_t i {}; i < blocks.size(); i++)
     {
-        drawBlock({x, 0.0f, 0.0f});
-        for (uint32_t j {}; j < 5; j++)
-        {
-            drawBlock({x, 0.0f, z});
-            z += 0.5f;
-        }
-        x += 0.5f;
-        z = 0;
+        drawBlock(blocks[i]);
+
+        // Check to see if the block was destroyed by the player, if so, remove it from the vector
+        if (blocks[i].isDestroyed)
+            blocks.erase(blocks.begin() + i);
     }
 }
 
