@@ -1,9 +1,8 @@
 #include "glad/glad.h"
-#include "mylib/physics/ray.hpp"
-#include "mylib/math/glmath.hpp"
-#include "mylib/window.hpp"
-#include "mylib/attribute.hpp"
-#include "mylib/renderer.hpp"
+#include "minecraft/physics/ray.hpp"
+#include "minecraft/window.hpp"
+#include "minecraft/attribute.hpp"
+#include "minecraft/renderer.hpp"
 #if 0
     #include <iostream>
 #endif
@@ -45,24 +44,6 @@ Ray::~Ray()
     glDeleteVertexArrays(1, &vao);
 }
 
-/* Draws this Ray from its origin to the direction its facing, with the distance of its length. */
-void Ray::drawRay()
-{
-    /* NOTE: If we make the ray offset from the block z-axis the same as the x-axis it
-            will probably appear exactly the same. */
-    ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;
-    #if 0
-        glBindVertexArray(vao);
-        rayShader.useShader();
-
-        glm::mat4 model {glm::mat4{1.0f}};
-        model = glm::translate(model, ray);
-        rayShader.setMat4("model", model);
-
-        glDrawArrays(GL_LINES, 0, 2);
-    #endif
-}
-
 /* Returns true if the ray intersects with vector B, within 
    the range of -0.5 and 0.5. */
 bool Ray::intersectsWith(const glm::vec3& b)
@@ -73,10 +54,6 @@ bool Ray::intersectsWith(const glm::vec3& b)
 }
 
 
-/* Returns true if the ray is inside of the triangle defined by pointA, pointB, and pointC. */
-bool Ray::isRayInsideTriangle(const glm::vec3 &pointA, const glm::vec3 &pointB, const glm::vec3 &pointC)
-{
-    glm::vec3 vwu{getBarycentricCoords(pointA, pointB, pointC, origin)};
-    return (vwu.x >= 0.0f && vwu.y >= 0.0f && vwu.z >= 0.0f);
-}
+/* Updates the position of the ray. */
+void Ray::updateRay() { ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;}
 
