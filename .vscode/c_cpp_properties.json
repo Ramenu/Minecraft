@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/include/**",
                 "C:/Users/ramen/Clibrary/public/OpenGL/**",
+                "C:/Users/ramen/Clibrary/public/SFML/**",
                 "C:/Users/ramen/Clibrary"
             ],
             "defines": [
