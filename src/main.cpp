@@ -1,4 +1,4 @@
-#include "mylib/game.hpp"
+#include "minecraft/game.hpp"
 
 int main()
 {

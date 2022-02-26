@@ -1,14 +1,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "glad/glad.h"
 #include <filesystem>
-#include "mylib/gfx/texture.hpp"
+#include "minecraft/gfx/texture.hpp"
 #pragma GCC diagnostic push 
 #pragma GCC diagnostic ignored "-Wdouble-promotion"
 #pragma GCC diagnostic ignored "-Wcast-qual"
 #pragma GCC diagnostic ignored "-Wuseless-cast"
 #include <stb-master/stb_image.h>
 #pragma GCC diagnostic pop
-#include "mylib/glerror.hpp"
+#include "minecraft/glerror.hpp"
 
 namespace fs = std::filesystem;
 

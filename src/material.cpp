@@ -1,4 +1,4 @@
-#include "mylib/block/material.hpp"
+#include "minecraft/block/material.hpp"
 
 
 /* Initializes the material. */

@@ -1,5 +1,5 @@
 #include "Glad/glad.h"
-#include "mylib/attribute.hpp"
+#include "minecraft/attribute.hpp"
 
 
 /* Sets the attribute locations, only requires a vector of the stride of each attribute. */

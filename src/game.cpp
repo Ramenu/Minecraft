@@ -1,12 +1,12 @@
 #define GLFW_INCLUDE_NONE
 
 #include <glad/glad.h>
-#include "mylib/game.hpp"
-#include "mylib/renderer.hpp"
-#include "mylib/lighting.hpp"
-#include "mylib/glerror.hpp"
-#include "mylib/window.hpp"
-#include "mylib/gfx/texture.hpp"
+#include "minecraft/game.hpp"
+#include "minecraft/renderer.hpp"
+#include "minecraft/lighting.hpp"
+#include "minecraft/glerror.hpp"
+#include "minecraft/window.hpp"
+#include "minecraft/gfx/texture.hpp"
 
 
 /* Game constructor. Initializes the window width and height and GLFW itself. */
@@ -47,7 +47,7 @@ void Game::runGame()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.updateView();
-        renderer.drawChunk();
+        renderer.drawAllBlocks();
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
 

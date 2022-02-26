@@ -1,4 +1,4 @@
-#include "mylib/glerror.hpp"
+#include "minecraft/glerror.hpp"
 #include <iostream>
 extern "C" 
 {

@@ -1,6 +1,6 @@
 #include "glad/glad.h"
-#include "mylib/shader.hpp"
-#include "mylib/glerror.hpp"
+#include "minecraft/shader.hpp"
+#include "minecraft/glerror.hpp"
 #include <fstream>
 #include <sstream>
 

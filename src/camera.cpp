@@ -1,6 +1,6 @@
 #include "GLFW/glfw3.h"
-#include "mylib/camera.hpp"
-#include "mylib/window.hpp"
+#include "minecraft/camera.hpp"
+#include "minecraft/window.hpp"
 
 
 /* Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
@@ -65,7 +65,7 @@ void Camera::updateCameraPos()
     cameraRay.origin = cameraPos;
     cameraRay.direction = cameraFront;
     #if 1
-        cameraRay.drawRay();
+        cameraRay.updateRay();
     #endif
 
 }
