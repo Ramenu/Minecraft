@@ -1,7 +1,7 @@
 #include "glad/glad.h"
-#include "mylib/window.hpp"
-#include "mylib/camera.hpp"
-#include "mylib/glerror.hpp"
+#include "minecraft/window.hpp"
+#include "minecraft/camera.hpp"
+#include "minecraft/glerror.hpp"
 #include <stb-master/stb_image.h>
 
 namespace Window
@@ -32,12 +32,12 @@ namespace Window
     /* Enables/disables wireframes. */
     void renderWireframes()
     {
-        static bool wireframeMode = false;
-        if (wireframeMode)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        else
+        static bool wireFrameMode = false;
+        if (wireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        wireframeMode = !wireframeMode;
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        wireFrameMode = !wireFrameMode;
     }
 
 
