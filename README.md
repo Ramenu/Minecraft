@@ -11,6 +11,9 @@ KNOWN BUGS:
 - Camera will make weird turns 
 - Pressing 'Q' may enable wireframe mode really fast, which will cause it to go off and on (may depend on hardware platform)
 
+Some links to the libraries I use, they are really great, go check them out:
+https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
+
 
 
 
