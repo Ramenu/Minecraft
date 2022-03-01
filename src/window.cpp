@@ -8,10 +8,10 @@ namespace Window
 {
     static uint32_t screenWidth;
     static uint32_t screenHeight;
-    static GLFWwindow* glfwWindow;
+    static GLFWwindow *glfwWindow;
     
     /* Handles keyboard-input.  */
-    void processKeyboardInput(float deltaTime, Camera& camera)
+    void processKeyboardInput(float deltaTime, Camera &camera)
     {
         camera.movementSpeed = 2.5f * deltaTime;
         if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
@@ -42,7 +42,7 @@ namespace Window
 
 
     //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
-    GLFWwindow* loadWindow(GLFWwindow* window, const char* title)
+    GLFWwindow *loadWindow(GLFWwindow *window, const char *title)
     {
         //Specify version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -70,7 +70,7 @@ namespace Window
     }
 
     /* Initializes the window. */
-    void initWindow(const char* windowName, double windowWidth, double windowHeight)
+    void initWindow(const char *windowName, double windowWidth, double windowHeight)
     {
         screenWidth = windowWidth;
         screenHeight = windowHeight;
@@ -84,7 +84,7 @@ namespace Window
         stbi_image_free(icon[0].pixels);
     }
 
-    GLFWwindow* getWindow() {return glfwWindow;}
+    GLFWwindow *getWindow() {return glfwWindow;}
     uint32_t getScreenWidth() {return screenWidth;}
     uint32_t getScreenHeight() {return screenHeight;}
 }

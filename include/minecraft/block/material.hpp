@@ -7,7 +7,7 @@ class Material
 {
     public:
         Material() = default;
-        Material(const glm::vec3& specular, uint16_t diffuse, float shine);
+        Material(const glm::vec3 &specular, uint16_t diffuse, float shine);
         glm::vec3 specular {0.8f, 0.8f, 0.8f};
         uint16_t diffuse {0};
         float shine {32.0f};

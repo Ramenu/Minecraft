@@ -7,7 +7,7 @@
 class Ray
 {
     public:
-        Ray(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& rayLength);
+        Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength);
         ~Ray();
         void updateRay();
         inline glm::vec3 getRay() const {return ray;}
@@ -16,7 +16,7 @@ class Ray
         Shader rayShader;
         float rayPitch;
         float rayYaw;
-        bool intersectsWith(const glm::vec3& b);
+        bool intersectsWith(const glm::vec3 &b);
     private:
         glm::vec3 ray;
         uint32_t vao;

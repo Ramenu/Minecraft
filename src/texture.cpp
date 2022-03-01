@@ -32,7 +32,7 @@ namespace Texture
     }
 
     /* Creates a texture from the filepath given with the default wrapping and filtering configurations. */
-    void createTexture(const char* filePath, uint32_t& texture)
+    void createTexture(const char *filePath, uint32_t &texture)
     {
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -48,37 +48,37 @@ namespace Texture
     }
 
     /* Loads the texture from the filename passed. */
-    void loadTexture(const char* fileName)
+    void loadTexture(const char *texturePath)
     {
-        const ImageData img {loadImage(fileName)};
+        const ImageData img {loadImage(texturePath)};
         if (img.data)
         {
-            if (fs::path(fileName).extension() == ".jpg")
+            if (fs::path(texturePath).extension() == ".jpg")
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
             else
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,img.data);
             glGenerateMipmap(GL_TEXTURE_2D);
         }
         else
-            GLError::error_message(std::string{"Failed to load image data from \"" + std::string{fileName} + '\"'}.c_str());
+            GLError::error_message(std::string{"Failed to load image data from \"" + std::string{texturePath} + '\"'}.c_str());
     }
 
     /* Returns a pointer to the image loaded, if successful, otherwise will return a nullptr. */
-    [[nodiscard]] ImageData loadImage(const char* fileName) 
+    [[nodiscard]] ImageData loadImage(const char *imagePath) 
     {
-        if (fs::exists(fileName))
+        if (fs::exists(imagePath))
         {
-            if (fs::path(fileName).extension() == ".jpg" || fs::path(fileName).extension() == ".png")
+            if (fs::path(imagePath).extension() == ".jpg" || fs::path(imagePath).extension() == ".png")
             {
                 ImageData image;
-                image.data = stbi_load(fileName, &image.width, &image.height, &image.colorChannels, 0);
+                image.data = stbi_load(imagePath, &image.width, &image.height, &image.colorChannels, 0);
                 return image;
             }
             else
                 GLError::error_message("File format must be .png or .jpg");
         }
         else
-            GLError::error_message(std::string{"No file \"" + std::string{fileName} + "\" could be found. Double check to make sure it exists.\n"}.c_str());
+            GLError::error_message(std::string{"No file \"" + std::string{imagePath} + "\" could be found. Double check to make sure it exists.\n"}.c_str());
         throw; // Impossible to reach here, but put a throw here anyway just so the compiler does not complain about a return missing
     }
 }

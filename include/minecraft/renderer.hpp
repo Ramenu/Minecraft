@@ -12,7 +12,7 @@ class Renderer
         Renderer();
         ~Renderer();
         void bindBlock(BlockName block);
-        void drawBlock(Block& block);
+        void drawBlock(Block &block);
         void drawAllBlocks();
         void drawLightSource();
         void updateView();
@@ -21,7 +21,7 @@ class Renderer
         static void initProjection();
         static inline glm::mat4 getProjection() {return proj;}
     private:
-        bool canHighlightBlock(const glm::vec3& blockPos);
+        bool canHighlightBlock(const glm::vec3 &blockPos);
         Block selectedBlock;
 		Lighting lightSource;
         uint32_t blockVao;

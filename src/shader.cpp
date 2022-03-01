@@ -6,7 +6,7 @@
 
 /* Loads the vertex and fragment shader and links them into the shader program, the arguments passed should be paths to where the
    shader code is located, if there are any errors during compilation then it will print them out as well. */
-Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
+Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
 {
     vertexShaderPath = vertexShaderSource;
     fragmentShaderPath = fragmentShaderSource;
@@ -65,14 +65,14 @@ Shader::Shader(const char* vertexShaderSource, const char* fragmentShaderSource)
 
 /* Copy constructor for Shader. Probably worse than the compiler's default, however I added it in just for learning purposes.
    Expect it to be removed in the future. */
-Shader::Shader(const Shader& shader)
+Shader::Shader(const Shader &shader)
 {
     *this=shader;
 }
 
 /* Move assignment operator with l-value reference. Probably worse than the compiler's default, however I added it in just for
    learning purposes. Expect it to be removed in the future. */
-Shader& Shader::operator=(const Shader& shader) 
+Shader& Shader::operator=(const Shader &shader) 
 {
     if (this == &shader)
         return *this;
@@ -131,33 +131,33 @@ Shader::~Shader()
     glDeleteProgram(shaderProgram);
 }
 
-void Shader::setInt(const char* name, int32_t value) const
+void Shader::setInt(const char *name, int32_t value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setFloat(const char* name, float value) const
+void Shader::setFloat(const char *name, float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setVec2(const char* name, const glm::vec2& vec) const
+void Shader::setVec2(const char *name, const glm::vec2 &vec) const
 {
     glUniform2f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y);
 }
 
-void Shader::setVec3(const char* name, const glm::vec3& vec) const
+void Shader::setVec3(const char *name, const glm::vec3 &vec) const
 {
     glUniform3f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y, vec.z);
 }
 
-void Shader::setMat3(const char* name, const glm::mat3& matrix) const
+void Shader::setMat3(const char *name, const glm::mat3 &matrix) const
 {
     glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }
 
 /* Passes the 4x4 matrix to the shader to GLSL. */
-void Shader::setMat4(const char* name, const glm::mat4& matrix) const
+void Shader::setMat4(const char *name, const glm::mat4 &matrix) const
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }

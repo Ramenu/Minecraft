@@ -9,7 +9,7 @@
 #include <string>
 
 /* Constructor for the Ray object. */
-Ray::Ray(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& rayLength) : 
+Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) : 
 origin{rayOrigin}, 
 direction{rayDirection}, 
 rayShader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, 
@@ -46,7 +46,7 @@ Ray::~Ray()
 
 /* Returns true if the ray intersects with vector B, within 
    the range of -0.5 and 0.5. */
-bool Ray::intersectsWith(const glm::vec3& b)
+bool Ray::intersectsWith(const glm::vec3 &b)
 {
     return (
         (ray.x >= b.x - 0.5f && ray.x < b.x) &&

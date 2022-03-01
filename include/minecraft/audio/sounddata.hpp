@@ -10,7 +10,7 @@
 class SoundData
 {
     public:
-        explicit SoundData(const char* soundFilePath);
+        explicit SoundData(const char *soundFilePath);
         sf::Sound audio;
         sf::SoundBuffer buffer;
 };

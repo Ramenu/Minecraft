@@ -14,8 +14,8 @@ struct BufferData
 
 namespace Buffer
 {
-    extern void createBuffer(BufferData& buffer);
-    extern void updateBuffer(const BufferData& buffer);
+    extern void createBuffer(BufferData &buffer);
+    extern void updateBuffer(const BufferData &buffer);
 }
 
 #endif // BUFFER_HPP

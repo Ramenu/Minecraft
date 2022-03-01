@@ -8,10 +8,10 @@ class Lighting
     public:
         static void initLightVAO();
         static void bindLightVAO();
-        Lighting(float ambient, float specular, float diffuse, const glm::vec3& direction, const glm::vec3& light);
+        Lighting(float ambient, float specular, float diffuse, const glm::vec3 &direction, const glm::vec3 &light);
         ~Lighting() = default;
 		static void removeAllLights();
-        void shaderProgramLightSource(const Shader& shader) const;
+        void shaderProgramLightSource(const Shader &shader) const;
         Shader lightShader;
         glm::vec3 ambientVec;
         glm::vec3 specularVec;

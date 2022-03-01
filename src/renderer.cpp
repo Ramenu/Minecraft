@@ -102,7 +102,7 @@ void Renderer::bindBlock(BlockName block)
 }
 
 /* Returns true if the block located at 'blockCoords' intersects with the camera ray. */
-bool Renderer::canHighlightBlock(const glm::vec3& blockCoords)
+bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords)
 {
     const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
     if (distance <= 2.0f)
@@ -118,7 +118,7 @@ bool Renderer::canHighlightBlock(const glm::vec3& blockCoords)
 }
 
 /* Draws the selected block on the (X, Y, Z) position passed. */
-void Renderer::drawBlock(Block& block)
+void Renderer::drawBlock(Block &block)
 {
     float ambient {selectedBlock.blockMaterial.ambient};
     if (canHighlightBlock(block.position))
