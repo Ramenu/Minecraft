@@ -65,7 +65,6 @@ target_compile_options(main PRIVATE
 -Wduplicated-cond
 -Wshadow
 -Wcast-qual
--Wdangling-else
 -Winvalid-pch
 -Wlogical-op
 -Wdisabled-optimization
