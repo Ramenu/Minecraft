@@ -7,7 +7,7 @@
 			"command": "timer.bat make all",
 			"args": [],
 			"options": {
-				"cwd": "C:/Users/ramen/Projects/Minecraft/build"
+				"cwd": "C:/Users/ramen/Projects/Unfinished Projects/Minecraft/build"
 			},
 			"group": {
 				"kind": "build",
