@@ -3,9 +3,11 @@
 #include "minecraft/gfx/texture.hpp"
 #include "glad/glad.h"
 
-
-/* Creates a block with the given name, loading its corresponding subtexture and initializing the block sounds. */
-Block::Block(BlockName block, bool withSFX) : name {block}
+/**
+ * Initializes the block's Y
+ * coordinates in the texture atlas.
+ */
+void Block::initBlockTextureCoordinates(BlockName block)
 {
     switch (block)
     {
@@ -20,20 +22,47 @@ Block::Block(BlockName block, bool withSFX) : name {block}
             break;
         }
     }
+}
+
+/**
+ * Creates a block with the given name, loading its corresponding subtexture and initializing the block sounds. 
+ */
+Block::Block(BlockName block, bool withSFX) : name {block}
+{
+    initBlockTextureCoordinates(name);
     if (withSFX)
         playBlockPlacementSound(name);
 }
 
-/* Draws this block. */
-void Block::draw() const
+/**
+ * Draws the block, its position could be
+ * anywhere. It is the responsibility of
+ * the caller to handle where the block
+ * should be located in world space.
+ */
+void Block::draw() const noexcept
 {
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+/**
+ * Plays the block's sound on destruction.
+ * Typically played when the player 
+ * destroys a block. Not when the block's
+ * destructor is being called!
+ */
 void Block::playDestroyedSound() const
 {
     playBlockBreakSound(name);
 }
 
+
+Block::Block(BlockName block, const glm::vec3 &blockPos) :
+name {block},
+position {blockPos}
+{
+    initBlockTextureCoordinates(block);
+
+}
 
 

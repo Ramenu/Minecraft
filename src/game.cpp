@@ -3,34 +3,43 @@
 #include <glad/glad.h>
 #include "minecraft/game.hpp"
 #include "minecraft/renderer.hpp"
-#include "minecraft/lighting.hpp"
 #include "minecraft/glerror.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/gfx/texture.hpp"
 
 
-/* Game constructor. Initializes the window width and height and GLFW itself. */
-Game::Game(uint16_t windowWidth, uint16_t windowHeight) 
+/**
+ * Called upon the game's initialization.
+ * Should be one of the first methods called
+ * in the main function.
+ */
+Game::Game(const char *windowTitle) 
 {
     glfwInit();
-    Window::initWindow("Minecraft", windowWidth, windowHeight);
+    Window::initWindow(windowTitle);
     glfwMakeContextCurrent(Window::getWindow());
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         GLError::error_message("Failed to initialize GLAD");
 
-    glViewport(0, 0, windowWidth, windowHeight);
+    constexpr float x {}, y {};
+    glViewport(x, y, Window::width, Window::height);
     Texture::initTextureAtlas();
     Lighting::initLightVAO();
     Renderer::initProjection();
 }
 
-/* Executes the game. */  
+/**
+ * Executes the game through an
+ * infinite loop until the program
+ * is terminated.
+ */  
 void Game::runGame()
 {
-    float deltaTime {0.0f}; // Time between current frame and last frame
-    float lastFrame {0.0f}; // Time of last frame
+    double deltaTime {0.0}; // Time between current frame and last frame
+    double lastFrame {0.0}; // Time of last frame
 
+    constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
 
     glEnable(GL_DEPTH_TEST);
@@ -38,11 +47,11 @@ void Game::runGame()
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
     {
-        const float currentTime {static_cast<float>(glfwGetTime())};
+        const double currentTime {glfwGetTime()};
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
-        glClearColor(0.0f, 0.8f, 1.0f, 1.0f);
+        glClearColor(red, green, blue, alpha);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -58,7 +67,10 @@ void Game::runGame()
     
 }
 
-Game::~Game()
+/**
+ * Frees up remaining resources used by the game.
+ */
+Game::~Game() noexcept
 {
     Texture::deleteTextureAtlas();
     Window::destroyWindow();

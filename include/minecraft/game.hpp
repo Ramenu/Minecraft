@@ -1,15 +1,14 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <cstdint>
-
 class Game
 {
     public:
-        Game(uint16_t windowWidth, uint16_t windowHeight);
-        ~Game();
+        explicit Game(const char *windowTitle);
+        Game(const Game &game) = delete;
+        Game(Game &&game) = delete;
+        ~Game() noexcept;
         void runGame();
-        
 };
 
 #endif // GAME_HPP

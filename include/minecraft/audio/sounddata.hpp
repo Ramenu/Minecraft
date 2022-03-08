@@ -12,6 +12,7 @@ class SoundData
     public:
         explicit SoundData(const char *soundFilePath);
         sf::Sound audio;
+    private:
         sf::SoundBuffer buffer;
 };
 

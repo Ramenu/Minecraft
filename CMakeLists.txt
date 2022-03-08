@@ -20,26 +20,25 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Directories to search for libraries
-link_directories(C:/Users/ramen/Clibrary/public)
 link_directories(C:/Users/ramen/Clibrary/public/OpenGL/lib)
 link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
 
 add_executable(main
 ./src/attribute.cpp
 ./src/block.cpp
-./src/blocksound.cpp
 ./src/buffer.cpp
 ./src/camera.cpp
 ./src/game.cpp
 ./src/glerror.cpp
 ./src/lighting.cpp
 ./src/main.cpp
-./src/material.cpp
 ./src/ray.cpp
 ./src/renderer.cpp
 ./src/shader.cpp
 ./src/sound.cpp
+./src/sounddata.cpp
 ./src/texture.cpp
+./src/vertexarray.cpp
 ./src/vertices.cpp
 ./src/window.cpp)
 
@@ -68,7 +67,9 @@ target_compile_options(main PRIVATE
 -Winvalid-pch
 -Wlogical-op
 -Wdisabled-optimization
--fexceptions)
+-fexceptions
+#-fanalyzer
+)
 
 # Linker flags
 target_link_options(main PUBLIC ../icons/icon.res)
@@ -79,7 +80,6 @@ set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time"
 # Include directories
 target_include_directories(main PUBLIC "./include")
 target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/OpenGL")
-target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary")
 target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/SFML")
 
 

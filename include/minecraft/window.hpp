@@ -6,15 +6,14 @@
 
 namespace Window
 {
-    extern GLFWwindow *loadWindow(GLFWwindow* window, const char &title);
-    extern void initWindow(const char *windowName, double windowWidth, double windowHeight);
-    extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-    extern void processKeyboardInput(float deltaTime, Camera &camera);
+    extern GLFWwindow *loadWindow(GLFWwindow *window, const char &title);
+    extern void initWindow(const char *windowName);
+    extern void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+    extern void processKeyboardInput(double deltaTime, Camera &camera); 
     extern void renderWireframes();
     extern void destroyWindow();
     extern GLFWwindow *getWindow();
-    extern uint32_t getScreenWidth();
-    extern uint32_t getScreenHeight();
+    constexpr double width {512}, height {512};
 }
 
 #endif // WINDOW_HPP

@@ -3,23 +3,29 @@
 
 #include "minecraft/shader.hpp"
 
+struct LightComponents
+{
+    glm::vec3 ambient;
+    glm::vec3 specular;
+    glm::vec3 diffuse;
+};
+
 class Lighting
 {
+    private:
+        LightComponents components;
+        glm::vec3 directionVec;
+        static uint32_t lightVao;
     public:
         static void initLightVAO();
         static void bindLightVAO();
-        Lighting(float ambient, float specular, float diffuse, const glm::vec3 &direction, const glm::vec3 &light);
+        Lighting() = default;
+        Lighting(const LightComponents &componentsOfLight, const glm::vec3 &direction, const glm::vec3 &position);
         ~Lighting() = default;
 		static void removeAllLights();
         void shaderProgramLightSource(const Shader &shader) const;
-        Shader lightShader;
-        glm::vec3 ambientVec;
-        glm::vec3 specularVec;
-        glm::vec3 diffuseVec;
-        glm::vec3 directionVec;
-        glm::vec3 lightPos;
-    private:
-        static uint32_t lightVao;
+        Shader lightShader {"shaders/light/lightvertexshader.vert", "shaders/light/lightfragmentshader.frag"};
+        glm::vec3 position;
 
 };
 

@@ -1,9 +1,23 @@
-CLASSIC V1.5
+Copyright 2022 ramen
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+CLASSIC V1.55
 ------------
-- Added block destroying functionality
-- Added block placement functionality (cobblestone blocks), only on the y-axis though
-- Added SFX for individual blocks, so whenever they are placed or destroyed by a player, a sound effect is played
-- Changed the default Minecraft textures and added in my own (it was too difficult to find the classic Minecraft assets)
+- Nothing was actually added in terms of the game, just made the code easier and nice to read (hopefully)
+- Added a new file 'vertexarray' for handling vertex array related stuff
 
 
 KNOWN BUGS:
@@ -14,6 +28,10 @@ KNOWN BUGS:
 Some links to the libraries I use, they are really great, go check them out:
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
 
+HOW TO BUILD:
+-------------
+
+Coming soon...
 
 
 

@@ -6,30 +6,33 @@
 
 namespace Window
 {
-    static uint32_t screenWidth;
-    static uint32_t screenHeight;
-    static GLFWwindow *glfwWindow;
-    
-    /* Handles keyboard-input.  */
-    void processKeyboardInput(float deltaTime, Camera &camera)
+    GLFWwindow *window;
+    /**
+     * Handles keyboard input.
+     */
+    void processKeyboardInput(double deltaTime, Camera &camera) 
     {
-        camera.movementSpeed = 2.5f * deltaTime;
-        if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
-            camera.cameraPos += camera.movementSpeed * camera.cameraFront;
-        if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
-            camera.cameraPos -= camera.movementSpeed * camera.cameraFront;
-        if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
-            camera.cameraPos -= camera.movementSpeed * camera.cameraRight;
-        if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
-            camera.cameraPos += camera.movementSpeed * camera.cameraRight;
-        if (glfwGetKey(glfwWindow, GLFW_KEY_Q) == GLFW_PRESS)
+        constexpr double speed {2.5};
+        camera.settings.speed = speed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            camera.cameraPos += camera.settings.speed * camera.getCameraFront();
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            camera.cameraPos -= camera.settings.speed * camera.getCameraFront();
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            camera.cameraPos -= camera.settings.speed * camera.getCameraRight();
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            camera.cameraPos += camera.settings.speed * camera.getCameraRight();
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
             renderWireframes();
-        if (glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(glfwWindow, true);
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
     }
 
 
-    /* Enables/disables wireframes. */
+    /**
+     * Toggles wireframes. 
+     * [NOTE: CURRENTLY BUGGY]
+     */
     void renderWireframes()
     {
         static bool wireFrameMode = false;
@@ -42,7 +45,7 @@ namespace Window
 
 
     //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
-    GLFWwindow *loadWindow(GLFWwindow *window, const char *title)
+    GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title)
     {
         //Specify version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -51,42 +54,41 @@ namespace Window
         #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // If an apple machine (in this case, it isn't)
         #endif
-        window = glfwCreateWindow(screenWidth, screenHeight, title, NULL, NULL);
+        glWindow = glfwCreateWindow(width, height, title, NULL, NULL);
 
         //Occurs if window or OpenGL context creation fails (prints an error message and the title of the window)
-        if (window == NULL)
+        if (!glWindow)
         {
             glfwTerminate();
             GLError::error_message("Failed to contextualize window");
         } 
-        return window; 
+        return glWindow; 
     }
 
     /* Destroys the window. */
     void destroyWindow()
     {
-        if (glfwWindow)
-            glfwDestroyWindow(glfwWindow);
+        if (window)
+            glfwDestroyWindow(window);
     }
 
-    /* Initializes the window. */
-    void initWindow(const char *windowName, double windowWidth, double windowHeight)
+    /**
+     * Initializes the window's width and height. Sets
+     * the window's icon and the viewport.
+     */
+    void initWindow(const char *windowName)
     {
-        screenWidth = windowWidth;
-        screenHeight = windowHeight;
-        glfwWindow = loadWindow(glfwWindow, windowName);
+        window = loadWindow(window, windowName);
         GLFWimage icon[1];
         icon[0].pixels = stbi_load("icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
-        glfwSetWindowSize(glfwWindow, screenWidth, screenHeight);
-        glfwSetWindowIcon(glfwWindow, 1, icon);
-        glfwSetFramebufferSizeCallback(glfwWindow, [](GLFWwindow*, int width, int height) {glViewport(0, 0, width, height);});
-        glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetWindowSize(window, width, height);
+        glfwSetWindowIcon(window, 1, icon);
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWidth, int windowHeight) {glViewport(0, 0, windowWidth, windowHeight);});
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         stbi_image_free(icon[0].pixels);
     }
 
-    GLFWwindow *getWindow() {return glfwWindow;}
-    uint32_t getScreenWidth() {return screenWidth;}
-    uint32_t getScreenHeight() {return screenHeight;}
+    GLFWwindow *getWindow() {return window;}
 }
 
 

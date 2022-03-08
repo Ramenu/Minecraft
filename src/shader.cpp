@@ -4,12 +4,17 @@
 #include <fstream>
 #include <sstream>
 
-/* Loads the vertex and fragment shader and links them into the shader program, the arguments passed should be paths to where the
-   shader code is located, if there are any errors during compilation then it will print them out as well. */
-Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
+/** 
+ * Loads the vertex and fragment shader and links them into 
+ * the shader program, the arguments passed should 
+ * be paths to where the shader code is located. 
+ * If there are any errors during compilation or linking then 
+ * it will print them to stderr. 
+ */
+Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource) :
+vertexShaderPath {vertexShaderSource},
+fragmentShaderPath {fragmentShaderSource}
 {
-    vertexShaderPath = vertexShaderSource;
-    fragmentShaderPath = fragmentShaderSource;
 
     std::stringstream vertexShaderStream, fragmentShaderStream;
     std::ifstream vertexShaderFile, fragmentShaderFile;
@@ -36,20 +41,20 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     }
     
     // Compile vertex shader
-    std::string vertexShaderCode {vertexShaderStream.str()};
+    const std::string vertexShaderCode {vertexShaderStream.str()};
     const char* cstrVertexShaderCode {vertexShaderCode.c_str()};
-    uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
+    const uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
-    checkShaderCompilationErrors(vertexShader, ShaderType::Vertex);
+    checkShaderCompilationErrors(vertexShader, GL_VERTEX_SHADER);
 
     // Compile fragment shader
-    std::string fragmentShaderCode {fragmentShaderStream.str()};
+    const std::string fragmentShaderCode {fragmentShaderStream.str()};
     const char* cstrFragmentShaderCode {fragmentShaderCode.c_str()};
-    uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
+    const uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);
-    checkShaderCompilationErrors(fragmentShader, ShaderType::Fragment);
+    checkShaderCompilationErrors(fragmentShader, GL_FRAGMENT_SHADER);
     
     shaderProgram = glCreateProgram();
 
@@ -63,54 +68,30 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     glDeleteShader(fragmentShader);
 }
 
-/* Copy constructor for Shader. Probably worse than the compiler's default, however I added it in just for learning purposes.
-   Expect it to be removed in the future. */
-Shader::Shader(const Shader &shader)
-{
-    *this=shader;
-}
 
-/* Move assignment operator with l-value reference. Probably worse than the compiler's default, however I added it in just for
-   learning purposes. Expect it to be removed in the future. */
-Shader& Shader::operator=(const Shader &shader) 
+/**
+ * Checks if shader compilation was successful. If not,
+ * the program will print an error message to stderr before
+ * terminating the program.
+ */
+void Shader::checkShaderCompilationErrors(const uint32_t& shader, int shaderType) const noexcept
 {
-    if (this == &shader)
-        return *this;
-    shaderProgram = shader.shaderProgram;
-    vertexShaderPath = shader.vertexShaderPath;
-    fragmentShaderPath = shader.fragmentShaderPath;
-    return *this;
-}
-
-/* Move assignment operator with l-value reference. Probably worse than the compiler's default, however I added it in just for
-   learning purposes. Expect it to be removed in the future. */
-Shader& Shader::operator=(Shader&& shader)
-{
-    if (this == &shader)
-        return *this;
-    *this=shader;
-    return *this;
-}
-
-/* Checks if the shader passed has an error in its code, if so it will print an error log containing the errors found within it. */
-void Shader::checkShaderCompilationErrors(const uint32_t& shader, ShaderType shaderType)
-{
-    int success;
-    char infoLog[512];
-    const char* shaderPath {(shaderType == ShaderType::Vertex) ? vertexShaderPath : fragmentShaderPath};
+    int success {};
+    char infoLog[512] {};
+    std::string shaderPath {(shaderType == GL_VERTEX_SHADER) ? vertexShaderPath : fragmentShaderPath};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        GLError::error_message("Failed to compile shader \"" + std::string{shaderPath} + "\". " + std::string{infoLog});
+        GLError::error_message("Failed to compile shader \"" + shaderPath + "\". " + std::string{infoLog});
     }
 }
 
 /* Checks if the program linking was unsuccessful. */
-void Shader::checkLinkageErrors()
+void Shader::checkLinkageErrors() const noexcept
 {
-    int success;
-    char infoLog[512];
+    int success {};
+    char infoLog[512] {};
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
     {
@@ -119,45 +100,46 @@ void Shader::checkLinkageErrors()
     }
 }
 
-/* Uses this shader. */
-void Shader::useShader() const 
+void Shader::useShader() const noexcept
 {
     glUseProgram(shaderProgram);
 }
 
-/* Destructor for Shader. */
-Shader::~Shader()
+/**
+ * Deletes the shader program.
+ */
+Shader::~Shader() noexcept
 {
     glDeleteProgram(shaderProgram);
 }
 
-void Shader::setInt(const char *name, int32_t value) const
+void Shader::setInt(const char *name, int32_t value) const noexcept
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setFloat(const char *name, float value) const
+void Shader::setFloat(const char *name, float value) const noexcept
 {
     glUniform1f(glGetUniformLocation(shaderProgram, name), value);
 }
 
-void Shader::setVec2(const char *name, const glm::vec2 &vec) const
+void Shader::setVec2(const char *name, const glm::vec2 &vec) const noexcept
 {
     glUniform2f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y);
 }
 
-void Shader::setVec3(const char *name, const glm::vec3 &vec) const
+void Shader::setVec3(const char *name, const glm::vec3 &vec) const noexcept
 {
     glUniform3f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y, vec.z);
 }
 
-void Shader::setMat3(const char *name, const glm::mat3 &matrix) const
+void Shader::setMat3(const char *name, const glm::mat3 &matrix) const noexcept
 {
     glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }
 
 /* Passes the 4x4 matrix to the shader to GLSL. */
-void Shader::setMat4(const char *name, const glm::mat4 &matrix) const
+void Shader::setMat4(const char *name, const glm::mat4 &matrix) const noexcept
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }

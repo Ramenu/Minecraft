@@ -2,17 +2,21 @@
 #include <iostream>
 extern "C" 
 {
-    #include "public/terminal.h"
+    #include <terminal.h> 
+    #include <color.h>
 }
 
 namespace GLError
 {
-    void error_message(std::string_view error) 
+    /**
+     * Prints an error message to stderr before
+     * terminating the program. This function
+     * should only be called if the program 
+     * cannot recover from the error in any way.
+     */
+    void error_message(std::string_view error)
     {
-        enableTerminalColor(BRIGHTRED);
-        std::cerr << "\nFATAL ERROR: ";
-        enableTerminalColor(WHITE);
-        std::cerr << error << '\n';
-        exit(-1);
+        std::cerr << COLOR_RED << "\nFATAL ERROR: " << COLOR_RESET << error << '\n';
+        exit(EXIT_FAILURE);
     }
 } 

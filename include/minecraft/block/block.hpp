@@ -10,17 +10,19 @@ class Block
     public:
         Block() = default;
         Block(BlockName block, bool withSFX);
-        glm::vec3 position;
-        bool isDestroyed {false};
-        Material blockMaterial;
-        void playDestroyedSound() const;
-        void draw() const;
-        inline BlockName getBlockName() const {return name;}
-        inline float getTextureID() const {return textureY;}
+        Block(BlockName block, const glm::vec3 &blockPos);
     private:
         BlockName name;
+        void initBlockTextureCoordinates(BlockName block);
         float textureY;
-
+    public:
+        glm::vec3 position;
+        bool isDestroyed {false};
+        void playDestroyedSound() const;
+        void draw() const noexcept;
+        BlockName getBlockName() const {return name;}
+        inline float getTextureID() const {return textureY;}
+        Material blockMaterial;
 };
 
 #endif // BLOCK_HPP

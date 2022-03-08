@@ -9,6 +9,8 @@ constexpr float xStrideToNextBlock {atlasWidth - 1};
 // using the .y attribute
 constexpr float cubeVertices[288] =
 {
+    //                               First block
+    // Position                Texture coordinates                  Normal direction
    -0.5f, -0.5f, 0.0f,    0.0f,                      yPos,         0.0f, 0.0f,  1.0f,
    -0.5f,  0.5f, 0.0f,    0.0f,                      0.0f,         0.0f, 0.0f,  1.0f,
     0.0f, -0.5f, 0.0f,    xPos,                      yPos,         0.0f, 0.0f,  1.0f,
@@ -37,6 +39,7 @@ constexpr float cubeVertices[288] =
     0.0f,  0.5f, 0.5f,    0.0f,                      0.0f,         1.0f, 0.0f, 0.0f,
     0.0f,  0.5f, 0.0f,    xPos,                      0.0f,         1.0f, 0.0f, 0.0f,
 
+    //                            Second block
    -0.5f,  0.5f, 0.5f,    xPos,                      yPos,         0.0f,  1.0f, 0.0f, 
    -0.5f,  0.5f, 0.0f,    xPos,                      0.0f,         0.0f,  1.0f, 0.0f,
     0.0f,  0.5f, 0.5f,    xPos * xStrideToNextBlock, yPos,         0.0f,  1.0f, 0.0f,
@@ -44,6 +47,7 @@ constexpr float cubeVertices[288] =
    -0.5f,  0.5f, 0.0f,    xPos,                      0.0f,         0.0f,  1.0f, 0.0f,
     0.0f,  0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f,  1.0f, 0.0f,
 
+    //                            Third block
    -0.5f, -0.5f, 0.5f,    xPos * xStrideToNextBlock, yPos,         0.0f, -1.0f, 0.0f,   
    -0.5f, -0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f, -1.0f, 0.0f,
     0.0f, -0.5f, 0.5f,    xPos * atlasWidth,         yPos,         0.0f, -1.0f, 0.0f,                  

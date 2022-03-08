@@ -18,20 +18,21 @@ namespace Texture
 
     uint32_t getTextureAtlas() {return textureAtlas;}
 
-    /* Initializes the texture atlas, should be called when the game starts. */
     void initTextureAtlas()
     {
         glGenTextures(1, &textureAtlas);
         createTexture("textures/textureatlas.jpg", textureAtlas);
     }
 
-    /* Deletes the texture atlas, should be called when the game is terminated. */
     void deleteTextureAtlas()
     {
         glDeleteTextures(1, &textureAtlas);
     }
 
-    /* Creates a texture from the filepath given with the default wrapping and filtering configurations. */
+    /**
+     * Creates a texture from the filepath given with 
+     * the default wrapping and filtering configurations. 
+     */
     void createTexture(const char *filePath, uint32_t &texture)
     {
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -47,23 +48,25 @@ namespace Texture
         loadTexture(filePath); 
     }
 
-    /* Loads the texture from the filename passed. */
+    /**
+     * Loads the texture from the file path given.
+     * If unsuccessful, the program will be terminated.
+     */
     void loadTexture(const char *texturePath)
     {
         const ImageData img {loadImage(texturePath)};
-        if (img.data)
-        {
-            if (fs::path(texturePath).extension() == ".jpg")
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
-            else
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,img.data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
+        if (fs::path(texturePath).extension() == ".jpg")
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data); 
         else
-            GLError::error_message(std::string{"Failed to load image data from \"" + std::string{texturePath} + '\"'}.c_str());
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,img.data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
-    /* Returns a pointer to the image loaded, if successful, otherwise will return a nullptr. */
+    /** 
+     * Returns the data of the image, if successful. Otherwise, will terminate
+     * the program. This function has various checks to make sure the path passed
+     * is valid (e.g. making sure it exists and making sure it is a supported image format).
+     */
     [[nodiscard]] ImageData loadImage(const char *imagePath) 
     {
         if (fs::exists(imagePath))

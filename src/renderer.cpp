@@ -1,75 +1,66 @@
-#include "glad/glad.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "minecraft/vertexarray.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/renderer.hpp"
 #include "minecraft/attribute.hpp"
 #include "minecraft/vertices.hpp"
-#include "minecraft/buffers/buffer.hpp"
-#include <string>
+#include "minecraft/buffer.hpp"
+#include <array>
 
+constexpr float strideToNextBlock {0.5f};
 glm::mat4 Renderer::proj;
 
-/* Creates the projection matrix which defines the visible space. */
+
+/**
+ *  Creates the projection matrix which defines the visible space. 
+ */
 void Renderer::initProjection()
 {
-    proj = glm::perspective(
-        glm::radians(45.0f), 
-        static_cast<float>(Window::getScreenWidth())/ static_cast<float>(Window::getScreenHeight()), 
-        0.1f, 
-        100.0f);
+    constexpr double fov {glm::radians(45.0f)};
+    constexpr double aspectRatio {Window::width/Window::height}; 
+    constexpr double near {0.1f};
+    constexpr double far {100.0f};
+    proj = glm::perspective(fov, aspectRatio, near, far);
 }
 
+/**
+ * Initializes the shaders, blocks and their positions, as well as the 
+ * vertex buffer data.
+ */
 Renderer::Renderer() : 
-cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
-playerCamera {-90.0f, 0.0f, 2.5f, 0.1f, 45.0f},
-selectedBlock {BlockName::Grass_Block, false},
-lightSource {0.25f, 1.0f, 0.7f, glm::vec3{-1.0f, -3.0f, -1.0f}, glm::vec3{1.0f, 3.0f, 1.0f}},
-blocks {25}
+cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
 {
-    bool playCreationSFX {false};
-    std::fill(blocks.begin(), blocks.end(), Block{BlockName::Grass_Block, playCreationSFX}); // Initialize a vector of 25 grass blocks
+    // Set the camera (not done in the initializer list for better readability)
+    constexpr float yaw {90.0f}, pitch {0.0f}, speed {2.5f}, sensitivity {0.1f}, zoom {45.0f};
+    playerCamera = Camera{CameraSettings{yaw, pitch, speed, sensitivity, zoom}};
 
-    /* Initialize the position of the blocks at their respective positions. This is far from the most efficient, clean and practical solution, 
-       but this is only for prototyping and checking that it works. Besides, this is called in this constructor only. */
-    float x {}, z {};
-    uint32_t i {};
-    for (uint32_t k {}; k < 5; k++)
-    {
-        blocks.at(i).position = {x, 0.0f, 0.0f};
-        for (uint32_t j {}; j < 5; j++)
-        {
-            blocks.at(i).position = {x, 0.0f, z};
-            z += 0.5f;
-            i++;
-        }
-        x += 0.5f;
-        z = 0;
-    }
-
+    // Set the light source (not done in the initializer list for better readability)
+    constexpr glm::vec3 ambient {0.25f, 0.25f, 0.25f};
+    constexpr glm::vec3 specular {1.0f, 1.0f, 1.0f};
+    constexpr glm::vec3 diffuse {0.7f, 0.7f, 0.7f};
+    constexpr LightComponents components {ambient, specular, diffuse};
+    constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
+    constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
+    lightSource = Lighting{components, direction, position};
+    
 
     // Create vertex array and bind for the upcoming vertex buffer
-    glGenVertexArrays(1, &blockVao);
-    glBindVertexArray(blockVao);
+    VertexArray::createVertexArray(blockVao);
+    VertexArray::bindVertexArray(blockVao);
     
     // Create our vertex buffer and store the cube vertices data into it
     uint32_t buffer {};
-    bool isStatic {true}, isVertexBuffer {true};
-    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), cubeVertices, isStatic, isVertexBuffer};
+    constexpr bool staticDrawEnabled {true};
+    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), cubeVertices, staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
 
-    // 1 = Position coordinates, 2 = Texture coordinates, 3 = Light reflection coordinates, 4 = Normal direction coordinates
-    setAttributes(std::vector<intptr_t>{3, 2, 3}); 
+    constexpr intptr_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
+    setAttributes(std::vector<intptr_t>{positionOffset, textureOffset, lightDirectionOffset}); 
     enableVAOAttributes({0, 1, 2});
 
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
     cubeShader.useShader(); 
     cubeShader.setMat3("normalMatrix", normalMatrix);
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
-    cubeShader.setFloat("material.shine", selectedBlock.blockMaterial.shine);
-    cubeShader.setVec3("material.specular", selectedBlock.blockMaterial.specular);
-    cubeShader.setInt("material.diffuse", selectedBlock.blockMaterial.diffuse);
-    cubeShader.setFloat("material.ambient", selectedBlock.blockMaterial.ambient);
     lightSource.shaderProgramLightSource(cubeShader);
 
     cubeShader.setInt("allTextures", 0);
@@ -87,44 +78,49 @@ blocks {25}
     #endif
 }
 
-/* Class destructor for Renderer. */
-Renderer::~Renderer()
+/**
+ * Eliminates the positional light source and deletes
+ * the vertex buffer and vertex array.
+ */
+Renderer::~Renderer() noexcept
 {
     lightSource.removeAllLights();
-    glDeleteBuffers(1, &vertexBuffer.buffer);
-    glDeleteVertexArrays(1, &blockVao);
+    Buffer::deleteBuffer(vertexBuffer.buffer);
+    VertexArray::deleteVertexArray(blockVao);
 }
 
-/* Binds the name of the block passed. */
-void Renderer::bindBlock(BlockName block)
-{
-    selectedBlock = Block{block, false};
-}
 
-/* Returns true if the block located at 'blockCoords' intersects with the camera ray. */
-bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords)
+/**
+ * Returns true if the block located at 'blockCoords' intersects with the 
+ * camera ray. 
+ */
+bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
 {
     const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
-    if (distance <= 2.0f)
+    constexpr float playerReachableDistance {2.0f};
+    if (distance <= playerReachableDistance)
     {
         if (playerCamera.cameraRay.intersectsWith(blockCoords))
         {
             const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
-            const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + 0.5f})};
-            return (distanceBetween <= 0.5f && distanceBetween <= nextBlock);
+            const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), 
+                                   glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + strideToNextBlock})};
+            return (distanceBetween <= strideToNextBlock && distanceBetween <= nextBlock);
         }
     }
     return false;
 }
 
-/* Draws the selected block on the (X, Y, Z) position passed. */
+/** 
+ * Draws the selected block on the (X, Y, Z) position passed. 
+ */
 void Renderer::drawBlock(Block &block)
 {
-    float ambient {selectedBlock.blockMaterial.ambient};
+    float ambient {block.blockMaterial.ambient};
     if (canHighlightBlock(block.position))
     {
         static int oldState = GLFW_RELEASE;
-        int newState = glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_RIGHT);
+        const int newState = glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_RIGHT);
         ambient = 1.8f;
 
         // Destroy the block on click
@@ -136,7 +132,7 @@ void Renderer::drawBlock(Block &block)
         }
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
-            bool playSFX = true;
+            constexpr bool playSFX = true;
             Block blockPlaced {BlockName::Cobblestone_Block, playSFX};
             blockPlaced.position = {block.position.x, block.position.y + 1.0f, block.position.z};
             blocks.emplace_back(blockPlaced);
@@ -150,7 +146,13 @@ void Renderer::drawBlock(Block &block)
     block.draw();
 }
 
-/* Draws all of the blocks available in the vector. */
+/**
+ * Draws all of the blocks available in the block vector. 
+ * This will at some point be replaced by something else
+ * as rendering dynamically creating thousands of blocks
+ * at runtime is too expensive. But suffices for testing
+ * purposes.
+ */
 void Renderer::drawAllBlocks()
 {
     for (size_t i {}; i < blocks.size(); i++)
@@ -163,23 +165,30 @@ void Renderer::drawAllBlocks()
     }
 }
 
-/* Draws the source of the light, should only be used for debugging or testing. It does not make sense to draw the light source since it
-   is a directional light. */
+/**
+ * Draws the source of the light, should only be 
+ * used for debugging or testing. It does not make 
+ * sense to draw the light source since it is a directional light. 
+ */
 void Renderer::drawLightSource()
 {
     Lighting::bindLightVAO();
     lightSource.lightShader.useShader();
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, lightSource.lightPos)};
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, lightSource.position)};
     lightSource.lightShader.setMat4("model", model);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-/* Updates the camera view for the player, and updates all the shaders to the updated position of the camera. */
+/**
+ * Updates the camera view for the player, 
+ * and updates all the shaders to the updated 
+ * position of the camera. 
+ */
 void Renderer::updateView()
 {
     playerCamera.updateCameraPos();
     cubeShader.useShader();
-    cubeShader.setMat4("view", playerCamera.view);
+    cubeShader.setMat4("view", playerCamera.getView());
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
     #if 0
         lightSource->lightShader.useShader();

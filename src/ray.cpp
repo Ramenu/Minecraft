@@ -8,17 +8,21 @@
 #endif
 #include <string>
 
-/* Constructor for the Ray object. */
+/**
+ * Initializes the origin of the ray, its direction 
+ * and the ray's magnitude. Given these three vectors,
+ * the end of the ray can be calculated to form the ray.
+ */
 Ray::Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) : 
 origin{rayOrigin}, 
 direction{rayDirection}, 
-rayShader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, 
+shader{"shaders/line/linevertexshader.vert", "shaders/line/linefragmentshader.frag"}, 
 length{rayLength}
 {
     // Create vertex array and buffer
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    glm::vec3 rayEnd{origin + direction * length};
+    const glm::vec3 rayEnd{origin + direction * length};
     #if 1
         const float rayVertices[6] =
         {
@@ -27,33 +31,40 @@ length{rayLength}
         };
     #endif
     uint32_t buffer {};
-    bool doStaticDraw {true}, isVertexBuffer {true};
-    vertexBuffer = BufferData{buffer, sizeof(rayVertices), rayVertices, doStaticDraw, isVertexBuffer};
+    const bool staticDrawEnabled {true};
+    vertexBuffer = BufferData{buffer, sizeof(rayVertices), rayVertices, staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
     setAttributes(std::vector<intptr_t>{3});
     enableVAOAttributes({0,1});
-    rayShader.useShader();
-    rayShader.setMat4("projection", Renderer::getProjection());
+    shader.useShader();
+    shader.setMat4("projection", Renderer::getProjection());
 
 }
 
-/* Destructor for the Ray object. Deallocates the ray's buffer and deletes the vertex array. */
-Ray::~Ray()
+/**
+ * Deletes the vertex buffer and vertex array upon destruction.
+ */
+Ray::~Ray() noexcept
 {
     glDeleteBuffers(1, &vertexBuffer.buffer);
     glDeleteVertexArrays(1, &vao);
 }
 
-/* Returns true if the ray intersects with vector B, within 
-   the range of -0.5 and 0.5. */
-bool Ray::intersectsWith(const glm::vec3 &b)
+/**
+ * Returns true if the ray and vector B are within
+ * a distance less than or equal to 0.5.
+ */
+bool Ray::intersectsWith(const glm::vec3 &b) const noexcept
 {
+    constexpr float blockWidth {0.5f};
     return (
-        (ray.x >= b.x - 0.5f && ray.x < b.x) &&
-        (ray.y >= b.y - 0.5f && ray.y < b.y + 0.5f));
+        (ray.x >= b.x - blockWidth && ray.x < b.x) &&
+        (ray.y >= b.y - blockWidth && ray.y < b.y + blockWidth));
 }
 
 
-/* Updates the position of the ray. */
+/**
+ * Updates the position of the ray.
+ */
 void Ray::updateRay() { ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;}
 

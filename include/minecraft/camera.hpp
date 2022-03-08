@@ -4,28 +4,34 @@
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+struct CameraSettings
+{
+	float yaw;
+	float pitch;
+	float speed;
+	float sensitivity;
+	float zoom;
+};
+
 class Camera
 {
     public:
-    	Camera(float yaw, float pitch, float speed, float sensitivity, float zoom);
+		Camera() = default;
+    	explicit Camera(const CameraSettings &cameraSettings);
 		~Camera() = default;
+		CameraSettings settings;
 		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
-		glm::vec3 cameraFront {0.0f, 0.0f, -1.0f};
-		glm::vec3 cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * movementSpeed};
-		glm::mat4 view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)};
 		void updateCameraPos();
-		float yaw;
-		float pitch;
-		float movementSpeed;
-		float mouseSensitivity;
-		float zoom;
-		float deltaTime {0.0f};
-		float lastFrame {0.0f};
+		inline glm::mat4 getView() const noexcept {return view;}
+		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}
+		inline glm::vec3 getCameraFront() const noexcept {return cameraFront;}
 		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
 	private:
-		bool firstMouseMovement {true};
-		double lastX;
-		double lastY;
+		float deltaTime {0.0f};
+		float lastFrame {0.0f};
+		glm::mat4 view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)};
+		glm::vec3 cameraRight;
+		glm::vec3 cameraFront {0.0f, 0.0f, -1.0f};
 		glm::vec3 cameraUp {0.0f, 1.0f, 0.0f};
 };
 
