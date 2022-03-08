@@ -6,6 +6,9 @@ if (CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
+# Set the build to debug mode
+set(CMAKE_BUILD_TYPE "Debug")
+
 # Set compiler
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
@@ -46,7 +49,6 @@ add_executable(main
 # Compiler flags
 target_compile_options(main PRIVATE 
 -fdiagnostics-color
--g
 -Wall
 -Werror
 -Wpedantic
@@ -68,11 +70,19 @@ target_compile_options(main PRIVATE
 -Wlogical-op
 -Wdisabled-optimization
 -fexceptions
-#-fanalyzer
 )
 
+
+# Options for release build
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(main PRIVATE
+    -O3
+    -ffast-math)
+    target_link_options(main PUBLIC -flto)
+endif (CMAKE_BUILD_TYPE STREQUAL "Release")
+
 # Linker flags
-target_link_options(main PUBLIC ../icons/icon.res)
+target_link_options(main PUBLIC ../icons/icon.res )
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
