@@ -1,10 +1,13 @@
+#include "glad/glad.h"
 #include "minecraft/vertexarray.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/renderer.hpp"
 #include "minecraft/attribute.hpp"
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
-#include <array>
+#include "minecraft/math/glmath.hpp"
+#include <string>
+
 
 constexpr float strideToNextBlock {0.5f};
 glm::mat4 Renderer::proj;
@@ -38,6 +41,7 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
     constexpr glm::vec3 specular {1.0f, 1.0f, 1.0f};
     constexpr glm::vec3 diffuse {0.7f, 0.7f, 0.7f};
     constexpr LightComponents components {ambient, specular, diffuse};
+
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     lightSource = Lighting{components, direction, position};
@@ -134,7 +138,7 @@ void Renderer::drawBlock(Block &block)
         {
             constexpr bool playSFX = true;
             Block blockPlaced {BlockName::Cobblestone_Block, playSFX};
-            blockPlaced.position = {block.position.x, block.position.y + 1.0f, block.position.z};
+            blockPlaced.position = block.position + glm::vec3{0.0f, 1.0f, 0.0f};
             blocks.emplace_back(blockPlaced);
         }
         oldState = newState;
@@ -143,7 +147,7 @@ void Renderer::drawBlock(Block &block)
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
     cubeShader.setFloat("textureY", block.getTextureID());
-    block.draw();
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 /**
