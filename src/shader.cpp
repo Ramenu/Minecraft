@@ -35,7 +35,7 @@ fragmentShaderPath {fragmentShaderSource}
         vertexShaderFile.close();
         fragmentShaderFile.close();
     }
-    catch (const std::exception& e)
+    catch (const std::ifstream::failure &e)
     {
         GLError::error_message(std::string{"Shader compilation failed:\n" + std::string{e.what()}});
     }
