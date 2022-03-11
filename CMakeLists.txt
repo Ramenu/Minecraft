@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Launch compiler with ccache
-find_program(CCACHE_PROGRAM ccache)
-if (CCACHE_PROGRAM)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-endif()
-
 # Set the build to debug mode
 set(CMAKE_BUILD_TYPE "Debug")
 
@@ -33,6 +27,7 @@ add_executable(main
 ./src/camera.cpp
 ./src/game.cpp
 ./src/glerror.cpp
+./src/glmath.cpp
 ./src/lighting.cpp
 ./src/main.cpp
 ./src/ray.cpp
