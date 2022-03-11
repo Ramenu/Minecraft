@@ -19,7 +19,6 @@ class Block
         glm::vec3 position;
         bool isDestroyed {false};
         void playDestroyedSound() const;
-        void draw() const noexcept;
         BlockName getBlockName() const {return name;}
         inline float getTextureID() const {return textureY;}
         Material blockMaterial;
