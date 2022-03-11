@@ -70,6 +70,7 @@ target_compile_options(main PRIVATE
 
 # Options for release build
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Running release build")
     target_compile_options(main PRIVATE
     -O3
     -ffast-math)
@@ -77,7 +78,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 # Linker flags
-target_link_options(main PUBLIC ../icons/icon.res )
+target_link_options(main PUBLIC ../icons/icon.res)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
@@ -89,12 +90,13 @@ target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/SFML")
 
 
 # Link libraries
-target_link_libraries(main PUBLIC terminal)
-target_link_libraries(main PUBLIC glad)
-target_link_libraries(main PUBLIC glfw3)
-target_link_libraries(main PUBLIC gdi32)
-target_link_libraries(main PUBLIC sfml-system-3)
-target_link_libraries(main PUBLIC sfml-audio-3)
+target_link_libraries(main PUBLIC 
+terminal
+glad
+glfw3
+sfml-system-3
+sfml-audio-3)
+
 
 
 
