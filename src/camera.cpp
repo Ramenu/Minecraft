@@ -58,12 +58,18 @@ void Camera::updateCameraPos()
     settings.yaw += xOffset;
     settings.pitch += yOffset;
 
-    #if 0
-        // To prevent the player from turning past a certain angle
+    #if 1
+        // Prevent the player tilting their head backwards
         if (settings.pitch > 180.0f)
             settings.pitch = 180.0f;
         else if (settings.pitch < -180.0f)
             settings.pitch = -180.0f;
+        
+        // Reset the yaw so the player can spin their camera around 
+        if (settings.yaw > 360.0f)
+            settings.yaw = 0.0f;
+        else if (settings.yaw < -360.0f)
+            settings.yaw = 0.0f;
     #endif
 
 
