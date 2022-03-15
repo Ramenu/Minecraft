@@ -32,9 +32,9 @@ length{rayLength}
     #endif
     uint32_t buffer {};
     const bool staticDrawEnabled {true};
-    vertexBuffer = BufferData{buffer, sizeof(rayVertices), rayVertices, staticDrawEnabled};
+    vertexBuffer = BufferData{buffer, sizeof(rayVertices), static_cast<const float*>(rayVertices), staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
-    setAttributes(std::vector<intptr_t>{3});
+    setAttributes(std::vector<int32_t>{3});
     enableVAOAttributes({0,1});
     shader.useShader();
     shader.setMat4("projection", Renderer::getProjection());
