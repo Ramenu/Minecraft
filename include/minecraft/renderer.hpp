@@ -22,8 +22,8 @@ class Renderer
         Shader cubeShader;
         bool canHighlightBlock(const glm::vec3 &blockPos) const;
 		Lighting lightSource;
-        uint32_t blockVao;
-        BufferData vertexBuffer;
+        uint32_t blockVao {};
+        BufferData vertexBuffer {};
         static glm::mat4 proj;
         std::vector<Block> blocks {
             {BlockName::Grass_Block, {0.0f, 0.0f, 0.0f}},
