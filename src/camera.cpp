@@ -22,15 +22,15 @@ cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * settings.speed}
  */
 void Camera::updateCameraPos()
 {
-	glm::vec3 direction;
 	const float cosPitch {cosf(glm::radians(settings.pitch))};
 
     // Calculate a 3D vector given the yaw and pitch
-	direction.x = cosf(glm::radians(settings.yaw)) * cosPitch;
-	direction.y = sinf(glm::radians(settings.pitch));
-	direction.z = sinf(glm::radians(settings.yaw)) * cosPitch;
-    
-    	
+	glm::vec3 direction {
+        cosf(glm::radians(settings.yaw)) * cosPitch,
+        sinf(glm::radians(settings.pitch)),
+        sinf(glm::radians(settings.yaw)) * cosPitch
+    };
+
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 	cameraFront = glm::normalize(direction);
@@ -59,16 +59,20 @@ void Camera::updateCameraPos()
     settings.pitch += yOffset;
 
     #if 1
+        // Angles in degrees
+        constexpr float angle180 {180.0f}; 
+        constexpr float angle360 {360.0f};
+
         // Prevent the player tilting their head backwards
-        if (settings.pitch > 180.0f)
-            settings.pitch = 180.0f;
-        else if (settings.pitch < -180.0f)
-            settings.pitch = -180.0f;
+        if (settings.pitch > angle180)
+            settings.pitch = angle180;
+        else if (settings.pitch < -angle180)
+            settings.pitch = -angle180;
         
         // Reset the yaw so the player can spin their camera around 
-        if (settings.yaw > 360.0f)
+        if (settings.yaw > angle360)
             settings.yaw = 0.0f;
-        else if (settings.yaw < -360.0f)
+        else if (settings.yaw < -angle360)
             settings.yaw = 0.0f;
     #endif
 
