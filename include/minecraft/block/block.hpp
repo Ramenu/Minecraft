@@ -14,9 +14,9 @@ class Block
     private:
         BlockName name;
         void initBlockTextureCoordinates(BlockName block);
-        float textureY;
+        float textureY {};
     public:
-        glm::vec3 position;
+        glm::vec3 position {};
         bool isDestroyed {false};
         void playDestroyedSound() const;
         BlockName getBlockName() const {return name;}
