@@ -73,12 +73,13 @@ namespace Texture
         {
             if (fs::path(imagePath).extension() == ".jpg" || fs::path(imagePath).extension() == ".png")
             {
-                ImageData image;
+                ImageData image {};
                 image.data = stbi_load(imagePath, &image.width, &image.height, &image.colorChannels, 0);
-                return image;
+                if (image.data)
+                    return image;
+                GLError::error_message("Failed to load data from image");
             }
-            else
-                GLError::error_message("File format must be .png or .jpg");
+            GLError::error_message("File format must be .png or .jpg");
         }
         else
             GLError::error_message(std::string{"No file \"" + std::string{imagePath} + "\" could be found. Double check to make sure it exists.\n"}.c_str());
