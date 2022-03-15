@@ -9,7 +9,7 @@
 #include <string>
 
 
-constexpr float strideToNextBlock {0.5f};
+static constexpr float strideToNextBlock {0.5f};
 glm::mat4 Renderer::proj;
 
 
@@ -54,11 +54,11 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
     // Create our vertex buffer and store the cube vertices data into it
     uint32_t buffer {};
     constexpr bool staticDrawEnabled {true};
-    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), cubeVertices, staticDrawEnabled};
+    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), static_cast<const float*>(cubeVertices), staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
 
     constexpr intptr_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
-    setAttributes(std::vector<intptr_t>{positionOffset, textureOffset, lightDirectionOffset}); 
+    setAttributes(std::vector<int32_t>{positionOffset, textureOffset, lightDirectionOffset}); 
     enableVAOAttributes({0, 1, 2});
 
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
@@ -147,7 +147,9 @@ void Renderer::drawBlock(Block &block)
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
     cubeShader.setFloat("textureY", block.getTextureID());
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    constexpr uint8_t verticesToBeDrawn {36};
+    glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
 }
 
 /**
