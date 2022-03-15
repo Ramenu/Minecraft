@@ -25,14 +25,14 @@ class Camera
 		inline glm::mat4 getView() const noexcept {return view;}
 		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}
 		inline glm::vec3 getCameraFront() const noexcept {return cameraFront;}
-		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
 	private:
-		float deltaTime {0.0f};
-		float lastFrame {0.0f};
+		glm::vec3 cameraFront {0.0f, 0.0f, -1.0f};
 		glm::mat4 view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)};
 		glm::vec3 cameraRight;
-		glm::vec3 cameraFront {0.0f, 0.0f, -1.0f};
 		glm::vec3 cameraUp {0.0f, 1.0f, 0.0f};
+	public:
+		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
+	
 };
 
 #endif // CAMERA_HPP
