@@ -74,7 +74,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_options(main PRIVATE
     -O3
     -ffast-math)
-    target_link_options(main PUBLIC -flto)
+    target_link_options(main PUBLIC -flto -s)
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 # Linker flags
