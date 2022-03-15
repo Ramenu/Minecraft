@@ -19,7 +19,7 @@ Game::Game(const char *windowTitle)
     Window::initWindow(windowTitle);
     glfwMakeContextCurrent(Window::getWindow());
     
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         GLError::error_message("Failed to initialize GLAD");
 
     constexpr float x {}, y {};
