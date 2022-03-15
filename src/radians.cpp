@@ -6,7 +6,7 @@
  * into radians and constructs
  * the object.
  */
-Radians::Radians(float angle) :
+Radians::Radians(float angle) noexcept :
 radians {glm::radians(angle)}
 {
 
