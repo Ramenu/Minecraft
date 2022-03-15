@@ -16,9 +16,9 @@ class Ray
         Shader shader;
         bool intersectsWith(const glm::vec3 &b) const noexcept;
     private:
-        glm::vec3 ray;
-        uint32_t vao;
-        BufferData vertexBuffer;
+        glm::vec3 ray {};
+        uint32_t vao {};
+        BufferData vertexBuffer {};
         glm::vec3 length;
 };
 
