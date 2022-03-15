@@ -1,4 +1,4 @@
-#include "Glad/glad.h"
+#include "glad/glad.h"
 #include "minecraft/attribute.hpp"
 
 
@@ -6,9 +6,9 @@
  * Sets the attribute locations, only requires a 
  * vector of the stride of each attribute. 
  */
-void setAttributes(const std::vector<intptr_t> &attributeIndices)
+void setAttributes(const std::vector<int32_t> &attributeIndices)
 {
-    intptr_t length {}, stride {};
+    GLsizei length {}, stride {};
     for (const auto&i: attributeIndices)
         length += i;
 
