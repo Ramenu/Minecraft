@@ -19,7 +19,7 @@ position {lightPosition}
 /** Deletes the light vertex array. This should be called only in 
  *  the renderer object's destructor.
  */
-void Lighting::removeAllLights()
+void Lighting::removeAllLights() noexcept
 {
 	glDeleteVertexArrays(1, &lightVao);
 }
@@ -27,7 +27,7 @@ void Lighting::removeAllLights()
 /**
  * Updates the shader's vectors to the light's vectors.
  */
-void Lighting::shaderProgramLightSource(const Shader &shader) const
+void Lighting::shaderProgramLightSource(const Shader &shader) const noexcept
 {
 	shader.setVec3("light.ambient", components.ambient);
 	shader.setVec3("light.diffuse", components.diffuse);
@@ -36,12 +36,12 @@ void Lighting::shaderProgramLightSource(const Shader &shader) const
 }
 
 
-void Lighting::initLightVAO()
+void Lighting::initLightVAO() noexcept
 {
 	glGenVertexArrays(1, &lightVao);
 }
 
-void Lighting::bindLightVAO()
+void Lighting::bindLightVAO() noexcept
 {
 	glBindVertexArray(lightVao);
 }
