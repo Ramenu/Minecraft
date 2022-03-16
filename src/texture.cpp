@@ -71,7 +71,8 @@ namespace Texture
     {
         if (fs::exists(imagePath))
         {
-            if (fs::path(imagePath).extension() == ".jpg" || fs::path(imagePath).extension() == ".png")
+            const std::string extension {fs::path(imagePath).extension().string()};
+            if (extension == ".jpg" || extension == ".png")
             {
                 ImageData image {};
                 image.data = stbi_load(imagePath, &image.width, &image.height, &image.colorChannels, 0);
