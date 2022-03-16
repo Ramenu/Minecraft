@@ -26,7 +26,6 @@ Game::Game(const char *windowTitle)
     glViewport(x, y, Window::width, Window::height);
     Texture::initTextureAtlas();
     Lighting::initLightVAO();
-    Renderer::initProjection();
 }
 
 /**
