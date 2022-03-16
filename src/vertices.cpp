@@ -45,12 +45,12 @@ constexpr float cubeVertices[288] =
    -0.5f,  0.5f, 0.0f,	  xPos,      0.0f,       1.0f, 0.0f,  0.0f,
 
     // Up (fifth square)
-   -0.5f,  0.5f, 0.5f,    xPos,      yPos,       0.0f,  1.0f, 0.0f, 
    -0.5f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f,  1.0f, 0.0f,
     0.0f,  0.5f, 0.5f,    xPos_2,    yPos,       0.0f,  1.0f, 0.0f,
-    0.0f,  0.5f, 0.5f,    xPos_2,    yPos,       0.0f,  1.0f, 0.0f,
-   -0.5f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f,  1.0f, 0.0f,
     0.0f,  0.5f, 0.0f,    xPos_2,    0.0f,       0.0f,  1.0f, 0.0f,
+    0.0f,  0.5f, 0.5f,    xPos_2,    yPos,       0.0f,  1.0f, 0.0f,
+   -0.5f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f,  1.0f, 0.0f,
+   -0.5f,  0.5f, 0.5f,    xPos,      yPos,       0.0f,  1.0f, 0.0f, 
 
     // Bottom (sixth square)
    -0.5f, -0.5f, 0.5f,    xPos_2,    yPos,       0.0f, -1.0f, 0.0f,   
