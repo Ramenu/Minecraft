@@ -8,22 +8,15 @@
 #include "minecraft/math/glmath.hpp"
 #include <string>
 
-
 static constexpr float strideToNextBlock {0.5f};
-glm::mat4 Renderer::proj;
-
-
-/**
- *  Creates the projection matrix which defines the visible space. 
- */
-void Renderer::initProjection()
-{
-    constexpr double fov {glm::radians(45.0f)};
-    constexpr double aspectRatio {Window::width/Window::height}; 
-    constexpr double near {0.1f};
-    constexpr double far {100.0f};
-    proj = glm::perspective(fov, aspectRatio, near, far);
-}
+const glm::mat4 Renderer::projection {[]{
+        constexpr double fov {glm::radians(45.0f)};
+        constexpr double aspectRatio {Window::width/Window::height}; 
+        constexpr double near {0.1f};
+        constexpr double far {100.0f};
+        return glm::perspective(fov, aspectRatio, near, far);
+    }()
+};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -68,7 +61,7 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
     lightSource.shaderProgramLightSource(cubeShader);
 
     cubeShader.setInt("allTextures", 0);
-    cubeShader.setMat4("projection", proj);
+    cubeShader.setMat4("projection", projection);
 
     // Same process again... for the light cubeShader (Don't need this right now since it is a directional light at the moment)
     #if 0
@@ -109,6 +102,7 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
             const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
             const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), 
                                    glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + strideToNextBlock})};
+
             return (distanceBetween <= strideToNextBlock && distanceBetween <= nextBlock);
         }
     }
@@ -118,7 +112,7 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
 /** 
  * Draws the selected block on the (X, Y, Z) position passed. 
  */
-void Renderer::drawBlock(Block &block)
+void Renderer::drawBlock(Block &block) noexcept
 {
     float ambient {block.blockMaterial.ambient};
     if (canHighlightBlock(block.position))
@@ -159,7 +153,7 @@ void Renderer::drawBlock(Block &block)
  * at runtime is too expensive. But suffices for testing
  * purposes.
  */
-void Renderer::drawAllBlocks()
+void Renderer::drawAllBlocks() noexcept
 {
     for (size_t i {}; i < blocks.size(); i++)
     {

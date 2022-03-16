@@ -11,20 +11,18 @@ class Renderer
     public:
         Renderer();
         ~Renderer() noexcept;
-        void drawBlock(Block &block);
-        void drawAllBlocks();
+        void drawBlock(Block &block) noexcept;
+        void drawAllBlocks() noexcept;
         void drawLightSource();
         void updateView();
-        static void initProjection();
-        static inline glm::mat4 getProjection() {return proj;}
         Camera playerCamera;
+        static const glm::mat4 projection;
     private:
         Shader cubeShader;
         bool canHighlightBlock(const glm::vec3 &blockPos) const;
 		Lighting lightSource;
         uint32_t blockVao {};
         BufferData vertexBuffer {};
-        static glm::mat4 proj;
         std::vector<Block> blocks {
             {BlockName::Grass_Block, {0.0f, 0.0f, 0.0f}},
             {BlockName::Grass_Block, {0.0f, 0.0f, 0.5f}},
