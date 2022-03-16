@@ -37,7 +37,7 @@ length{rayLength}
     setAttributes(std::vector<int32_t>{3});
     enableVAOAttributes({0,1});
     shader.useShader();
-    shader.setMat4("projection", Renderer::getProjection());
+    shader.setMat4("projection", Renderer::projection);
 
 }
 
