@@ -3,55 +3,60 @@
 
 using namespace Texture;
 
-constexpr float xStrideToNextBlock {atlasWidth - 1};
+constexpr float xPos_2 {(atlasWidth - 1) * xPos};
+
 
 // For future reference to the y coordinates, just adjust them inside the vertex shader
 // using the .y attribute
 constexpr float cubeVertices[288] =
 {
-    //                               First block
-    // Position                Texture coordinates                  Normal direction
-   -0.5f, -0.5f, 0.0f,    0.0f,                      yPos,         0.0f, 0.0f,  1.0f,
-   -0.5f,  0.5f, 0.0f,    0.0f,                      0.0f,         0.0f, 0.0f,  1.0f,
-    0.0f, -0.5f, 0.0f,    xPos,                      yPos,         0.0f, 0.0f,  1.0f,
-    0.0f, -0.5f, 0.0f,    xPos,                      yPos,         0.0f, 0.0f,  1.0f,
-   -0.5f,  0.5f, 0.0f,    0.0f,                      0.0f,         0.0f, 0.0f,  1.0f,
-    0.0f,  0.5f, 0.0f,    xPos,                      0.0f,         0.0f, 0.0f,  1.0f,
+   // Position          Texture coordinates     Normal direction (Light)
 
-   -0.5f, -0.5f, 0.5f,    0.0f,                      yPos,         0.0f, 0.0f,  1.0f,
-   -0.5f,  0.5f, 0.5f,    0.0f,                      0.0f,         0.0f, 0.0f,  1.0f,
-    0.0f, -0.5f, 0.5f,    xPos,                      yPos,         0.0f, 0.0f,  1.0f,
-    0.0f, -0.5f, 0.5f,    xPos,                      yPos,         0.0f, 0.0f,  1.0f,
-   -0.5f,  0.5f, 0.5f,    0.0f,                      0.0f,         0.0f, 0.0f,  1.0f,
-    0.0f,  0.5f, 0.5f,    xPos,                      0.0f,         0.0f, 0.0f,  1.0f,
+   // Back (First square)
+   -0.5f, -0.5f, 0.0f,    0.0f,      yPos,       0.0f, 0.0f,  1.0f,
+    0.0f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f, 0.0f,  1.0f,
+    0.0f, -0.5f, 0.0f,    xPos,      yPos,       0.0f, 0.0f,  1.0f,
+    0.0f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f, 0.0f,  1.0f,
+   -0.5f, -0.5f, 0.0f,    0.0f,      yPos,       0.0f, 0.0f,  1.0f,
+   -0.5f,  0.5f, 0.0f,    0.0f,      0.0f,       0.0f, 0.0f,  1.0f,
 
-   -0.5f, -0.5f, 0.5f,	  0.0f,                      yPos,         1.0f, 0.0f,  0.0f,  
-   -0.5f,  0.5f, 0.5f,	  0.0f,                      0.0f,         1.0f, 0.0f,  0.0f, 
-   -0.5f, -0.5f, 0.0f,    xPos,                      yPos,         1.0f, 0.0f,  0.0f,   
-   -0.5f, -0.5f, 0.0f,	  xPos,                      yPos,         1.0f, 0.0f,  0.0f,  
-   -0.5f,  0.5f, 0.5f,	  0.0f,                      0.0f,         1.0f, 0.0f,  0.0f,  
-   -0.5f,  0.5f, 0.0f,	  xPos,                      0.0f,         1.0f, 0.0f,  0.0f,
+    // Front (Second square)
+   -0.5f, -0.5f, 0.5f,    0.0f,      yPos,       0.0f, 0.0f,  1.0f,
+    0.0f, -0.5f, 0.5f,    xPos,      yPos,       0.0f, 0.0f,  1.0f,
+    0.0f,  0.5f, 0.5f,    xPos,      0.0f,       0.0f, 0.0f,  1.0f,
+    0.0f,  0.5f, 0.5f,    xPos,      0.0f,       0.0f, 0.0f,  1.0f,
+   -0.5f,  0.5f, 0.5f,    0.0f,      0.0f,       0.0f, 0.0f,  1.0f,
+   -0.5f, -0.5f, 0.5f,    0.0f,      yPos,       0.0f, 0.0f,  1.0f,
 
-    0.0f, -0.5f, 0.5f,    0.0f,                      yPos,         1.0f, 0.0f, 0.0f,
-    0.0f,  0.5f, 0.5f,    0.0f,                      0.0f,         1.0f, 0.0f, 0.0f,
-    0.0f, -0.5f, 0.0f,    xPos,                      yPos,         1.0f, 0.0f, 0.0f,
-    0.0f, -0.5f, 0.0f,    xPos,                      yPos,         1.0f, 0.0f, 0.0f,
-    0.0f,  0.5f, 0.5f,    0.0f,                      0.0f,         1.0f, 0.0f, 0.0f,
-    0.0f,  0.5f, 0.0f,    xPos,                      0.0f,         1.0f, 0.0f, 0.0f,
+    // Right (Third square)
+    0.0f,  0.5f, 0.0f,    xPos,      0.0f,       1.0f, 0.0f,  0.0f,
+    0.0f, -0.5f, 0.5f,    0.0f,      yPos,       1.0f, 0.0f,  0.0f,
+    0.0f, -0.5f, 0.0f,    xPos,      yPos,       1.0f, 0.0f,  0.0f,
+    0.0f, -0.5f, 0.5f,    0.0f,      yPos,       1.0f, 0.0f,  0.0f,
+    0.0f,  0.5f, 0.0f,    xPos,      0.0f,       1.0f, 0.0f,  0.0f,
+    0.0f,  0.5f, 0.5f,    0.0f,      0.0f,       1.0f, 0.0f,  0.0f,
+ 
+    // Left (Fourth square)
+   -0.5f,  0.5f, 0.0f,	  xPos,      0.0f,       1.0f, 0.0f,  0.0f,
+   -0.5f, -0.5f, 0.0f,    xPos,      yPos,       1.0f, 0.0f,  0.0f,   
+   -0.5f, -0.5f, 0.5f,	  0.0f,      yPos,       1.0f, 0.0f,  0.0f,  
+   -0.5f, -0.5f, 0.5f,	  0.0f,      yPos,       1.0f, 0.0f,  0.0f,  
+   -0.5f,  0.5f, 0.5f,	  0.0f,      0.0f,       1.0f, 0.0f,  0.0f, 
+   -0.5f,  0.5f, 0.0f,	  xPos,      0.0f,       1.0f, 0.0f,  0.0f,
 
-    //                            Second block
-   -0.5f,  0.5f, 0.5f,    xPos,                      yPos,         0.0f,  1.0f, 0.0f, 
-   -0.5f,  0.5f, 0.0f,    xPos,                      0.0f,         0.0f,  1.0f, 0.0f,
-    0.0f,  0.5f, 0.5f,    xPos * xStrideToNextBlock, yPos,         0.0f,  1.0f, 0.0f,
-    0.0f,  0.5f, 0.5f,    xPos * xStrideToNextBlock, yPos,         0.0f,  1.0f, 0.0f,
-   -0.5f,  0.5f, 0.0f,    xPos,                      0.0f,         0.0f,  1.0f, 0.0f,
-    0.0f,  0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f,  1.0f, 0.0f,
+    // Up (fifth square)
+   -0.5f,  0.5f, 0.5f,    xPos,      yPos,       0.0f,  1.0f, 0.0f, 
+   -0.5f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f,  1.0f, 0.0f,
+    0.0f,  0.5f, 0.5f,    xPos_2,    yPos,       0.0f,  1.0f, 0.0f,
+    0.0f,  0.5f, 0.5f,    xPos_2,    yPos,       0.0f,  1.0f, 0.0f,
+   -0.5f,  0.5f, 0.0f,    xPos,      0.0f,       0.0f,  1.0f, 0.0f,
+    0.0f,  0.5f, 0.0f,    xPos_2,    0.0f,       0.0f,  1.0f, 0.0f,
 
-    //                            Third block
-   -0.5f, -0.5f, 0.5f,    xPos * xStrideToNextBlock, yPos,         0.0f, -1.0f, 0.0f,   
-   -0.5f, -0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f, -1.0f, 0.0f,
-    0.0f, -0.5f, 0.5f,    xPos * atlasWidth,         yPos,         0.0f, -1.0f, 0.0f,                  
-    0.0f, -0.5f, 0.5f,    xPos * atlasWidth,         yPos,         0.0f, -1.0f, 0.0f,                  
-   -0.5f, -0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f, -1.0f, 0.0f,               
-    0.0f, -0.5f, 0.0f,    xPos * xStrideToNextBlock, 0.0f,         0.0f, -1.0f, 0.0f,               
+    // Bottom (sixth square)
+   -0.5f, -0.5f, 0.5f,    xPos_2,    yPos,       0.0f, -1.0f, 0.0f,   
+   -0.5f, -0.5f, 0.0f,    xPos_2,    0.0f,       0.0f, -1.0f, 0.0f,
+    0.0f, -0.5f, 0.5f,    1.0f,      yPos,       0.0f, -1.0f, 0.0f,                  
+    0.0f, -0.5f, 0.5f,    1.0f,      yPos,       0.0f, -1.0f, 0.0f,                  
+   -0.5f, -0.5f, 0.0f,    xPos_2,    0.0f,       0.0f, -1.0f, 0.0f,               
+    0.0f, -0.5f, 0.0f,    xPos_2,    0.0f,       0.0f, -1.0f, 0.0f              
 };
