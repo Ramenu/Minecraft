@@ -48,6 +48,7 @@ target_compile_options(main PRIVATE
 -Werror
 -Wpedantic
 -fstrict-enums
+-fsanitize=leak
 -Wctor-dtor-privacy
 -Wmismatched-tags
 -Wextra-semi
