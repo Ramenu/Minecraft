@@ -83,6 +83,7 @@ namespace Texture
         }
         else
             GLError::error_message(std::string{"No file \"" + std::string{imagePath} + "\" could be found. Double check to make sure it exists.\n"}.c_str());
-        throw; // Impossible to reach here, but put a throw here anyway just so the compiler does not complain about a return missing
+        // Impossible to reach here, but put a throw here anyway just so the compiler does not complain about a return missing
+        exit(EXIT_FAILURE);
     }
 }
