@@ -1,5 +1,6 @@
 #include "minecraft/game.hpp"
 #include <cstdint>
+#include "minecraft/glerror.hpp"
 extern "C"
 {
     #include <terminal.h>
@@ -8,7 +9,6 @@ extern "C"
 int main()
 {
     static_assert(sizeof(size_t) >= 4, "Go buy a real computer");
-
     #ifdef _WIN32
         if (enable_virtual_terminal_processing()) // ASCI colors don't work atm ;(
         {
@@ -16,8 +16,8 @@ int main()
             minecraft.runGame();
         } 
         else
-            return 1;
-    #else
+            GLError::error_message("Failed to enable virtual terminal processing");
+    #else // ASCI color codes are automatically supported on UNIX systems
         Game minecraft {"Minecraft"};
         minecraft.runGame();
     #endif
