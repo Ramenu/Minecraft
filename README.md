@@ -28,12 +28,12 @@ KNOWN BUGS:
 - Camera will make weird turns 
 - Pressing 'Q' may enable wireframe mode really fast, which will cause it to go off and on (may depend on hardware platform)
 
-Some links to the libraries I use, they are really great, go check them out:
+Some links to the libraries I use, they are really great, go check them out:<br>
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
 
 I'm also using other tools to help make the code look cleaner, and hopefully 'safer'. Hope you find them interesting:
-https://github.com/danmar/cppcheck
-https://clang.llvm.org/extra/clang-tidy/
+https://github.com/danmar/cppcheck<br>
+https://clang.llvm.org/extra/clang-tidy/<br>
 
 HOW TO BUILD:
 -------------
