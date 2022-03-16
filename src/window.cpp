@@ -10,7 +10,7 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(double deltaTime, Camera &camera) 
+    void processKeyboardInput(double deltaTime, Camera &camera) noexcept 
     {
         constexpr double speed {2.5};
         camera.settings.speed = speed * deltaTime;
@@ -33,7 +33,7 @@ namespace Window
      * Toggles wireframes. 
      * [NOTE: CURRENTLY BUGGY]
      */
-    void renderWireframes()
+    void renderWireframes() noexcept
     {
         static bool wireFrameMode = false;
         if (wireFrameMode)
@@ -45,7 +45,7 @@ namespace Window
 
 
     //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
-    GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title)
+    GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title) noexcept
     {
         //Specify version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -66,7 +66,7 @@ namespace Window
     }
 
     /* Destroys the window. */
-    void destroyWindow()
+    void destroyWindow() noexcept
     {
         if (window)
             glfwDestroyWindow(window);
@@ -76,7 +76,7 @@ namespace Window
      * Initializes the window's width and height. Sets
      * the window's icon and the viewport.
      */
-    void initWindow(const char *windowName)
+    void initWindow(const char *windowName) noexcept
     {
         window = loadWindow(window, windowName);
         GLFWimage icon[1];
@@ -88,7 +88,7 @@ namespace Window
         stbi_image_free(icon[0].pixels);
     }
 
-    GLFWwindow *getWindow() {return window;}
+    GLFWwindow *getWindow() noexcept {return window;}
 }
 
 

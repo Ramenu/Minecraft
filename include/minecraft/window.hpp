@@ -6,13 +6,12 @@
 
 namespace Window
 {
-    extern GLFWwindow *loadWindow(GLFWwindow *window, const char &title);
-    extern void initWindow(const char *windowName);
-    extern void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-    extern void processKeyboardInput(double deltaTime, Camera &camera); 
-    extern void renderWireframes();
-    extern void destroyWindow();
-    extern GLFWwindow *getWindow();
+    extern GLFWwindow *loadWindow(GLFWwindow *window, const char &title) noexcept;
+    extern void initWindow(const char *windowName) noexcept;
+    extern void processKeyboardInput(double deltaTime, Camera &camera) noexcept; 
+    extern void renderWireframes() noexcept;
+    extern void destroyWindow() noexcept;
+    extern GLFWwindow *getWindow() noexcept;
     constexpr double width {512}, height {512};
 }
 
