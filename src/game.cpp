@@ -43,6 +43,7 @@ void Game::runGame()
     Renderer renderer;
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
