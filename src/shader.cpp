@@ -77,11 +77,11 @@ fragmentShaderPath {fragmentShaderSource}
 void Shader::checkShaderCompilationErrors(const uint32_t& shader, int shaderType) const noexcept
 {
     int success {};
-    char infoLog[512] {};
     std::string shaderPath {(shaderType == GL_VERTEX_SHADER) ? vertexShaderPath : fragmentShaderPath};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
+        char infoLog[512] {};
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         GLError::error_message("Failed to compile shader \"" + shaderPath + "\". " + std::string{infoLog});
     }
@@ -91,10 +91,10 @@ void Shader::checkShaderCompilationErrors(const uint32_t& shader, int shaderType
 void Shader::checkLinkageErrors() const noexcept
 {
     int success {};
-    char infoLog[512] {};
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
     {
+        char infoLog[512] {};
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
     }
