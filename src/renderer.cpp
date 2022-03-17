@@ -22,13 +22,12 @@ const glm::mat4 Renderer::projection {[]{
  * vertex buffer data.
  */
 Renderer::Renderer() : 
-cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
-{
-    // Set the camera (not done in the initializer list for better readability)
-    constexpr float yaw {90.0f}, pitch {0.0f}, speed {2.5f}, sensitivity {0.1f}, zoom {45.0f};
-    playerCamera = Camera{CameraSettings{yaw, pitch, speed, sensitivity, zoom}};
-
-    // Set the light source (not done in the initializer list for better readability)
+playerCamera {[this](){
+    constexpr float yaw {90.0f}, pitch {0.0f}, speed {2.5f}, sensitivity {0.1f}, zoom {45.0};
+    return Camera{CameraSettings{yaw, pitch, speed, sensitivity, zoom}};
+}()},
+cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
+lightSource {[this]() {
     constexpr glm::vec3 ambient {0.25f, 0.25f, 0.25f};
     constexpr glm::vec3 specular {1.0f, 1.0f, 1.0f};
     constexpr glm::vec3 diffuse {0.7f, 0.7f, 0.7f};
@@ -36,9 +35,10 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
 
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
-    lightSource = Lighting{components, direction, position};
+    return Lighting{components, direction, position};
+}()}
+{
     
-
     // Create vertex array and bind for the upcoming vertex buffer
     VertexArray::createVertexArray(blockVao);
     VertexArray::bindVertexArray(blockVao);
@@ -188,7 +188,6 @@ void Renderer::updateView()
     double xPos, yPos;
     glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
     playerCamera.updateCameraPos(xPos, yPos);
-    cubeShader.useShader();
     cubeShader.setMat4("view", playerCamera.getView());
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
     #if 0
