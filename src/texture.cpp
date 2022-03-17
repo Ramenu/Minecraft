@@ -76,7 +76,7 @@ namespace Texture
             {
                 ImageData image {};
                 image.data = stbi_load(imagePath, &image.width, &image.height, &image.colorChannels, 0);
-                if (image.data)
+                if (image.data != nullptr)
                     return image;
                 GLError::error_message("Failed to load data from image");
             }
