@@ -1,4 +1,3 @@
-#include "glad/glad.h"
 #include "minecraft/shader.hpp"
 #include "minecraft/glerror.hpp"
 #include <fstream>
@@ -100,20 +99,8 @@ void Shader::checkLinkageErrors() const noexcept
     }
 }
 
-void Shader::useShader() const noexcept
-{
-    glUseProgram(shaderProgram);
-}
 
-/**
- * Deletes the shader program.
- */
-Shader::~Shader() noexcept
-{
-    glDeleteProgram(shaderProgram);
-}
-
-void Shader::setInt(const char *name, int32_t value) const noexcept
+/*void Shader::setInt(const char *name, int32_t value) const noexcept
 {
     glUniform1i(glGetUniformLocation(shaderProgram, name), value);
 }
@@ -138,8 +125,7 @@ void Shader::setMat3(const char *name, const glm::mat3 &matrix) const noexcept
     glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
 }
 
-/* Passes the 4x4 matrix to the shader to GLSL. */
 void Shader::setMat4(const char *name, const glm::mat4 &matrix) const noexcept
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
-}
+}*/
