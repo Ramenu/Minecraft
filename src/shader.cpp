@@ -98,34 +98,3 @@ void Shader::checkLinkageErrors() const noexcept
         GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
     }
 }
-
-
-/*void Shader::setInt(const char *name, int32_t value) const noexcept
-{
-    glUniform1i(glGetUniformLocation(shaderProgram, name), value);
-}
-
-void Shader::setFloat(const char *name, float value) const noexcept
-{
-    glUniform1f(glGetUniformLocation(shaderProgram, name), value);
-}
-
-void Shader::setVec2(const char *name, const glm::vec2 &vec) const noexcept
-{
-    glUniform2f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y);
-}
-
-void Shader::setVec3(const char *name, const glm::vec3 &vec) const noexcept
-{
-    glUniform3f(glGetUniformLocation(shaderProgram, name), vec.x, vec.y, vec.z);
-}
-
-void Shader::setMat3(const char *name, const glm::mat3 &matrix) const noexcept
-{
-    glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
-}
-
-void Shader::setMat4(const char *name, const glm::mat4 &matrix) const noexcept
-{
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
-}*/
