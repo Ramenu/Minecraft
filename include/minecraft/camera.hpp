@@ -21,7 +21,7 @@ class Camera
 		~Camera() = default;
 		CameraSettings settings;
 		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
-		void updateCameraPos();
+		void updateCameraPos(double cursorX, double cursorY);
 		inline glm::mat4 getView() const noexcept {return view;}
 		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}
 		inline glm::vec3 getCameraFront() const noexcept {return cameraFront;}

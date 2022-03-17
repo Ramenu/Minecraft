@@ -1,7 +1,4 @@
-#include "GLFW/glfw3.h"
 #include "minecraft/camera.hpp"
-#include "minecraft/window.hpp"
-
 
 /** 
  * Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
@@ -11,16 +8,16 @@ Camera::Camera(const CameraSettings &cameraSettings) :
 settings {cameraSettings},
 cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * settings.speed} 
 {
-    double xPos {}, yPos {};
-	glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
     
 }
 
 
 /** 
  * Updates the position of where the camera is looking.
+ * Parameters take the position of the mouse's 
+ * x-position and y-position.
  */
-void Camera::updateCameraPos()
+void Camera::updateCameraPos(const double cursorX, const double cursorY)
 {
 	const float cosPitch {cosf(glm::radians(settings.pitch))};
 
@@ -35,25 +32,22 @@ void Camera::updateCameraPos()
 	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 	cameraFront = glm::normalize(direction);
 
-	double xPos {}, yPos {};
     static double lastX {}, lastY {};
     static bool firstMouseMovement = true;
 
-	glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
-
     if (firstMouseMovement)
     {
-        lastX = xPos;
-        lastY = yPos;
+        lastX = cursorX;
+        lastY = cursorY;
         firstMouseMovement = false;
     }
 
-    const float xOffset {static_cast<float>((xPos - lastX)) * settings.sensitivity};
-    const float yOffset {static_cast<float>((lastY - yPos)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
+    const float xOffset {static_cast<float>((cursorX - lastX)) * settings.sensitivity};
+    const float yOffset {static_cast<float>((lastY - cursorY)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
 
     // Update the last mouse positions to the current position
-    lastX = xPos;
-    lastY = yPos;
+    lastX = cursorX;
+    lastY = cursorY;
 
     settings.yaw += xOffset;
     settings.pitch += yOffset;
