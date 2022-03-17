@@ -18,8 +18,8 @@ void playBlockPlacementSound(BlockName block)
     switch (block)
     {
         default: /* Throw exception */ break;
-        case Block::Grass_Block: blockSounds[0].first.audio.play(); break;
-        case Block::Cobblestone_Block: blockSounds[1].first.audio.play(); break;
+        case Block::Grass_Block: return blockSounds[0].first.audio.play(); 
+        case Block::Cobblestone_Block: return blockSounds[1].first.audio.play();
     }
 }   
 
@@ -32,7 +32,7 @@ void playBlockBreakSound(BlockName block)
     switch (block)
     {
         default: /* Throw exception */ break;
-        case Block::Grass_Block: blockSounds[0].second.audio.play(); break;
-        case Block::Cobblestone_Block: blockSounds[1].second.audio.play(); break;
+        case Block::Grass_Block: return blockSounds[0].second.audio.play();
+        case Block::Cobblestone_Block: return blockSounds[1].second.audio.play(); 
     }
 }
