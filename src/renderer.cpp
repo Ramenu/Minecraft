@@ -1,7 +1,6 @@
-#include "glad/glad.h"
 #include "minecraft/vertexarray.hpp"
-#include "minecraft/window.hpp"
 #include "minecraft/renderer.hpp"
+#include "minecraft/window.hpp"
 #include "minecraft/attribute.hpp"
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
@@ -186,7 +185,9 @@ void Renderer::drawLightSource()
  */
 void Renderer::updateView()
 {
-    playerCamera.updateCameraPos();
+    double xPos, yPos;
+    glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
+    playerCamera.updateCameraPos(xPos, yPos);
     cubeShader.useShader();
     cubeShader.setMat4("view", playerCamera.getView());
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
