@@ -6,7 +6,7 @@
 
 namespace Window
 {
-    GLFWwindow *window;
+    static GLFWwindow *window;
     /**
      * Handles keyboard input.
      */
@@ -68,7 +68,7 @@ namespace Window
     /* Destroys the window. */
     void destroyWindow() noexcept
     {
-        if (window)
+        if (window != nullptr)
             glfwDestroyWindow(window);
     }
 
