@@ -1,4 +1,3 @@
-#include "glad/glad.h"
 #include "minecraft/physics/ray.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/attribute.hpp"
