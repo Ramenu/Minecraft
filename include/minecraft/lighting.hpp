@@ -19,7 +19,6 @@ class Lighting
     public:
         static void initLightVAO() noexcept;
         static void bindLightVAO() noexcept;
-        Lighting() = default;
         Lighting(const LightComponents &componentsOfLight, const glm::vec3 &direction, const glm::vec3 &position);
         ~Lighting() = default;
 		static void removeAllLights() noexcept;
