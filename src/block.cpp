@@ -10,16 +10,8 @@ void Block::initBlockTextureCoordinates(BlockName block)
 {
     switch (block)
     {
-        case BlockName::Grass_Block: 
-        {
-            textureY = 0.0f;
-            break;
-        }
-        case BlockName::Cobblestone_Block: 
-        {
-            textureY = 1.0f / Texture::atlasHeight;
-            break;
-        }
+        case BlockName::Grass_Block: textureY = 0.0f; break;
+        case BlockName::Cobblestone_Block: textureY = 1.0f / Texture::atlasHeight; break;
     }
 }
 
