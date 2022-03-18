@@ -156,6 +156,9 @@ void Renderer::drawBlock(Block &block) noexcept
  */
 void Renderer::drawAllBlocks() noexcept
 {
+    #ifdef GAME_BENCHMARK
+        time.start();
+    #endif
     for (size_t i {}; i < blocks.size(); i++)
     {
         drawBlock(blocks[i]);
@@ -164,6 +167,9 @@ void Renderer::drawAllBlocks() noexcept
         if (blocks[i].isDestroyed)
             blocks.erase(blocks.begin() + i);
     }
+    #ifdef GAME_BENCHMARK
+        time.end();
+    #endif
 }
 
 /**

@@ -5,6 +5,9 @@
 #include "minecraft/camera.hpp"
 #include "minecraft/lighting.hpp"
 #include <vector>
+#ifdef GAME_BENCHMARK
+    #include "timer.hpp"
+#endif
 
 class Renderer
 {
@@ -17,6 +20,9 @@ class Renderer
         void updateView();
         Camera playerCamera;
         static const glm::mat4 projection;
+        #ifdef GAME_BENCHMARK
+            Timer<std::milli> time;
+        #endif
     private:
         Shader cubeShader;
         bool canHighlightBlock(const glm::vec3 &blockPos) const;
