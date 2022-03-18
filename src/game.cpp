@@ -63,7 +63,9 @@ void Game::runGame()
         glfwPollEvents(); 
         Window::processKeyboardInput(deltaTime, renderer.playerCamera);
     }
-    
+    #ifdef GAME_BENCHMARK
+        renderer.time.detailedDisplay();
+    #endif
 }
 
 /**
