@@ -36,6 +36,12 @@ lightSource {[this]() {
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     return Lighting{components, direction, position};
+}()},
+vertexBuffer {[this]() {
+    uint32_t buffer {};
+    const float *data {static_cast<const float*>(cubeVertices)};
+    constexpr bool staticDrawEnabled {true};
+    return BufferData{buffer, sizeof(cubeVertices), data, staticDrawEnabled};
 }()}
 {
     
@@ -43,10 +49,6 @@ lightSource {[this]() {
     VertexArray::createVertexArray(blockVao);
     VertexArray::bindVertexArray(blockVao);
     
-    // Create our vertex buffer and store the cube vertices data into it
-    uint32_t buffer {};
-    constexpr bool staticDrawEnabled {true};
-    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), static_cast<const float*>(cubeVertices), staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
 
     constexpr intptr_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
