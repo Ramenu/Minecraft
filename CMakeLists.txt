@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Directories to search for libraries
+link_directories(C:/Users/ramen/Clibrary/public)
 link_directories(C:/Users/ramen/Clibrary/public/OpenGL/lib)
 link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
 
@@ -43,6 +44,7 @@ add_executable(main
 
 # Compiler flags
 target_compile_options(main PRIVATE 
+-DGAME_BENCHMARK
 -fdiagnostics-color
 -Wall
 -Werror
@@ -85,9 +87,12 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
 # Include directories
-target_include_directories(main PUBLIC "./include")
-target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/OpenGL")
-target_include_directories(main PUBLIC "C:/Users/ramen/Clibrary/public/SFML")
+target_include_directories(main PUBLIC 
+"./include"
+"C:/Users/ramen/Clibrary/public/OpenGL"
+"C:/Users/ramen/Clibrary/public/SFML"
+"C:/Users/ramen/Clibrary/public"
+)
 
 
 # Link libraries
@@ -96,7 +101,8 @@ terminal
 glad
 glfw3
 sfml-system-3
-sfml-audio-3)
+sfml-audio-3
+timer)
 
 
 
