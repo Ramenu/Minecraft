@@ -2,8 +2,7 @@
 #include <iostream>
 extern "C" 
 {
-    #include <terminal.h> 
-    #include <color.h>
+    #include "color.h"
 }
 
 namespace GLError
