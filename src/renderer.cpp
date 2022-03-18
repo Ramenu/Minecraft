@@ -9,10 +9,10 @@
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
-        constexpr double fov {glm::radians(45.0f)};
+        constexpr double fov {glm::radians(45.0)};
         constexpr double aspectRatio {Window::width/Window::height}; 
-        constexpr double near {0.1f};
-        constexpr double far {100.0f};
+        constexpr double near {0.1};
+        constexpr double far {100.0};
         return glm::perspective(fov, aspectRatio, near, far);
     }()
 };
