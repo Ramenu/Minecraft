@@ -19,7 +19,7 @@ float Block::initBlockTextureCoordinates(BlockName block) const noexcept
 /**
  * Creates a block with the given name, loading its corresponding subtexture and initializing the block sounds. 
  */
-Block::Block(BlockName block, bool withSFX) : 
+Block::Block(BlockName block, bool withSFX) noexcept: 
 name {block}, 
 textureY {initBlockTextureCoordinates(name)}
 {
@@ -27,26 +27,12 @@ textureY {initBlockTextureCoordinates(name)}
         playBlockPlacementSound(name);
 }
 
-
-/**
- * Plays the block's sound on destruction.
- * Typically played when the player 
- * destroys a block. Not when the block's
- * destructor is being called!
- */
-void Block::playDestroyedSound() const
-{
-    playBlockBreakSound(name);
-}
-
 /**
  * Constructs a block at the given position.
  * Does not play SFX.
  */
-Block::Block(BlockName block, const glm::vec3 &blockPos) :
-position {blockPos},
+Block::Block(BlockName block, const glm::vec3 &pos) noexcept:
+position {pos},
 name {block},
 textureY {initBlockTextureCoordinates(block)}
 {}
-
-
