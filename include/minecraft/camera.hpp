@@ -4,34 +4,34 @@
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+constexpr float speed {2.5f};
+
 struct CameraSettings
 {
 	float yaw;
 	float pitch;
-	float speed;
 	float sensitivity;
-	float zoom;
 };
 
 class Camera
 {
     public:
 		Camera() = default;
-    	explicit Camera(const CameraSettings &cameraSettings);
+    	Camera(const CameraSettings &cameraSettings, const glm::vec3 &cameraPos);
 		~Camera() = default;
 		CameraSettings settings;
-		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
-		void updateCameraPos(double cursorX, double cursorY);
+		void updateCameraPos(double cursorX, double cursorY, const glm::vec3 &cameraPos);
 		inline glm::mat4 getView() const noexcept {return view;}
-		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}
 		inline glm::vec3 getCameraFront() const noexcept {return cameraFront;}
+		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}
 	private:
 		glm::vec3 cameraFront {0.0f, 0.0f, -1.0f};
-		glm::mat4 view {glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)};
-		glm::vec3 cameraRight;
 		glm::vec3 cameraUp {0.0f, 1.0f, 0.0f};
+		glm::vec3 cameraRight;
+		glm::mat4 view;
+		Line rayLine;
 	public:
-		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
+		Ray ray {rayLine};
 	
 };
 
