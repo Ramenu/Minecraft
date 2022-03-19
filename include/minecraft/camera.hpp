@@ -31,7 +31,7 @@ class Camera
 		glm::vec3 cameraRight;
 		glm::vec3 cameraUp {0.0f, 1.0f, 0.0f};
 	public:
-		Ray cameraRay {cameraPos, cameraFront, glm::vec3{0.0f, 0.0f, 1.0f}};
+		Ray cameraRay {cameraPos, cameraFront};
 	
 };
 
