@@ -12,7 +12,7 @@
  * Should be one of the first methods called
  * in the main function.
  */
-Game::Game(const char *windowTitle) 
+void initGame(const char *windowTitle) 
 {
     glfwInit();
     Window::initWindow(windowTitle);
@@ -32,7 +32,7 @@ Game::Game(const char *windowTitle)
  * infinite loop until the program
  * is terminated.
  */  
-void Game::runGame()
+void runGame()
 {
     double deltaTime {0.0}; // Time between current frame and last frame
     double lastFrame {0.0}; // Time of last frame
@@ -63,18 +63,11 @@ void Game::runGame()
         glfwPollEvents(); 
         Window::processKeyboardInput(deltaTime, renderer.playerCamera);
     }
+    // Free up remaining resources used by the game
+    Texture::deleteTextureAtlas();
+    Window::destroyWindow();
+    glfwTerminate();
     #ifdef GAME_BENCHMARK
         renderer.time.detailedDisplay();
     #endif
 }
-
-/**
- * Frees up remaining resources used by the game.
- */
-Game::~Game() noexcept
-{
-    Texture::deleteTextureAtlas();
-    Window::destroyWindow();
-    glfwTerminate();
-}
-
