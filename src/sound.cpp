@@ -14,13 +14,7 @@ static std::pair<SoundData, SoundData> blockSounds[2] {
  */
 void playBlockPlacementSound(BlockName block)
 {
-    using Block = BlockName;
-    switch (block)
-    {
-        default: /* Throw exception */ break;
-        case Block::Grass_Block: return blockSounds[0].first.audio.play(); 
-        case Block::Cobblestone_Block: return blockSounds[1].first.audio.play();
-    }
+    blockSounds[block].first.audio.play();
 }   
 
 /**
@@ -28,11 +22,5 @@ void playBlockPlacementSound(BlockName block)
  */
 void playBlockBreakSound(BlockName block)
 {
-    using Block = BlockName;
-    switch (block)
-    {
-        default: /* Throw exception */ break;
-        case Block::Grass_Block: return blockSounds[0].second.audio.play();
-        case Block::Cobblestone_Block: return blockSounds[1].second.audio.play(); 
-    }
+    blockSounds[block].second.audio.play();
 }
