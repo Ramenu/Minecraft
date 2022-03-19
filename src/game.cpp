@@ -35,11 +35,12 @@ void initGame(const char *windowTitle)
  */  
 void runGame()
 {
-    double deltaTime {0.0}; // Time between current frame and last frame
-    double lastFrame {0.0}; // Time of last frame
+    float deltaTime {0.0}; // Time between current frame and last frame
+    float lastFrame {0.0}; // Time of last frame
 
     constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
+
     Timer<std::milli> time;
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -48,7 +49,7 @@ void runGame()
     while (!glfwWindowShouldClose(Window::getWindow()))
     {
         time.start();
-        const double currentTime {glfwGetTime()};
+        const float currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -63,9 +64,11 @@ void runGame()
 
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        Window::processKeyboardInput(deltaTime, renderer.playerCamera);
+        Window::processKeyboardInput(deltaTime, renderer.cameraPos, 
+                                     renderer.playerCamera.getCameraFront(), renderer.playerCamera.getCameraRight());
         time.end();
     }
+
     // Free up remaining resources used by the game
     Texture::deleteTextureAtlas();
     Window::destroyWindow();
