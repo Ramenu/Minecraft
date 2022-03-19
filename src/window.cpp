@@ -10,18 +10,17 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(double deltaTime, Camera &camera) noexcept 
+    void processKeyboardInput(float deltaTime, glm::vec3 &cameraPos, const glm::vec3 &cameraFront, const glm::vec3 &cameraRight) noexcept 
     {
-        constexpr double speed {2.5};
-        camera.settings.speed = speed * deltaTime;
+        const float cameraSpeed = speed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.cameraPos += camera.settings.speed * camera.getCameraFront();
+            cameraPos += cameraSpeed * cameraFront;
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.cameraPos -= camera.settings.speed * camera.getCameraFront();
+            cameraPos -= cameraSpeed * cameraFront;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.cameraPos -= camera.settings.speed * camera.getCameraRight();
+            cameraPos -= cameraSpeed * cameraRight;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.cameraPos += camera.settings.speed * camera.getCameraRight();
+            cameraPos += cameraSpeed * cameraRight;
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
             renderWireframes();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
