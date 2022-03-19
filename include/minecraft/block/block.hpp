@@ -19,7 +19,7 @@ class Block
     private:
         BlockName name;
         float textureY {};
-        float initBlockTextureCoordinates(BlockName block) noexcept;
+        float initBlockTextureCoordinates(BlockName block) const noexcept;
 };
 
 #endif // BLOCK_HPP
