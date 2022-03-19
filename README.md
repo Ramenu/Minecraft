@@ -14,14 +14,10 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.6
+CLASSIC V1.61
 ------------
-- Face culling has been added for significant performance improvement, however this will only make the faces that arent facing the player not  render. This means that faces hidden by other blocks will still be rendered, which I plan to fix in the future.
-- Changed the C-style casts to more appropriate C++ casts
-- Removed some constants and replaced them with variables instead (for readability)
-- Updated the build system to check for memory leaks
-- Removed license from markdown
-
+- Removed the Game class as the instance didn't provide anything useful
+- Removed the switch statement as I realized the enums worked as an array indice as well
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
