@@ -5,7 +5,11 @@
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/audio/sound.hpp"
 #include <string>
+
+static uint32_t blockVao {};
+static BufferData vertexBuffer {};
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
@@ -23,8 +27,8 @@ const glm::mat4 Renderer::projection {[]{
  */
 Renderer::Renderer() : 
 playerCamera {[this](){
-    constexpr float yaw {90.0f}, pitch {0.0f}, speed {2.5f}, sensitivity {0.1f}, zoom {45.0};
-    return Camera{CameraSettings{yaw, pitch, speed, sensitivity, zoom}};
+    constexpr float yaw {90.0f}, pitch {0.0f}, sensitivity {0.1f};
+    return Camera{CameraSettings{yaw, pitch, sensitivity}, cameraPos};
 }()},
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 lightSource {[this]() {
@@ -36,12 +40,6 @@ lightSource {[this]() {
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     return Lighting{components, direction, position};
-}()},
-vertexBuffer {[this]() {
-    uint32_t buffer {};
-    const float *data {static_cast<const float*>(cubeVertices)};
-    constexpr bool staticDrawEnabled {true};
-    return BufferData{buffer, sizeof(cubeVertices), data, staticDrawEnabled};
 }()}
 {
     
@@ -49,6 +47,10 @@ vertexBuffer {[this]() {
     VertexArray::createVertexArray(blockVao);
     VertexArray::bindVertexArray(blockVao);
     
+    uint32_t buffer {};
+    const float *data {static_cast<const float*>(cubeVertices)};
+    constexpr bool staticDrawEnabled {true};
+    vertexBuffer = BufferData{buffer, sizeof(cubeVertices), data, staticDrawEnabled};
     Buffer::createBuffer(vertexBuffer);
 
     constexpr intptr_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
@@ -58,7 +60,7 @@ vertexBuffer {[this]() {
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
     cubeShader.useShader(); 
     cubeShader.setMat3("normalMatrix", normalMatrix);
-    cubeShader.setVec3("viewPos", playerCamera.cameraPos);
+    cubeShader.setVec3("viewPos", cameraPos);
     lightSource.shaderProgramLightSource(cubeShader);
 
     cubeShader.setInt("allTextures", 0);
@@ -94,14 +96,14 @@ Renderer::~Renderer() noexcept
  */
 bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
 {
-    const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
+    const float distance {glm::distance(blockCoords, cameraPos)};
     constexpr float playerReachableDistance {2.0f};
     if (distance <= playerReachableDistance)
     {
-        if (playerCamera.cameraRay.intersectsWith(blockCoords))
+        if (playerCamera.ray.intersectsWith(blockCoords))
         {
-            const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
-            const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), 
+            const float distanceBetween {glm::distance(playerCamera.ray.getRay(), blockCoords)};
+            const float nextBlock {glm::distance(playerCamera.ray.getRay(), 
                                    glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + strideToNextBlock})};
 
             return (distanceBetween <= strideToNextBlock && distanceBetween <= nextBlock);
@@ -113,9 +115,9 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
 /** 
  * Draws the selected block on the (X, Y, Z) position passed. 
  */
-void Renderer::drawBlock(Block &block) noexcept
+bool Renderer::drawBlock(Block &block) noexcept
 {
-    float ambient {block.blockMaterial.ambient};
+    float ambient {block.ambient};
     if (canHighlightBlock(block.position))
     {
         static int oldState = GLFW_RELEASE;
@@ -125,9 +127,8 @@ void Renderer::drawBlock(Block &block) noexcept
         // Destroy the block on click
         if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            block.playDestroyedSound();
-            block.isDestroyed = true;
-            return;
+            playBlockBreakSound(block.getName());
+            return false;
         }
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
@@ -145,6 +146,7 @@ void Renderer::drawBlock(Block &block) noexcept
 
     constexpr uint8_t verticesToBeDrawn {36};
     glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
+    return true;
 }
 
 /**
@@ -157,13 +159,8 @@ void Renderer::drawBlock(Block &block) noexcept
 void Renderer::drawAllBlocks() noexcept
 {
     for (size_t i {}; i < blocks.size(); i++)
-    {
-        drawBlock(blocks[i]);
-
-        // Check to see if the block was destroyed by the player, if so, remove it from the vector
-        if (blocks[i].isDestroyed)
+        if (!drawBlock(blocks[i]))
             blocks.erase(blocks.begin() + i);
-    }
 }
 
 /**
@@ -189,9 +186,9 @@ void Renderer::updateView()
 {
     double xPos, yPos;
     glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
-    playerCamera.updateCameraPos(xPos, yPos);
+    playerCamera.updateCameraPos(xPos, yPos, cameraPos);
     cubeShader.setMat4("view", playerCamera.getView());
-    cubeShader.setVec3("viewPos", playerCamera.cameraPos);
+    cubeShader.setVec3("viewPos", cameraPos);
     #if 0
         lightSource->lightShader.useShader();
         lightSource->lightShader.setMat4("view", playerCamera.view);
