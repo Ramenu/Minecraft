@@ -28,16 +28,6 @@ textureY {initBlockTextureCoordinates(name)}
 }
 
 
-/**
- * Plays the block's sound on destruction.
- * Typically played when the player 
- * destroys a block. Not when the block's
- * destructor is being called!
- */
-void Block::playDestroyedSound() const
-{
-    playBlockBreakSound(name);
-}
 
 /**
  * Constructs a block at the given position.

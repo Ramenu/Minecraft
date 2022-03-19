@@ -2,7 +2,7 @@
 #define BLOCK_HPP
 
 #include "minecraft/block/blockname.hpp"
-#include "minecraft/block/material.hpp"
+#include "glm/vec3.hpp"
 
 
 class Block
@@ -11,9 +11,8 @@ class Block
         Block(BlockName block, bool withSFX);
         Block(BlockName block, const glm::vec3 &blockPos);
         glm::vec3 position {};
-        bool isDestroyed {false};
         void playDestroyedSound() const;
-        Material blockMaterial;
+        float ambient {1.2f};
         inline BlockName getName() const noexcept {return name;}
         inline float getTextureID() const noexcept {return textureY;}
     private:

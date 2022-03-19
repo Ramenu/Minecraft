@@ -1,12 +1,13 @@
 #include "minecraft/camera.hpp"
 
+constexpr float speed {2.5f};
 /** 
  * Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
  * The other members are automatically initialized upon construction. 
  */  
 Camera::Camera(const CameraSettings &cameraSettings) :
 settings {cameraSettings},
-cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * settings.speed} 
+cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * speed} 
 {
     
 }

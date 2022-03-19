@@ -6,6 +6,7 @@
 #include "minecraft/buffer.hpp"
 #include "minecraft/math/glmath.hpp"
 #include <string>
+#include "minecraft/audio/sound.hpp"
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
@@ -23,8 +24,8 @@ const glm::mat4 Renderer::projection {[]{
  */
 Renderer::Renderer() : 
 playerCamera {[this](){
-    constexpr float yaw {90.0f}, pitch {0.0f}, speed {2.5f}, sensitivity {0.1f}, zoom {45.0};
-    return Camera{CameraSettings{yaw, pitch, speed, sensitivity, zoom}};
+    constexpr float yaw {90.0f}, pitch {0.0f}, sensitivity {0.1f};
+    return Camera{CameraSettings{yaw, pitch, sensitivity}};
 }()},
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 lightSource {[this]() {
@@ -113,9 +114,9 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
 /** 
  * Draws the selected block on the (X, Y, Z) position passed. 
  */
-void Renderer::drawBlock(Block &block) noexcept
+bool Renderer::drawBlock(Block &block) noexcept
 {
-    float ambient {block.blockMaterial.ambient};
+    float ambient {block.ambient};
     if (canHighlightBlock(block.position))
     {
         static int oldState = GLFW_RELEASE;
@@ -125,9 +126,8 @@ void Renderer::drawBlock(Block &block) noexcept
         // Destroy the block on click
         if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            block.playDestroyedSound();
-            block.isDestroyed = true;
-            return;
+            playBlockBreakSound(block.getName());
+            return false;
         }
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
@@ -145,6 +145,7 @@ void Renderer::drawBlock(Block &block) noexcept
 
     constexpr uint8_t verticesToBeDrawn {36};
     glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
+    return true;
 }
 
 /**
@@ -157,13 +158,8 @@ void Renderer::drawBlock(Block &block) noexcept
 void Renderer::drawAllBlocks() noexcept
 {
     for (size_t i {}; i < blocks.size(); i++)
-    {
-        drawBlock(blocks[i]);
-
-        // Check to see if the block was destroyed by the player, if so, remove it from the vector
-        if (blocks[i].isDestroyed)
+        if (!drawBlock(blocks[i]))
             blocks.erase(blocks.begin() + i);
-    }
 }
 
 /**

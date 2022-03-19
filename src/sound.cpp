@@ -11,6 +11,8 @@ static std::pair<SoundData, SoundData> blockSounds[2] {
 
 /**
  * Plays the given block corresponding placement sound. 
+ * This function as it is will not work with blocks
+ * that share same sounds.
  */
 void playBlockPlacementSound(BlockName block)
 {
@@ -19,6 +21,8 @@ void playBlockPlacementSound(BlockName block)
 
 /**
  * Plays the given block's corresponding deletion sound. 
+ * This function as it is will not work with blocks
+ * that share same sounds.
  */
 void playBlockBreakSound(BlockName block)
 {

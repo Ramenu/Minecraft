@@ -37,8 +37,8 @@ void initGame(const char *windowTitle)
  */  
 void runGame()
 {
-    double deltaTime {0.0}; // Time between current frame and last frame
-    double lastFrame {0.0}; // Time of last frame
+    float deltaTime {0.0}; // Time between current frame and last frame
+    float lastFrame {0.0}; // Time of last frame
 
     constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
@@ -54,7 +54,7 @@ void runGame()
         #ifdef GAME_BENCHMARK
             time.start();
         #endif
-        const double currentTime {glfwGetTime()};
+        const float currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -74,6 +74,7 @@ void runGame()
             time.end();
         #endif
     }
+
     // Free up remaining resources used by the game
     Texture::deleteTextureAtlas();
     Window::destroyWindow();

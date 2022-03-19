@@ -39,7 +39,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     
     // Compile vertex shader
     const std::string vertexShaderCode {vertexShaderStream.str()};
-    const char* cstrVertexShaderCode {vertexShaderCode.c_str()};
+    const char *cstrVertexShaderCode {vertexShaderCode.c_str()};
     const uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
@@ -47,7 +47,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
 
     // Compile fragment shader
     const std::string fragmentShaderCode {fragmentShaderStream.str()};
-    const char* cstrFragmentShaderCode {fragmentShaderCode.c_str()};
+    const char *cstrFragmentShaderCode {fragmentShaderCode.c_str()};
     const uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);

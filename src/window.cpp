@@ -10,18 +10,18 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(double deltaTime, Camera &camera) noexcept 
+    void processKeyboardInput(float deltaTime, Camera &camera) noexcept 
     {
-        constexpr double speed {2.5};
-        camera.settings.speed = speed * deltaTime;
+        constexpr float speedRate {2.5f};
+        float speed {speedRate * deltaTime};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.cameraPos += camera.settings.speed * camera.getCameraFront();
+            camera.cameraPos += speed * camera.getCameraFront();
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.cameraPos -= camera.settings.speed * camera.getCameraFront();
+            camera.cameraPos -= speed * camera.getCameraFront();
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.cameraPos -= camera.settings.speed * camera.getCameraRight();
+            camera.cameraPos -= speed * camera.getCameraRight();
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.cameraPos += camera.settings.speed * camera.getCameraRight();
+            camera.cameraPos += speed * camera.getCameraRight();
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
             renderWireframes();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

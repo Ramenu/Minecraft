@@ -8,7 +8,7 @@ namespace Window
 {
     extern GLFWwindow *loadWindow(GLFWwindow *window, const char &title) noexcept;
     extern void initWindow(const char *windowName) noexcept;
-    extern void processKeyboardInput(double deltaTime, Camera &camera) noexcept; 
+    extern void processKeyboardInput(float deltaTime, Camera &camera) noexcept; 
     extern void renderWireframes() noexcept;
     extern void destroyWindow() noexcept;
     extern GLFWwindow *getWindow() noexcept;

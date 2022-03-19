@@ -11,7 +11,7 @@ class Renderer
     public:
         Renderer();
         ~Renderer() noexcept;
-        void drawBlock(Block &block) noexcept;
+        bool drawBlock(Block &block) noexcept;
         void drawAllBlocks() noexcept;
         void drawLightSource();
         void updateView();
