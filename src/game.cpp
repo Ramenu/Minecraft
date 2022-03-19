@@ -5,6 +5,7 @@
 #include "minecraft/glerror.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/gfx/texture.hpp"
+#include "timer.hpp"
 
 
 /**
@@ -39,13 +40,14 @@ void runGame()
 
     constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
-
+    Timer<std::milli> time;
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
     {
+        time.start();
         const double currentTime {glfwGetTime()};
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
@@ -62,12 +64,13 @@ void runGame()
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
         Window::processKeyboardInput(deltaTime, renderer.playerCamera);
+        time.end();
     }
     // Free up remaining resources used by the game
     Texture::deleteTextureAtlas();
     Window::destroyWindow();
     glfwTerminate();
     #ifdef GAME_BENCHMARK
-        renderer.time.detailedDisplay();
+        time.detailedDisplay();
     #endif
 }
