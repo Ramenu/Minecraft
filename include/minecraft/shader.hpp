@@ -20,9 +20,7 @@ class Shader
         inline uint32_t getShader() const noexcept {return shaderProgram;}
     private:
         uint32_t shaderProgram;
-        const char *vertexShaderPath {" "};
-        const char *fragmentShaderPath {" "};
-        void checkShaderCompilationErrors(const uint32_t &shader, int shaderType) const noexcept;
+        void checkShaderCompilationErrors(const uint32_t &shader, int shaderType, const char *shaderPath) const noexcept;
         void checkLinkageErrors() const noexcept;
 };
 
