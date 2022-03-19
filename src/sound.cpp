@@ -14,7 +14,7 @@ static std::pair<SoundData, SoundData> blockSounds[2] {
  * This function as it is will not work with blocks
  * that share same sounds.
  */
-void playBlockPlacementSound(BlockName block)
+void playBlockPlacementSound(BlockName block) noexcept
 {
     blockSounds[block].first.audio.play();
 }   
@@ -24,7 +24,7 @@ void playBlockPlacementSound(BlockName block)
  * This function as it is will not work with blocks
  * that share same sounds.
  */
-void playBlockBreakSound(BlockName block)
+void playBlockBreakSound(BlockName block) noexcept
 {
     blockSounds[block].second.audio.play();
 }

@@ -16,11 +16,11 @@ class Camera
 {
     public:
 		Camera() = default;
-    	Camera(const CameraSettings &cameraSettings);
+    	Camera(const CameraSettings &cameraSettings) noexcept;
 		~Camera() = default;
 		CameraSettings settings;
 		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
-		void updateCameraPos(double cursorX, double cursorY);
+		void updateCameraPos(double cursorX, double cursorY) noexcept;
 		inline glm::mat4 getView() const noexcept {return view;}
 		inline glm::vec3 getCameraFront() const noexcept {return cameraFront;}
 		inline glm::vec3 getCameraRight() const noexcept {return cameraRight;}

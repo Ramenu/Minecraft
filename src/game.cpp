@@ -15,7 +15,7 @@
  * Should be one of the first methods called
  * in the main function.
  */
-void initGame(const char *windowTitle) 
+void initGame(const char *windowTitle) noexcept
 {
     glfwInit();
     Window::initWindow(windowTitle);
@@ -35,7 +35,7 @@ void initGame(const char *windowTitle)
  * infinite loop until the program
  * is terminated.
  */  
-void runGame()
+void runGame() noexcept
 {
     float deltaTime {0.0}; // Time between current frame and last frame
     float lastFrame {0.0}; // Time of last frame

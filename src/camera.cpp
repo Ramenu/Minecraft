@@ -5,7 +5,7 @@ constexpr float speed {2.5f};
  * Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
  * The other members are automatically initialized upon construction. 
  */  
-Camera::Camera(const CameraSettings &cameraSettings) :
+Camera::Camera(const CameraSettings &cameraSettings) noexcept :
 settings {cameraSettings},
 cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * speed} 
 {
@@ -18,7 +18,7 @@ cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * speed}
  * Parameters take the position of the mouse's 
  * x-position and y-position.
  */
-void Camera::updateCameraPos(const double cursorX, const double cursorY)
+void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcept
 {
 	const float cosPitch {cosf(glm::radians(settings.pitch))};
 

@@ -3,7 +3,7 @@
 
 #include "minecraft/block/blockname.hpp"
 
-extern void playBlockPlacementSound(BlockName block);
-extern void playBlockBreakSound(BlockName block);
+extern void playBlockPlacementSound(BlockName block) noexcept;
+extern void playBlockBreakSound(BlockName block) noexcept;
 
 #endif // SOUND_HPP

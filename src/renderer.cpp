@@ -22,7 +22,7 @@ const glm::mat4 Renderer::projection {[]{
  * Initializes the shaders, blocks and their positions, as well as the 
  * vertex buffer data.
  */
-Renderer::Renderer() : 
+Renderer::Renderer() noexcept : 
 playerCamera {[this](){
     constexpr float yaw {90.0f}, pitch {0.0f}, sensitivity {0.1f};
     return Camera{CameraSettings{yaw, pitch, sensitivity}};
@@ -93,7 +93,7 @@ Renderer::~Renderer() noexcept
  * Returns true if the block located at 'blockCoords' intersects with the 
  * camera ray. 
  */
-bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const
+bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
 {
     const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
     constexpr float playerReachableDistance {2.0f};
@@ -132,9 +132,7 @@ bool Renderer::drawBlock(Block &block) noexcept
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
             constexpr bool playSFX = true;
-            Block blockPlaced {BlockName::Cobblestone_Block, playSFX};
-            blockPlaced.position = block.position + glm::vec3{0.0f, 1.0f, 0.0f};
-            blocks.emplace_back(blockPlaced);
+            blocks.emplace_back(Block{BlockName::Cobblestone_Block, playSFX, block.position + glm::vec3{0.0f, 1.0f, 0.0f}});
         }
         oldState = newState;
     }
@@ -167,7 +165,7 @@ void Renderer::drawAllBlocks() noexcept
  * used for debugging or testing. It does not make 
  * sense to draw the light source since it is a directional light. 
  */
-void Renderer::drawLightSource()
+void Renderer::drawLightSource() noexcept
 {
     Lighting::bindLightVAO();
     lightSource.lightShader.useShader();
@@ -181,7 +179,7 @@ void Renderer::drawLightSource()
  * and updates all the shaders to the updated 
  * position of the camera. 
  */
-void Renderer::updateView()
+void Renderer::updateView() noexcept
 {
     double xPos, yPos;
     glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);

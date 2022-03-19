@@ -16,15 +16,15 @@ namespace Texture
 {
     static uint32_t textureAtlas;
 
-    uint32_t getTextureAtlas() {return textureAtlas;}
+    uint32_t getTextureAtlas() noexcept {return textureAtlas;}
 
-    void initTextureAtlas()
+    void initTextureAtlas() noexcept
     {
         glGenTextures(1, &textureAtlas);
         createTexture("textures/textureatlas.jpg", textureAtlas);
     }
 
-    void deleteTextureAtlas()
+    void deleteTextureAtlas() noexcept
     {
         glDeleteTextures(1, &textureAtlas);
     }
@@ -33,7 +33,7 @@ namespace Texture
      * Creates a texture from the filepath given with 
      * the default wrapping and filtering configurations. 
      */
-    void createTexture(const char *filePath, uint32_t &texture)
+    void createTexture(const char *filePath, uint32_t &texture) noexcept
     {
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -52,7 +52,7 @@ namespace Texture
      * Loads the texture from the file path given.
      * If unsuccessful, the program will be terminated.
      */
-    void loadTexture(const char *texturePath)
+    void loadTexture(const char *texturePath) noexcept
     {
         const ImageData img {loadImage(texturePath)};
         if (fs::path(texturePath).extension() == ".jpg")
@@ -67,7 +67,7 @@ namespace Texture
      * the program. This function has various checks to make sure the path passed
      * is valid (e.g. making sure it exists and making sure it is a supported image format).
      */
-    [[nodiscard]] ImageData loadImage(const char *imagePath) 
+    [[nodiscard]] ImageData loadImage(const char *imagePath) noexcept 
     {
         if (fs::exists(imagePath))
         {

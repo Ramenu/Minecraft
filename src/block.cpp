@@ -19,7 +19,7 @@ float Block::initBlockTextureCoordinates(BlockName block) const noexcept
 /**
  * Creates a block with the given name, loading its corresponding subtexture and initializing the block sounds. 
  */
-Block::Block(BlockName block, bool withSFX) : 
+Block::Block(BlockName block, bool withSFX) noexcept : 
 name {block}, 
 textureY {initBlockTextureCoordinates(name)}
 {
@@ -33,10 +33,13 @@ textureY {initBlockTextureCoordinates(name)}
  * Constructs a block at the given position.
  * Does not play SFX.
  */
-Block::Block(BlockName block, const glm::vec3 &blockPos) :
+Block::Block(BlockName block, bool withSFX, const glm::vec3 &blockPos) noexcept :
 position {blockPos},
 name {block},
 textureY {initBlockTextureCoordinates(block)}
-{}
+{
+    if (withSFX)
+        playBlockPlacementSound(name);
+}
 
 

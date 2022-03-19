@@ -8,10 +8,9 @@
 class Block
 {
     public:
-        Block(BlockName block, bool withSFX);
-        Block(BlockName block, const glm::vec3 &blockPos);
+        Block(BlockName block, bool withSFX) noexcept;
+        Block(BlockName block, bool withSFX, const glm::vec3 &blockPos) noexcept;
         glm::vec3 position {};
-        void playDestroyedSound() const;
         float ambient {1.2f};
         inline BlockName getName() const noexcept {return name;}
         inline float getTextureID() const noexcept {return textureY;}

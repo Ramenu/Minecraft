@@ -10,32 +10,21 @@
  * If there are any errors during compilation or linking then 
  * it will print them to stderr. 
  */
-Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
+Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource) noexcept
 {
 
     std::stringstream vertexShaderStream, fragmentShaderStream;
     std::ifstream vertexShaderFile, fragmentShaderFile;
 
-    try
-    {
-        // Set exceptions to be thrown
-        vertexShaderFile.exceptions(std::ios::failbit | std::ifstream::failbit);
-        fragmentShaderFile.exceptions(std::ios::failbit | std::ifstream::failbit);
+    vertexShaderFile.open(vertexShaderSource);
+    fragmentShaderFile.open(fragmentShaderSource);
 
-        vertexShaderFile.open(vertexShaderSource);
-        fragmentShaderFile.open(fragmentShaderSource);
+    // Read file contents into the string streams
+    vertexShaderStream << vertexShaderFile.rdbuf();
+    fragmentShaderStream << fragmentShaderFile.rdbuf();
 
-        // Read file contents into the string streams
-        vertexShaderStream << vertexShaderFile.rdbuf();
-        fragmentShaderStream << fragmentShaderFile.rdbuf();
-
-        vertexShaderFile.close();
-        fragmentShaderFile.close();
-    }
-    catch (const std::ifstream::failure &e)
-    {
-        GLError::error_message(std::string{"Shader compilation failed:\n" + std::string{e.what()}});
-    }
+    vertexShaderFile.close();
+    fragmentShaderFile.close();
     
     // Compile vertex shader
     const std::string vertexShaderCode {vertexShaderStream.str()};

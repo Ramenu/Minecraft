@@ -8,7 +8,7 @@
 class Shader
 {
     public:
-        Shader(const char *vertexShaderSource, const char *fragmentShaderSource);
+        Shader(const char *vertexShaderSource, const char *fragmentShaderSource) noexcept;
         inline ~Shader() noexcept {glDeleteProgram(shaderProgram);}
         inline void useShader() const noexcept {glUseProgram(shaderProgram);}
         inline void setMat4(const char *name, const glm::mat4 &matrix) const noexcept {glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);}

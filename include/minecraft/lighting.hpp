@@ -19,7 +19,7 @@ class Lighting
     public:
         static void initLightVAO() noexcept;
         static void bindLightVAO() noexcept;
-        Lighting(const LightComponents &componentsOfLight, const glm::vec3 &direction, const glm::vec3 &position);
+        Lighting(const LightComponents &componentsOfLight, const glm::vec3 &direction, const glm::vec3 &position) noexcept;
         ~Lighting() = default;
 		static void removeAllLights() noexcept;
         void shaderProgramLightSource(const Shader &shader) const noexcept;
