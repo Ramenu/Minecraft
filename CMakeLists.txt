@@ -31,7 +31,6 @@ add_executable(main
 ./src/glmath.cpp
 ./src/lighting.cpp
 ./src/main.cpp
-./src/ray.cpp
 ./src/renderer.cpp
 ./src/shader.cpp
 ./src/sound.cpp
@@ -44,7 +43,6 @@ add_executable(main
 
 # Compiler flags
 target_compile_options(main PRIVATE 
--DGAME_BENCHMARK
 -fdiagnostics-color
 -Wall
 -Werror
