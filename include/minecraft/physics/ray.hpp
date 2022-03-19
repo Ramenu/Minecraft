@@ -7,15 +7,22 @@
 class Ray
 {
     public:
-        Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength);
-        void updateRay();
+        inline Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) :
+            origin {rayOrigin},
+            direction {rayDirection} {}
+        inline void updateRay() noexcept {ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;}
         inline glm::vec3 getRay() const {return ray;}
         glm::vec3 origin;
         glm::vec3 direction;
-        bool intersectsWith(const glm::vec3 &b) const noexcept;
+        inline bool intersectsWith(const glm::vec3 &b) const noexcept
+        {
+            constexpr float blockWidth {0.5f};
+            return (
+                (ray.x >= b.x - blockWidth && ray.x < b.x) &&
+                (ray.y >= b.y - blockWidth && ray.y < b.y + blockWidth));
+        }
     private:
         glm::vec3 ray {};
-        glm::vec3 length;
 };
 
 #endif // RAY_HPP
