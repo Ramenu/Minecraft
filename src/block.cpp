@@ -6,7 +6,7 @@
  * Initializes the block's Y
  * coordinates in the texture atlas.
  */
-float Block::initBlockTextureCoordinates(BlockName block) noexcept
+float Block::initBlockTextureCoordinates(BlockName block) const noexcept
 {
     switch (block)
     {
