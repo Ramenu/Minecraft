@@ -16,7 +16,7 @@ class Block
         inline float getTextureID() const noexcept {return textureY;}
     private:
         BlockSoundID id;
-        float textureY {};
+        float textureY;
         float initBlockTextureCoordinates(BlockName block) noexcept;
 };
 

@@ -99,10 +99,10 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
     constexpr float playerReachableDistance {2.0f};
     if (distance <= playerReachableDistance)
     {
-        if (playerCamera.cameraRay.intersectsWith(blockCoords))
+        if (playerCamera.ray.intersectsWith(blockCoords))
         {
-            const float distanceBetween {glm::distance(playerCamera.cameraRay.getRay(), blockCoords)};
-            const float nextBlock {glm::distance(playerCamera.cameraRay.getRay(), 
+            const float distanceBetween {glm::distance(playerCamera.ray.getRay(), blockCoords)};
+            const float nextBlock {glm::distance(playerCamera.ray.getRay(), 
                                    glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + strideToNextBlock})};
 
             return (distanceBetween <= strideToNextBlock && distanceBetween <= nextBlock);

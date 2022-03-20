@@ -30,7 +30,7 @@ class Camera
 		glm::vec3 cameraRight;
 		glm::mat4 view;
 	public:
-		Ray cameraRay {cameraPos, cameraFront};
+		Ray ray {cameraPos, cameraFront};
 	
 };
 
