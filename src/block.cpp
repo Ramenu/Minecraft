@@ -6,12 +6,16 @@
  * Initializes the block's Y
  * coordinates in the texture atlas.
  */
-float Block::initBlockTextureCoordinates(BlockName block) const noexcept
+float Block::initBlockTextureCoordinates(BlockName block) noexcept
 {
     switch (block)
     {
-        case BlockName::Grass_Block: return 0.0f;
-        case BlockName::Cobblestone_Block: return (1.0f / Texture::atlasHeight);
+        case BlockName::Grass_Block: 
+            id = BlockSoundID::Grass_Block;
+            return 0.0f;
+        case BlockName::Cobblestone_Block: 
+            id = BlockSoundID::Cobblestone_Block;
+            return (1.0f / Texture::atlasHeight);
     }
     exit(EXIT_FAILURE);
 }
@@ -20,11 +24,10 @@ float Block::initBlockTextureCoordinates(BlockName block) const noexcept
  * Creates a block with the given name, loading its corresponding subtexture and initializing the block sounds. 
  */
 Block::Block(BlockName block, bool withSFX) noexcept : 
-name {block}, 
-textureY {initBlockTextureCoordinates(name)}
+textureY {initBlockTextureCoordinates(block)}
 {
     if (withSFX)
-        playBlockPlacementSound(name);
+        playBlockPlacementSound(id);
 }
 
 
@@ -35,11 +38,10 @@ textureY {initBlockTextureCoordinates(name)}
  */
 Block::Block(BlockName block, bool withSFX, const glm::vec3 &blockPos) noexcept :
 position {blockPos},
-name {block},
 textureY {initBlockTextureCoordinates(block)}
 {
     if (withSFX)
-        playBlockPlacementSound(name);
+        playBlockPlacementSound(id);
 }
 
 
