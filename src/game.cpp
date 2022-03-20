@@ -72,7 +72,7 @@ void runGame() noexcept
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        Window::processKeyboardInput(deltaTime, renderer.playerCamera);
+        Window::processKeyboardInput(deltaTime, renderer.playerCamera.direction, renderer.playerCamera.cameraPos);
         #ifdef GAME_BENCHMARK
             time.end();
         #endif
