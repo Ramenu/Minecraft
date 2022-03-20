@@ -6,7 +6,6 @@
 
 namespace Window
 {
-    static GLFWwindow *window;
     /**
      * Handles keyboard input.
      */
@@ -86,8 +85,6 @@ namespace Window
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         stbi_image_free(icon[0].pixels);
     }
-
-    GLFWwindow *getWindow() noexcept {return window;}
 }
 
 

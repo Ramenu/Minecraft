@@ -22,7 +22,7 @@ void initGame(const char *windowTitle) noexcept
 {
     glfwInit();
     Window::initWindow(windowTitle);
-    glfwMakeContextCurrent(Window::getWindow());
+    glfwMakeContextCurrent(Window::window);
     
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         GLError::error_message("Failed to initialize GLAD");
@@ -52,7 +52,7 @@ void runGame() noexcept
     glEnable(GL_CULL_FACE);
     
     // Main game loop
-    while (!glfwWindowShouldClose(Window::getWindow()))
+    while (!glfwWindowShouldClose(Window::window))
     {
         #ifdef GAME_BENCHMARK
             time.start();
@@ -68,7 +68,7 @@ void runGame() noexcept
         renderer.updateView();
         renderer.drawAllBlocks();
 
-        glfwSwapBuffers(Window::getWindow()); // Swap color buffer
+        glfwSwapBuffers(Window::window); // Swap color buffer
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 

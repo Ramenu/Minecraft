@@ -120,11 +120,11 @@ bool Renderer::drawBlock(Block &block) noexcept
     if (canHighlightBlock(block.position))
     {
         static int oldState = GLFW_RELEASE;
-        const int newState = glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_RIGHT);
+        const int newState = glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_RIGHT);
         ambient = 1.8f;
 
         // Destroy the block on click
-        if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
             Sound::playBlockBreakSound(block.getSoundID());
             return false;
@@ -182,7 +182,7 @@ void Renderer::drawLightSource() noexcept
 void Renderer::updateView() noexcept
 {
     double xPos, yPos;
-    glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
+    glfwGetCursorPos(Window::window, &xPos, &yPos);
     playerCamera.updateCameraPos(xPos, yPos);
     cubeShader.setMat4("view", playerCamera.getView());
     cubeShader.setVec3("viewPos", playerCamera.cameraPos);
