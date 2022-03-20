@@ -33,7 +33,6 @@ add_executable(main
 ./src/main.cpp
 ./src/renderer.cpp
 ./src/shader.cpp
-./src/sound.cpp
 ./src/sounddata.cpp
 ./src/texture.cpp
 ./src/vertexarray.cpp
