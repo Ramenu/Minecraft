@@ -1,17 +1,5 @@
 #include "minecraft/camera.hpp"
 
-constexpr float speed {2.5f};
-/** 
- * Initializes the scalar values such as yaw, pitch, speed, sensitivity, and zoom.
- * The other members are automatically initialized upon construction. 
- */  
-Camera::Camera(const CameraSettings &cameraSettings) noexcept :
-settings {cameraSettings},
-cameraRight {glm::normalize(glm::cross(cameraFront, cameraUp)) * speed} 
-{
-    
-}
-
 
 /** 
  * Updates the position of where the camera is looking.
@@ -23,15 +11,15 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
 	const float cosPitch {cosf(glm::radians(settings.pitch))};
 
     // Calculate a 3D vector given the yaw and pitch
-	glm::vec3 direction {
+	glm::vec3 updatedDirection {
         cosf(glm::radians(settings.yaw)) * cosPitch,
         sinf(glm::radians(settings.pitch)),
         sinf(glm::radians(settings.yaw)) * cosPitch
     };
 
-	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
-	cameraFront = glm::normalize(direction);
+	view = glm::lookAt(cameraPos, cameraPos + direction.front, direction.up);
+	direction.right = glm::normalize(glm::cross(direction.front, direction.up));
+	direction.front = glm::normalize(updatedDirection);
 
     static double lastX {}, lastY {};
     static bool firstMouseMovement = true;
@@ -73,7 +61,7 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
 
 
     ray.origin = cameraPos;
-    ray.direction = cameraFront;
+    ray.direction = direction.front;
     #if 1
         ray.updateRay();
     #endif
