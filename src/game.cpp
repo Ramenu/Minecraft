@@ -1,4 +1,5 @@
 #define GLFW_INCLUDE_NONE
+#define GAME_BENCHMARK
 
 #include "minecraft/game.hpp"
 #include "minecraft/renderer.hpp"
@@ -9,6 +10,7 @@
     #include "timer.hpp"
 #endif
 #include <iostream>
+#include <string>
 
 
 /**
@@ -38,8 +40,8 @@ void initGame(const char *windowTitle) noexcept
  */  
 void runGame() noexcept
 {
-    float deltaTime {0.0}; // Time between current frame and last frame
-    float lastFrame {0.0}; // Time of last frame
+    double deltaTime {0.0}; // Time between current frame and last frame
+    double lastFrame {0.0}; // Time of last frame
 
     constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
@@ -48,10 +50,6 @@ void runGame() noexcept
     #endif
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-    size_t frameCount {};
-    const double timeStart {glfwGetTime()};
-    std::vector<double> times;
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
@@ -59,7 +57,7 @@ void runGame() noexcept
         #ifdef GAME_BENCHMARK
             time.start();
         #endif
-        const float currentTime = glfwGetTime();
+        const double currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -71,21 +69,15 @@ void runGame() noexcept
         renderer.drawAllBlocks();
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
-
+        
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
         Window::processKeyboardInput(deltaTime, renderer.playerCamera);
         #ifdef GAME_BENCHMARK
             time.end();
         #endif
-        ++frameCount;
-        times.emplace_back(frameCount / (glfwGetTime() - timeStart));
     }
 
-    double totalTime {};
-    for (const auto &i: times) totalTime += i;
-    // Show average FPS 
-    std::cout << "\nAverage FPS: " << totalTime / times.size() << '\n';
     // Free up remaining resources used by the game
     Texture::deleteTextureAtlas();
     Window::destroyWindow();
