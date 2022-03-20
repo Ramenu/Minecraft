@@ -8,6 +8,7 @@
 #ifdef GAME_BENCHMARK
     #include "timer.hpp"
 #endif
+#include <iostream>
 
 
 /**
@@ -47,6 +48,10 @@ void runGame() noexcept
     #endif
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    size_t frameCount {};
+    const double timeStart {glfwGetTime()};
+    std::vector<double> times;
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
@@ -73,8 +78,14 @@ void runGame() noexcept
         #ifdef GAME_BENCHMARK
             time.end();
         #endif
+        ++frameCount;
+        times.emplace_back(frameCount / (glfwGetTime() - timeStart));
     }
 
+    double totalTime {};
+    for (const auto &i: times) totalTime += i;
+    // Show average FPS 
+    std::cout << "\nAverage FPS: " << totalTime / times.size() << '\n';
     // Free up remaining resources used by the game
     Texture::deleteTextureAtlas();
     Window::destroyWindow();
