@@ -10,10 +10,10 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(float deltaTime, Camera &camera) noexcept 
+    void processKeyboardInput(double deltaTime, Camera &camera) noexcept 
     {
         constexpr float speedRate {2.5f};
-        float speed {speedRate * deltaTime};
+        float speed {speedRate * static_cast<float>(deltaTime)};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             camera.cameraPos += speed * camera.getCameraFront();
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
