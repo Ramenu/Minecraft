@@ -64,7 +64,7 @@ target_compile_options(main PRIVATE
 -Winvalid-pch
 -Wlogical-op
 -Wdisabled-optimization
--fexceptions
+-fno-exceptions
 )
 
 
