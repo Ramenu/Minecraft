@@ -11,20 +11,16 @@ static std::pair<SoundData, SoundData> blockSounds[2] {
 
 /**
  * Plays the given block corresponding placement sound. 
- * This function as it is will not work with blocks
- * that share same sounds.
  */
-void playBlockPlacementSound(BlockName block) noexcept
+void playBlockPlacementSound(BlockSoundID id) noexcept
 {
-    blockSounds[block].first.audio.play();
+    blockSounds[id].first.audio.play();
 }   
 
 /**
  * Plays the given block's corresponding deletion sound. 
- * This function as it is will not work with blocks
- * that share same sounds.
  */
-void playBlockBreakSound(BlockName block) noexcept
+void playBlockBreakSound(BlockSoundID id) noexcept
 {
-    blockSounds[block].second.audio.play();
+    blockSounds[id].second.audio.play();
 }
