@@ -91,6 +91,7 @@ target_include_directories(main PUBLIC
 "C:/Users/ramen/Clibrary/public"
 )
 
+target_precompile_headers(main PUBLIC include/minecraft/audio/sound.hpp)
 
 # Link libraries
 target_link_libraries(main PUBLIC 
