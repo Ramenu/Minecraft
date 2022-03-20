@@ -27,7 +27,7 @@ Block::Block(BlockName block, bool withSFX) noexcept :
 textureY {initBlockTextureCoordinates(block)}
 {
     if (withSFX)
-        playBlockPlacementSound(id);
+        Sound::playBlockPlacementSound(id);
 }
 
 
@@ -41,7 +41,9 @@ position {blockPos},
 textureY {initBlockTextureCoordinates(block)}
 {
     if (withSFX)
-        playBlockPlacementSound(id);
+        Sound::playBlockPlacementSound(id);
 }
+
+
 
 

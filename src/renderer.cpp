@@ -126,7 +126,7 @@ bool Renderer::drawBlock(Block &block) noexcept
         // Destroy the block on click
         if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            playBlockBreakSound(block.getSoundID());
+            Sound::playBlockBreakSound(block.getSoundID());
             return false;
         }
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
