@@ -14,7 +14,7 @@ float Block::initBlockTextureCoordinates(BlockName block) noexcept
             id = BlockSoundID::Grass_Block;
             return 0.0f;
         case BlockName::Cobblestone_Block: 
-            id = BlockSoundID::Cobblestone_Block;
+            id = BlockSoundID::Stone_Block;
             return (1.0f / Texture::atlasHeight);
     }
     exit(EXIT_FAILURE);
