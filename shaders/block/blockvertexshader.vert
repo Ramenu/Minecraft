@@ -10,9 +10,12 @@ out vec3 FragPos;
 
 uniform mat4 model;
 uniform mat4 view;
-uniform mat4 projection;
 uniform mat3 normalMatrix;
 uniform float textureY;
+layout (std140, binding = 0) uniform Matrices
+{
+    uniform mat4 projection;
+};
 
 void main()
 {
