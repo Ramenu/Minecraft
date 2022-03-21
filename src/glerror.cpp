@@ -13,7 +13,7 @@ namespace GLError
      * should only be called if the program 
      * cannot recover from the error in any way.
      */
-    void error_message(std::string_view error)
+    void error_message(std::string_view error) noexcept
     {
         std::cerr << COLOR_RED << "\nFATAL ERROR: " << COLOR_RESET << error << '\n';
         exit(EXIT_FAILURE);

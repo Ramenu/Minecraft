@@ -5,7 +5,7 @@
 
 namespace GLError
 {
-    extern void error_message(std::string_view error);
+    extern void error_message(std::string_view error) noexcept;
 }
 
 #endif // GLERROR_HPP
