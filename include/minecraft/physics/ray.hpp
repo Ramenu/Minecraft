@@ -1,8 +1,7 @@
 #ifndef RAY_HPP
 #define RAY_HPP
 
-#include "minecraft/shader.hpp"
-#include "minecraft/buffer.hpp"
+#include "glm/vec3.hpp"
 
 class Ray
 {

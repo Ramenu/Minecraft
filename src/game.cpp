@@ -9,8 +9,6 @@
 #ifdef GAME_BENCHMARK
     #include "timer.hpp"
 #endif
-#include <iostream>
-#include <string>
 
 
 /**
