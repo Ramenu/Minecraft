@@ -17,8 +17,8 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
         sinf(glm::radians(settings.yaw)) * cosPitch
     };
 
-	view = glm::lookAt(cameraPos, cameraPos + direction.front, direction.up);
-	direction.right = glm::normalize(glm::cross(direction.front, direction.up));
+	view = glm::lookAt(cameraPos, cameraPos + direction.front, up);
+	direction.right = glm::normalize(glm::cross(direction.front, up));
 	direction.front = glm::normalize(updatedDirection);
 
     static double lastX {}, lastY {};
