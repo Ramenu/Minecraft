@@ -23,7 +23,7 @@ class Renderer
         bool canHighlightBlock(const glm::vec3 &blockPos) const noexcept;
 		Lighting lightSource;
         uint32_t blockVao {};
-        BufferData vertexBuffer {};
+        unsigned int vertexBuffer;
         std::vector<Block> blocks {
             {BlockName::Grass_Block, false, {0.0f, 0.0f, 0.0f}},
             {BlockName::Grass_Block, false, {0.0f, 0.0f, 0.5f}},
