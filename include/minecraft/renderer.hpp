@@ -4,6 +4,7 @@
 #include "minecraft/block/block.hpp"
 #include "minecraft/camera.hpp"
 #include "minecraft/lighting.hpp"
+#include "minecraft/buffer.hpp"
 #include <vector>
 
 class Renderer
