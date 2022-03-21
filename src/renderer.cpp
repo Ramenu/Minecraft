@@ -3,13 +3,14 @@
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
+#include "minecraft/data/uniformbuffer.h"
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
-        constexpr double fov {glm::radians(45.0)};
-        constexpr double aspectRatio {Window::width/Window::height}; 
-        constexpr double near {0.1};
-        constexpr double far {100.0};
+        constexpr double fov {glm::radians(45.0)}, 
+        aspectRatio {Window::width/Window::height}, 
+        near {0.1}, 
+        far {100.0};
         return glm::perspective(fov, aspectRatio, near, far);
     }()
 };
@@ -52,7 +53,9 @@ lightSource {[this]() {
     lightSource.shaderProgramLightSource(cubeShader);
 
     cubeShader.setInt("allTextures", 0);
-    cubeShader.setMat4("projection", projection);
+    // Bind the uniform buffer and fill the data with the projection matrix
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
 
     // Same process again... for the light cubeShader (Don't need this right now since it is a directional light at the moment)
     #if 0
@@ -60,9 +63,6 @@ lightSource {[this]() {
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Do not need to store the buffer data into it, since we already did it for the cube
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-    
-        lightSource->lightShader.useShader();
-        lightSource->lightShader.setMat4("projection", proj);
     #endif
 }
 
