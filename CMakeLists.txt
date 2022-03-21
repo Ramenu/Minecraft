@@ -22,7 +22,6 @@ link_directories(C:/Users/ramen/Clibrary/public/OpenGL/lib)
 link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
 
 add_executable(main
-./src/attribute.cpp
 ./src/block.cpp
 ./src/buffer.cpp
 ./src/camera.cpp
