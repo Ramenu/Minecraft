@@ -12,8 +12,8 @@ class Block
         Block(BlockName block, bool withSFX, const glm::vec3 &blockPos) noexcept;
         glm::vec3 position {};
         float ambient {1.2f};
-        inline BlockSoundID getSoundID() const noexcept {return id;}
-        inline float getTextureID() const noexcept {return textureY;}
+        inline BlockSoundID getSoundID() const {return id;}
+        inline float getTextureID() const {return textureY;}
     private:
         BlockSoundID id;
         float textureY;

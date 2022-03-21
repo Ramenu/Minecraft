@@ -14,11 +14,11 @@ namespace Sound
         std::pair<SoundData, SoundData>{"./sfx/stone/stoneplace.ogg", "./sfx/stone/stonebreak.ogg"} // Stone block sounds
     };
 
-    inline void playBlockPlacementSound(BlockSoundID id) noexcept
+    inline void playBlockPlacementSound(BlockSoundID id) 
     {
         blockSounds[id].first.audio.play();
     }
-    inline void playBlockBreakSound(BlockSoundID id) noexcept
+    inline void playBlockBreakSound(BlockSoundID id) 
     {
         blockSounds[id].second.audio.play();
     }
