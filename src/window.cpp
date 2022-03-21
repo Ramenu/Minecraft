@@ -52,6 +52,12 @@ namespace Window
         #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // If an apple machine (in this case, it isn't)
         #endif
+
+        // Enable debug output context on debug builds
+        #ifdef MC_DEBUG_BUILD
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true); 
+        #endif
+
         glWindow = glfwCreateWindow(width, height, title, NULL, NULL);
 
         //Occurs if window or OpenGL context creation fails (prints an error message and the title of the window)
