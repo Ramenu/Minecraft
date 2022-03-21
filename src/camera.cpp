@@ -59,11 +59,8 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
             settings.yaw = 0.0f;
     #endif
 
-
-    ray.origin = cameraPos;
-    ray.direction = direction.front;
     #if 1
-        ray.updateRay();
+        ray.updateRay(cameraPos, direction.front);
     #endif
 
 }
