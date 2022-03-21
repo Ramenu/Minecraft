@@ -12,7 +12,7 @@ enum class BlockName
 enum BlockSoundID : uint8_t
 {
     Grass_Block = 0,
-    Cobblestone_Block = 1
+    Stone_Block = 1
 };
 
 #endif // BLOCKENUM_HPP
