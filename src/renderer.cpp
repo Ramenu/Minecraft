@@ -109,38 +109,40 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
 }
 
 /** 
- * Draws the selected block on the (X, Y, Z) position passed. 
+ * Takes the indice of the block in the vector
+ * and draws or destroys it.
  */
-bool Renderer::drawBlock(Block &block) noexcept
+void Renderer::drawBlock(size_t i) noexcept
 {
-    float ambient {block.ambient};
-    if (canHighlightBlock(block.position))
+    float ambient {blocks[i].ambient};
+    if (canHighlightBlock(blocks[i].position))
     {
         static int oldState = GLFW_RELEASE;
         const int newState = glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_RIGHT);
         ambient = 1.8f;
 
-        // Destroy the block on click
+        // Destroy the block player is facing
         if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            Sound::playBlockBreakSound(block.getSoundID());
-            return false;
+            Sound::playBlockBreakSound(blocks[i].getSoundID());
+            blocks.erase(blocks.begin() + i);
+            return;
         }
+        // Place a block
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
             constexpr bool playSFX = true;
-            blocks.emplace_back(Block{BlockName::Cobblestone_Block, playSFX, block.position + glm::vec3{0.0f, 1.0f, 0.0f}});
+            blocks.emplace_back(Block{BlockName::Cobblestone_Block, playSFX, blocks[i].position + glm::vec3{0.0f, 1.0f, 0.0f}});
         }
         oldState = newState;
     }
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, block.position)};
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, blocks[i].position)};
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
-    cubeShader.setFloat("textureY", block.getTextureID());
+    cubeShader.setFloat("textureY", blocks[i].getTextureID());
 
     constexpr uint8_t verticesToBeDrawn {36};
-    glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
-    return true;
+    return glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
 }
 
 /**
@@ -153,8 +155,7 @@ bool Renderer::drawBlock(Block &block) noexcept
 void Renderer::drawAllBlocks() noexcept
 {
     for (size_t i {}; i < blocks.size(); i++)
-        if (!drawBlock(blocks[i]))
-            blocks.erase(blocks.begin() + i);
+        drawBlock(i);
 }
 
 /**
