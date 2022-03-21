@@ -13,6 +13,18 @@
 
 
 /**
+ * Returns true if the debug output context
+ * was successfully initialized.
+ */
+static bool initializedDebugContext()
+{
+    int flag;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flag);
+    return (flag & GL_CONTEXT_FLAG_DEBUG_BIT);
+}
+
+
+/**
  * Called upon the game's initialization.
  * Should be one of the first methods called
  * in the main function.
@@ -25,6 +37,13 @@ void initGame(const char *windowTitle) noexcept
     
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         GLError::error_message("Failed to initialize GLAD");
+    
+    // Check if initializing the debug context was successful (if on a debug build)
+    #ifdef MC_DEBUG_BUILD
+        if (!initializedDebugContext())
+            GLError::error_message("Failed to initialize OpenGL debug context");
+        GLError::enableGLDebugCallBack();
+    #endif
 
     constexpr float x {}, y {};
     glViewport(x, y, Window::width, Window::height);
