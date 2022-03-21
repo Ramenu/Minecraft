@@ -1,6 +1,5 @@
 #include "minecraft/renderer.hpp"
 #include "minecraft/window.hpp"
-#include "minecraft/attribute.hpp"
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
@@ -34,24 +33,17 @@ lightSource {[this]() {
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     return Lighting{components, direction, position};
-}()},
-vertexBuffer {[this]() {
-    uint32_t buffer {};
-    const float *data {static_cast<const float*>(cubeVertices)};
-    constexpr bool staticDrawEnabled {true};
-    return BufferData{buffer, sizeof(cubeVertices), data, staticDrawEnabled};
 }()}
 {
     
     // Create vertex array and bind for the upcoming vertex buffer
     glGenVertexArrays(1, &blockVao);
     glBindVertexArray(blockVao);
-    
-    Buffer::createBuffer(vertexBuffer);
 
-    constexpr intptr_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
-    setAttributes(std::vector<int32_t>{positionOffset, textureOffset, lightDirectionOffset}); 
-    enableVAOAttributes({0, 1, 2});
+    // Create vertex buffer
+    constexpr size_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
+    BufferData buf {sizeof(cubeVertices), static_cast<const float*>(cubeVertices)};
+    vertexBuffer = Buffer::createVertexBuffer(buf, std::vector<size_t>{positionOffset, textureOffset, lightDirectionOffset});
 
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
     cubeShader.useShader(); 
@@ -81,7 +73,7 @@ vertexBuffer {[this]() {
 Renderer::~Renderer() noexcept
 {
     lightSource.removeAllLights();
-    Buffer::deleteBuffer(vertexBuffer.buffer);
+    glDeleteBuffers(1, &vertexBuffer);
     glDeleteVertexArrays(1, &blockVao);
 }
 
