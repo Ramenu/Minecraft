@@ -1,11 +1,8 @@
-#include "minecraft/vertexarray.hpp"
 #include "minecraft/renderer.hpp"
 #include "minecraft/window.hpp"
 #include "minecraft/attribute.hpp"
 #include "minecraft/vertices.hpp"
 #include "minecraft/buffer.hpp"
-#include "minecraft/math/glmath.hpp"
-#include <string>
 #include "minecraft/audio/sound.hpp"
 
 static constexpr float strideToNextBlock {0.5f};
@@ -47,8 +44,8 @@ vertexBuffer {[this]() {
 {
     
     // Create vertex array and bind for the upcoming vertex buffer
-    VertexArray::createVertexArray(blockVao);
-    VertexArray::bindVertexArray(blockVao);
+    glGenVertexArrays(1, &blockVao);
+    glBindVertexArray(blockVao);
     
     Buffer::createBuffer(vertexBuffer);
 
@@ -85,7 +82,7 @@ Renderer::~Renderer() noexcept
 {
     lightSource.removeAllLights();
     Buffer::deleteBuffer(vertexBuffer.buffer);
-    VertexArray::deleteVertexArray(blockVao);
+    glDeleteVertexArrays(1, &blockVao);
 }
 
 
