@@ -14,10 +14,13 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.61
+CLASSIC V1.62
 ------------
-- Removed the Game class as the instance didn't provide anything useful
-- Removed the switch statement as I realized the enums worked as an array indice as well
+- Added a uniform buffer for the projection matrix, will prove useful in the future
+- Checking if the block was destroyed does not happen on every iteration of the block being drawn anymore
+- Removed camera as parameter in the processKeyboardInput function and replaced it with a struct of camera vectors for better cache utilization
+- The UP direction vector is no longer an instance of the Camera class, just a global constant
+- Lots of other (minor) changes, but nothing significant that affected the gameplay
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
