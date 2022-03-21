@@ -9,6 +9,7 @@
 #ifdef GAME_BENCHMARK
     #include "timer.hpp"
 #endif
+#include "minecraft/data/uniformbuffer.h"
 
 
 /**
@@ -29,6 +30,12 @@ void initGame(const char *windowTitle) noexcept
     glViewport(x, y, Window::width, Window::height);
     Texture::initTextureAtlas();
     Lighting::initLightVAO();
+
+    // Initialize uniform buffer, bind it, and store the data
+    glGenBuffers(1, &uniformBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uniformBuffer, 0, sizeof(glm::mat4));
 }
 
 /**
@@ -77,6 +84,7 @@ void runGame() noexcept
     }
 
     // Free up remaining resources used by the game
+    glDeleteBuffers(1, &uniformBuffer);
     Texture::deleteTextureAtlas();
     Window::destroyWindow();
     glfwTerminate();
