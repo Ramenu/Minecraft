@@ -48,6 +48,8 @@ void runGame() noexcept
     #endif
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    glClearColor(red, green, blue, alpha);
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::window))
@@ -58,8 +60,6 @@ void runGame() noexcept
         const double currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
-
-        glClearColor(red, green, blue, alpha);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
