@@ -3,16 +3,13 @@
 
 #include "glm/vec3.hpp"
 
+
 class Ray
 {
     public:
-        inline Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept :
-            origin {rayOrigin},
-            direction {rayDirection} {}
-        inline void updateRay() noexcept {ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;}
+        Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
+        inline void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept {ray = glm::vec3{origin.x, origin.y - 0.1f, origin.z} + direction;}
         inline glm::vec3 getRay() const noexcept {return ray;}
-        glm::vec3 origin;
-        glm::vec3 direction;
         inline bool intersectsWith(const glm::vec3 &b) const noexcept
         {
             constexpr float blockWidth {0.5f};
