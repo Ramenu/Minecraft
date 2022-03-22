@@ -11,7 +11,7 @@ struct BufferData
 
 namespace Buffer
 {
-    extern unsigned int createVertexBuffer(BufferData &buffer, const std::vector<size_t> &strides) noexcept;
+    extern unsigned int createVertexBuffer(const BufferData &buffer, const std::vector<size_t> &strides) noexcept;
 }
 
 #endif // BUFFER_HPP
