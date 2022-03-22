@@ -1,10 +1,10 @@
 #define GLFW_INCLUDE_NONE
 #define GAME_BENCHMARK
 
-#include "minecraft/game.hpp"
-#include "minecraft/renderer.hpp"
-#include "minecraft/glerror.hpp"
-#include "minecraft/window.hpp"
+#include "minecraft/game/game.hpp"
+#include "minecraft/renderer/renderer.hpp"
+#include "minecraft/glerror/glerror.hpp"
+#include "minecraft/window/window.hpp"
 #include "minecraft/gfx/texture.hpp"
 #ifdef GAME_BENCHMARK
     #include "timer.hpp"
