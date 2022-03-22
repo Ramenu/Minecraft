@@ -20,10 +20,7 @@ const glm::mat4 Renderer::projection {[]{
  * vertex buffer data.
  */
 Renderer::Renderer() noexcept : 
-playerCamera {[this](){
-    constexpr float yaw {90.0f}, pitch {0.0f}, sensitivity {0.1f};
-    return Camera{CameraSettings{yaw, pitch, sensitivity}};
-}()},
+playerCamera {CameraSettings{.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f}},
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 lightSource {[this]() {
     constexpr glm::vec3 ambient {0.25f, 0.25f, 0.25f};
@@ -43,7 +40,7 @@ lightSource {[this]() {
 
     // Create vertex buffer
     constexpr size_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
-    BufferData buf {sizeof(cubeVertices), static_cast<const float*>(cubeVertices)};
+    BufferData buf {.size = sizeof(cubeVertices), .data = static_cast<const float*>(cubeVertices)};
     vertexBuffer = Buffer::createVertexBuffer(buf, std::vector<size_t>{positionOffset, textureOffset, lightDirectionOffset});
 
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
