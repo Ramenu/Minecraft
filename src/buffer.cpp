@@ -11,10 +11,11 @@ namespace Buffer
      * attribute given. 
      * NOTE: This function enables all attributes at once.
      */
-    unsigned int createVertexBuffer(BufferData &buffer, const std::vector<size_t> &strides) noexcept
+    unsigned int createVertexBuffer(const BufferData &buffer, const std::vector<size_t> &strides) noexcept
     {
         size_t size {}, sum {};
-        for (const auto &i: strides) sum += i;
+        for (const auto &i: strides) 
+            sum += i;
 
         unsigned int newBuffer {};
         glGenBuffers(1, &newBuffer);
@@ -22,7 +23,14 @@ namespace Buffer
         glBufferData(GL_ARRAY_BUFFER, buffer.size, buffer.data, GL_STATIC_DRAW);
         for (size_t i {}; i < strides.size(); i++)
         {
-            glVertexAttribPointer(i, strides[i], GL_FLOAT, GL_FALSE, sum * sizeof(float), reinterpret_cast<void*>(size * sizeof(float)));
+            const auto vertexAttributeIndice = i;
+            const auto vertexAttributeSize = strides[i];
+            const auto dataType = GL_FLOAT;
+            const auto dataIsNormalized = GL_FALSE;
+            const auto stride = sum * sizeof(float);
+            const auto positionOffset = reinterpret_cast<void*>(size * sizeof(float));
+
+            glVertexAttribPointer(vertexAttributeIndice, vertexAttributeSize, dataType, dataIsNormalized, stride, positionOffset);
             glEnableVertexAttribArray(i);
             size += strides[i];
         }
