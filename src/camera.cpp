@@ -1,4 +1,4 @@
-#include "minecraft/camera.hpp"
+#include "minecraft/camera/camera.hpp"
 
 
 /** 

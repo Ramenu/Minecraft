@@ -1,5 +1,5 @@
 #include "glad/glad.h"
-#include "minecraft/buffer.hpp"
+#include "minecraft/buffer/buffer.hpp"
 
 
 namespace Buffer

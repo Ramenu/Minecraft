@@ -1,7 +1,7 @@
 #ifndef LIGHTING_HPP
 #define LIGHTING_HPP
 
-#include "minecraft/shader.hpp"
+#include "minecraft/shader/shader.hpp"
 
 struct LightComponents
 {

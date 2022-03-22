@@ -1,6 +1,6 @@
-#include "minecraft/game.hpp"
+#include "minecraft/game/game.hpp"
 #include <cstdint>
-#include "minecraft/glerror.hpp"
+#include "minecraft/glerror/glerror.hpp"
 extern "C"
 {
     #include <terminal.h>

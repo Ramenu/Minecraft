@@ -19,6 +19,10 @@ class Shader
         inline void setFloat(const char *name, float value) const {glUniform1f(glGetUniformLocation(shaderProgram, name), value);}
         inline uint32_t getShader() const noexcept {return shaderProgram;}
     private:
+        bool binaryAvailable(const char *fileName);
+        bool canCreateShaderBinary();
+        void createShaderBinary(const char *outputFile);
+        void loadShaderBinary(const char *binaryFile);
         uint32_t shaderProgram;
         void checkShaderCompilationErrors(const uint32_t &shader, int shaderType, const char *shaderPath) const noexcept;
         void checkLinkageErrors() const noexcept;

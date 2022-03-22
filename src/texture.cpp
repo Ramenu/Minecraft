@@ -8,7 +8,7 @@
 #pragma GCC diagnostic ignored "-Wuseless-cast"
 #include <stb-master/stb_image.h>
 #pragma GCC diagnostic pop
-#include "minecraft/glerror.hpp"
+#include "minecraft/glerror/glerror.hpp"
 
 namespace fs = std::filesystem;
 

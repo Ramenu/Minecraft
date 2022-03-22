@@ -2,7 +2,7 @@
 #define WINDOW_HPP
 
 #include "GLFW/glfw3.h"
-#include "minecraft/camera.hpp"
+#include "minecraft/camera/camera.hpp"
 
 namespace Window
 {

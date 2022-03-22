@@ -1,7 +1,7 @@
-#include "minecraft/renderer.hpp"
-#include "minecraft/window.hpp"
-#include "minecraft/vertices.hpp"
-#include "minecraft/buffer.hpp"
+#include "minecraft/renderer/renderer.hpp"
+#include "minecraft/window/window.hpp"
+#include "minecraft/data/vertices.hpp"
+#include "minecraft/buffer/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/data/uniformbuffer.h"
 

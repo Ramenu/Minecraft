@@ -2,9 +2,9 @@
 #define RENDERER_HPP
 
 #include "minecraft/block/block.hpp"
-#include "minecraft/camera.hpp"
-#include "minecraft/lighting.hpp"
-#include "minecraft/buffer.hpp"
+#include "minecraft/camera/camera.hpp"
+#include "minecraft/lighting/lighting.hpp"
+#include "minecraft/buffer/buffer.hpp"
 #include <vector>
 
 class Renderer

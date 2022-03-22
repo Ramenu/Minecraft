@@ -1,4 +1,4 @@
-#include "minecraft/vertices.hpp"
+#include "minecraft/data/vertices.hpp"
 #include "minecraft/gfx/texture.hpp"
 
 using namespace Texture;

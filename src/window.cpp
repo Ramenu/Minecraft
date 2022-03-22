@@ -1,7 +1,7 @@
 #include "glad/glad.h"
-#include "minecraft/window.hpp"
-#include "minecraft/camera.hpp"
-#include "minecraft/glerror.hpp"
+#include "minecraft/window/window.hpp"
+#include "minecraft/camera/camera.hpp"
+#include "minecraft/glerror/glerror.hpp"
 #include <stb-master/stb_image.h>
 
 namespace Window

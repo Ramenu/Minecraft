@@ -1,5 +1,5 @@
 #include "glad/glad.h"
-#include "minecraft/lighting.hpp"
+#include "minecraft/lighting/lighting.hpp"
 
 uint32_t Lighting::lightVao {};
 //TODO: Make another class for positional light source later on

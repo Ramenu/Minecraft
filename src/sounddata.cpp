@@ -1,5 +1,5 @@
 #include "minecraft/audio/sounddata.hpp"
-#include "minecraft/glerror.hpp"
+#include "minecraft/glerror/glerror.hpp"
 
 /**
  * Initializes the sound from the filepath given by loading 
