@@ -5,8 +5,7 @@
 
 namespace GLMath
 {
-    extern glm::vec3 getNearest3DDirectionTo(const glm::vec3 &vec) noexcept;
-    extern glm::vec3 getDirectionOfYaw(float yaw) noexcept;
+    extern glm::vec3 closestDirectionTo(const glm::vec3 &vec) noexcept;
 }
 
 #endif // GLMATH_HPP

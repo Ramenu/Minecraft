@@ -7,43 +7,33 @@ namespace GLMath
     /**
      * Returns the nearest 3D direction the vector
      * passed as parameter is closest to.
+     * (Kept 0.5 for directions that aren't north and south, because)
+     * those are the block strides. May change in future).
      */
-    glm::vec3 getNearest3DDirectionTo(const glm::vec3 &vec) noexcept
+    glm::vec3 closestDirectionTo(const glm::vec3 &vec) noexcept
     {
-        #if 1
-            glm::vec3 vecNormalized {glm::normalize(vec)};
-        #endif
-        glm::vec3 directions[6] = {
-            {0.0f, 1.0f, 0.0f}, // Top
-            {0.0f, -1.0f, 0.0f}, // Bottom
-            {0.0f, 0.0f, 1.0f}, // East
-            {0.0f, 0.0f, -1.0f}, // West
-            {1.0f, 0.0f, 0.0f}, // North
-            {-1.0f, 0.0f, 0.0f} // South
+        const glm::vec3 normVec {glm::normalize(vec)};
+        constexpr glm::vec3 directions[6] {
+            {0.5f, 0.0f, 0.0f}, // East
+            {-0.5f, 0.0f, 0.0f}, // West
+            {0.0f, 1.0f, 0.0f}, // Up
+            {0.0f, -1.0f, 0.0f}, // Down
+            {0.0f, 0.0f, 0.5f}, // North
+            {0.0f, 0.0f, -0.5f} // South
         };
-        glm::vec3 closestDirection;
-        float nearest {glm::dot(vecNormalized, directions[0])};
+        glm::vec3 closest {directions[0]};
+        float dotOfClosest {glm::dot(closest, normVec)};
 
-        // Find which direction the vec is closest to
-        // Replace this with binary search
+        // Iterate over all the directions and check which direction is the closest
         for (uint8_t i {1}; i < 6; i++)
         {
-            const float direction {glm::dot(vecNormalized, directions[i])};
-            if (direction > nearest)
+            if (glm::dot(directions[i], normVec) > dotOfClosest)
             {
-                nearest = direction;
-                closestDirection = directions[i];
-            }  
+                closest = directions[i];
+                dotOfClosest = glm::dot(closest, normVec);
+            }
         }
-        return closestDirection;
-    }
-
-    glm::vec3 getDirectionOfYaw(float yaw) noexcept
-    {
-        yaw = fabsf(yaw);
-        if (yaw > 60.0f && yaw < 90.0f) 
-            return {1.0f, 0.0f, 0.0f};
-        return {0.0f, 1.0f, 0.0f};
+        return closest;
     }
 
 }
