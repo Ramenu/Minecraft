@@ -14,9 +14,10 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.63
+CLASSIC V1.64
 ------------
-- Added OpenGL error logger for easier bug-tracking, though may slow up the game, if you do not want this simply remove the define 'MC_DEBUG_BUILD' from ./include/minecraft/glerror.hpp 
+- Blocks can now be placed at the direction the player is closest to
+- Added debugging header
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
