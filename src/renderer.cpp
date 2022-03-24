@@ -4,6 +4,7 @@
 #include "minecraft/buffer/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/data/uniformbuffer.h"
+#include "minecraft/math/glmath.hpp"
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
@@ -121,7 +122,9 @@ void Renderer::drawBlock(size_t i) noexcept
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
             constexpr bool playSFX = true;
-            blocks.emplace_back(Block{BlockName::Cobblestone_Block, playSFX, blocks[i].position + glm::vec3{0.0f, 1.0f, 0.0f}});
+            blocks.emplace_back(Block{BlockName::Cobblestone_Block, 
+                                      playSFX, 
+                                      blocks[i].position + (-GLMath::closestDirectionTo(playerCamera.direction.front))});
         }
         oldState = newState;
     }
