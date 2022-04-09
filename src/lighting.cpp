@@ -7,7 +7,9 @@ uint32_t Lighting::lightVao {};
 /**
  * Initializes the light source.
  */
-Lighting::Lighting(const LightComponents &componentsOfLight, const glm::vec3 &direction, const glm::vec3 &lightPosition) noexcept :
+Lighting::Lighting(const LightComponents &componentsOfLight, 
+                   const glm::vec3 &direction, 
+				   const glm::vec3 &lightPosition) noexcept :
 components {componentsOfLight},
 directionVec {direction},
 position {lightPosition}
