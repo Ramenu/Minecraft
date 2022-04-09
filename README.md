@@ -14,10 +14,13 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.64
+CLASSIC V1.7
 ------------
-- Blocks can now be placed at the direction the player is closest to
-- Added debugging header
+- Added dirt block to the game (they now get placed instead of cobblestone blocks as well)
+- Dirt block SFX is the same as grass block SFX
+- Changed terrain to 3x3x3 chunk instead of 5x1x5 (for face-culling tests in the future)
+- Virtual terminal processing now works on Windows (which means error codes are now colored)
+
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
