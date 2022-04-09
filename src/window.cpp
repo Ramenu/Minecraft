@@ -9,9 +9,9 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(double deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept 
+    void processKeyboardInput(float deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept 
     {
-        const float speedRate {speed * static_cast<float>(deltaTime)};
+        const float speedRate {speed * deltaTime};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             pos += speedRate * direction.front;
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -33,7 +33,7 @@ namespace Window
      */
     void renderWireframes() noexcept
     {
-        static bool wireFrameMode = false;
+        static constinit bool wireFrameMode = false;
         if (wireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
