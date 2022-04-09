@@ -3,21 +3,24 @@
 
 #include "minecraft/block/blockenum.hpp"
 #include "glm/vec3.hpp"
+#include "minecraft/gfx/texture.hpp"
 
+constexpr float textureCoords[noBlocks] = {
+    0.0f, 
+    1.0f / Texture::atlasHeight,
+    2.0f / Texture::atlasHeight
+};
 
 class Block
 {
     public:
-        Block(BlockName block, bool withSFX) noexcept;
+        Block(BlockName blockName, bool withSFX) noexcept;
         Block(BlockName block, bool withSFX, const glm::vec3 &blockPos) noexcept;
-        glm::vec3 position {};
-        float ambient {1.2f};
-        inline BlockSoundID getSoundID() const {return id;}
-        inline float getTextureID() const {return textureY;}
+        inline float getTexture() const {return textureCoords[name];}
+        inline BlockName getName() const {return name;}
+        glm::vec3 position;
     private:
-        BlockSoundID id;
-        float textureY;
-        float initBlockTextureCoordinates(BlockName block) noexcept;
+        BlockName name;
 };
 
 #endif // BLOCK_HPP
