@@ -27,10 +27,11 @@ namespace GLMath
         // Iterate over all the directions and check which direction is the closest
         for (uint8_t i {1}; i < 6; i++)
         {
-            if (glm::dot(directions[i], normVec) > dotOfClosest)
+            float dot {glm::dot(directions[i], normVec)};
+            if (dot > dotOfClosest)
             {
                 closest = directions[i];
-                dotOfClosest = glm::dot(closest, normVec);
+                dotOfClosest = dot;
             }
         }
         return closest;
