@@ -17,6 +17,30 @@ const glm::mat4 Renderer::projection {[]{
 };
 
 /**
+ * Initializes the blocks and their positions (a 3x3x3 chunk).
+ */
+std::vector<Block> Renderer::initBlockPositions()
+{
+    std::vector<Block> blockPositions;
+    constexpr bool playSFX = false;
+    for (float x {}; x < 1.5f; x += 0.5f)
+    {
+        BlockName selectedBlock = BlockName::Grass_Block;
+        for (float z {}; z < 1.5f; z += 0.5f)
+        {
+            selectedBlock = BlockName::Grass_Block;
+            for (float y {}; y > -3.0f; y -= 1.0f)
+            {
+                blockPositions.emplace_back(Block{selectedBlock, playSFX, {x, y, z}});
+                selectedBlock = BlockName::Dirt_Block;
+            }
+        }
+    }
+    return blockPositions;
+}
+
+
+/**
  * Initializes the shaders, blocks and their positions, as well as the 
  * vertex buffer data.
  */
@@ -104,7 +128,7 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
  */
 void Renderer::drawBlock(size_t i) noexcept
 {
-    float ambient {blocks[i].ambient};
+    float ambient {1.2f}; // Default ambient level
     if (canHighlightBlock(blocks[i].position))
     {
         static int oldState = GLFW_RELEASE;
@@ -114,7 +138,7 @@ void Renderer::drawBlock(size_t i) noexcept
         // Destroy the block player is facing
         if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            Sound::playBlockBreakSound(blocks[i].getSoundID());
+            Sound::playBlockBreakSound(blocks[i].getName());
             blocks.erase(blocks.begin() + i);
             return;
         }
@@ -122,7 +146,7 @@ void Renderer::drawBlock(size_t i) noexcept
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
             constexpr bool playSFX = true;
-            blocks.emplace_back(Block{BlockName::Cobblestone_Block, 
+            blocks.emplace_back(Block{BlockName::Dirt_Block, 
                                       playSFX, 
                                       blocks[i].position + (-GLMath::closestDirectionTo(playerCamera.direction.front))});
         }
@@ -131,7 +155,7 @@ void Renderer::drawBlock(size_t i) noexcept
     glm::mat4 model {glm::translate(glm::mat4{1.0f}, blocks[i].position)};
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
-    cubeShader.setFloat("textureY", blocks[i].getTextureID());
+    cubeShader.setFloat("textureY", blocks[i].getTexture());
 
     constexpr uint8_t verticesToBeDrawn {36};
     return glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);

@@ -24,33 +24,8 @@ class Renderer
 		Lighting lightSource;
         uint32_t blockVao {};
         unsigned int vertexBuffer;
-        std::vector<Block> blocks {
-            {BlockName::Grass_Block, false, {0.0f, 0.0f, 0.0f}},
-            {BlockName::Grass_Block, false, {0.0f, 0.0f, 0.5f}},
-            {BlockName::Grass_Block, false, {0.0f, 0.0f, 1.0f}},
-            {BlockName::Grass_Block, false, {0.0f, 0.0f, 1.5f}},
-            {BlockName::Grass_Block, false, {0.0f, 0.0f, 2.0f}},
-            {BlockName::Grass_Block, false, {0.5f, 0.0f, 0.0f}},
-            {BlockName::Grass_Block, false, {0.5f, 0.0f, 0.5f}},
-            {BlockName::Grass_Block, false, {0.5f, 0.0f, 1.0f}},
-            {BlockName::Grass_Block, false, {0.5f, 0.0f, 1.5f}},
-            {BlockName::Grass_Block, false, {0.5f, 0.0f, 2.0f}},
-            {BlockName::Grass_Block, false, {1.0f, 0.0f, 0.0f}},
-            {BlockName::Grass_Block, false, {1.0f, 0.0f, 0.5f}},
-            {BlockName::Grass_Block, false, {1.0f, 0.0f, 1.0f}},
-            {BlockName::Grass_Block, false, {1.0f, 0.0f, 1.5f}},
-            {BlockName::Grass_Block, false, {1.0f, 0.0f, 2.0f}},
-            {BlockName::Grass_Block, false, {1.5f, 0.0f, 0.0f}},
-            {BlockName::Grass_Block, false, {1.5f, 0.0f, 0.5f}},
-            {BlockName::Grass_Block, false, {1.5f, 0.0f, 1.0f}},
-            {BlockName::Grass_Block, false, {1.5f, 0.0f, 1.5f}},
-            {BlockName::Grass_Block, false, {1.5f, 0.0f, 2.0f}},
-            {BlockName::Grass_Block, false, {2.0f, 0.0f, 0.0f}},
-            {BlockName::Grass_Block, false, {2.0f, 0.0f, 0.5f}},
-            {BlockName::Grass_Block, false, {2.0f, 0.0f, 1.0f}},
-            {BlockName::Grass_Block, false, {2.0f, 0.0f, 1.5f}},
-            {BlockName::Grass_Block, false, {2.0f, 0.0f, 2.0f}},
-        };
+        static std::vector<Block> initBlockPositions();
+        std::vector<Block> blocks {initBlockPositions()};
 };
 
 #endif // RENDERER_HPP
