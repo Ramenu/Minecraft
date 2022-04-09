@@ -3,7 +3,7 @@
 #include <iostream>
 extern "C" 
 {
-    #include "color.h"
+    #include "misc/color.h"
 }
 
 namespace GLError
