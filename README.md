@@ -14,12 +14,12 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.7
+CLASSIC V1.8
 ------------
-- Added dirt block to the game (they now get placed instead of cobblestone blocks as well)
-- Dirt block SFX is the same as grass block SFX
-- Changed terrain to 3x3x3 chunk instead of 5x1x5 (for face-culling tests in the future)
-- Virtual terminal processing now works on Windows (which means error codes are now colored)
+- Added air blocks to the game (technically not blocks, but still)
+- Removed block vector and replaced it with a 5x5x5 chunk array for now, this means that blocks cannot be replaced outside of this chunk. However this will allow for more efficient world generation later on
+- Added a chunk class which will help with world generation later on
+- Cobblestones blocks are now placed by the player instead of dirt blocks
 
 
 KNOWN BUGS:
