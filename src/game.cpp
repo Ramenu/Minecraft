@@ -2,7 +2,7 @@
 #define GAME_BENCHMARK
 
 #include "minecraft/game/game.hpp"
-#include "minecraft/renderer/renderer.hpp"
+#include "minecraft/rendering/renderer.hpp"
 #include "minecraft/glerror/glerror.hpp"
 #include "minecraft/window/window.hpp"
 #include "minecraft/gfx/texture.hpp"
@@ -67,7 +67,6 @@ void runGame() noexcept
     double deltaTime {0.0}; // Time between current frame and last frame
     double lastFrame {0.0}; // Time of last frame
 
-    constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     Renderer renderer;
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
@@ -75,6 +74,7 @@ void runGame() noexcept
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     glClearColor(red, green, blue, alpha);
     
     // Main game loop
@@ -90,7 +90,7 @@ void runGame() noexcept
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.updateView();
-        renderer.drawAllBlocks();
+        renderer.drawChunk();
 
         glfwSwapBuffers(Window::window); // Swap color buffer
         
