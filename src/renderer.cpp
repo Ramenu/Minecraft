@@ -1,10 +1,11 @@
-#include "minecraft/renderer/renderer.hpp"
+#include "minecraft/rendering/renderer.hpp"
 #include "minecraft/window/window.hpp"
 #include "minecraft/data/vertices.hpp"
 #include "minecraft/buffer/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/data/uniformbuffer.h"
 #include "minecraft/math/glmath.hpp"
+#include <cstdio>
 
 static constexpr float strideToNextBlock {0.5f};
 const glm::mat4 Renderer::projection {[]{
@@ -16,28 +17,6 @@ const glm::mat4 Renderer::projection {[]{
     }()
 };
 
-/**
- * Initializes the blocks and their positions (a 3x3x3 chunk).
- */
-std::vector<Block> Renderer::initBlockPositions()
-{
-    std::vector<Block> blockPositions;
-    constexpr bool playSFX = false;
-    for (float x {}; x < 1.5f; x += 0.5f)
-    {
-        BlockName selectedBlock = BlockName::Grass_Block;
-        for (float z {}; z < 1.5f; z += 0.5f)
-        {
-            selectedBlock = BlockName::Grass_Block;
-            for (float y {}; y > -3.0f; y -= 1.0f)
-            {
-                blockPositions.emplace_back(Block{selectedBlock, playSFX, {x, y, z}});
-                selectedBlock = BlockName::Dirt_Block;
-            }
-        }
-    }
-    return blockPositions;
-}
 
 
 /**
@@ -126,53 +105,48 @@ bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
  * Takes the indice of the block in the vector
  * and draws or destroys it.
  */
-void Renderer::drawBlock(size_t i) noexcept
+void Renderer::drawBlock(Block &block, const glm::vec3 &blockIndex) noexcept
 {
     float ambient {1.2f}; // Default ambient level
-    if (canHighlightBlock(blocks[i].position))
+    const glm::vec3 position {GLMath::getBlockPos(blockIndex)};
+    if (canHighlightBlock(position))
     {
-        static int oldState = GLFW_RELEASE;
+        static constinit int oldState = GLFW_RELEASE;
         const int newState = glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_RIGHT);
         ambient = 1.8f;
 
         // Destroy the block player is facing
         if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            Sound::playBlockBreakSound(blocks[i].getName());
-            blocks.erase(blocks.begin() + i);
+            Sound::playBlockBreakSound(block.name);
+            block.name = BlockName::Air_Block;
             return;
         }
         // Place a block
         else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
         {
-            constexpr bool playSFX = true;
-            blocks.emplace_back(Block{BlockName::Dirt_Block, 
-                                      playSFX, 
-                                      blocks[i].position + (-GLMath::closestDirectionTo(playerCamera.direction.front))});
+            const glm::vec3 index {blockIndex + (-GLMath::closestDirectionTo(playerCamera.direction.front))};
+            if (!Chunk::isOutOfChunk(index))
+            {
+                // todo: understand the format of the array, how the blocks are placed, etc.
+                if (terrain.chunk[index.x][index.y][index.z].name == BlockName::Air_Block)
+                {
+                    terrain.chunk[index.x][index.y][index.z].name = BlockName::Cobblestone_Block;
+                    Sound::playBlockPlacementSound(BlockName::Cobblestone_Block);
+                }
+            }
         }
         oldState = newState;
     }
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, blocks[i].position)};
+    glm::mat4 model {glm::translate(glm::mat4{1.0f}, position)};
     cubeShader.setMat4("model", model);
     cubeShader.setFloat("material.ambient", ambient);
-    cubeShader.setFloat("textureY", blocks[i].getTexture());
+    cubeShader.setFloat("textureY", block.getTexture());
 
     constexpr uint8_t verticesToBeDrawn {36};
-    return glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
+    glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
 }
 
-/**
- * Draws all of the blocks available in the block vector. 
- * This will at some point be replaced by something else
- * as rendering dynamically creating thousands of blocks
- * at runtime is too expensive. But suffices for testing
- * purposes.
- */
-void Renderer::drawAllBlocks() noexcept
-{
-    for (size_t i {}; i < blocks.size(); i++)
-        drawBlock(i);
-}
 
 /**
  * Draws the source of the light, should only be 
@@ -204,5 +178,23 @@ void Renderer::updateView() noexcept
         lightSource->lightShader.useShader();
         lightSource->lightShader.setMat4("view", playerCamera.view);
     #endif
+}
+
+/**
+ * Draws all of the blocks in the chunk.
+ */
+void Renderer::drawChunk() noexcept 
+{
+    for (uint8_t x {}; x < chunkWidth; x++)
+    {
+        for (uint8_t y {}; y < chunkHeight; y++)
+        {
+            for (uint8_t z {}; z < chunkLength; z++)
+            {
+                if (terrain.chunk[x][y][z].name != BlockName::Air_Block)
+                    drawBlock(terrain.chunk[x][y][z], glm::vec3{x, y, z});
+            }
+        }
+    }
 }
 
