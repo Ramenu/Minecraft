@@ -191,7 +191,7 @@ void Renderer::drawChunk() noexcept
         {
             for (uint8_t z {}; z < chunkLength; z++)
             {
-                if (terrain.chunk[x][y][z].name != BlockName::Air_Block)
+                if (terrain.chunk[x][y][z].name != BlockName::Air_Block && terrain.blockIsVisibleToPlayer({x, y, z}))
                     drawBlock(terrain.chunk[x][y][z], glm::vec3{x, y, z});
             }
         }
