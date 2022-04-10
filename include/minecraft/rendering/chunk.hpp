@@ -41,9 +41,11 @@ class Chunk
          * is out of the chunk array's boundaries.
          */
         static inline bool isOutOfChunk(const glm::vec3 &pos) {
-            return (pos.x >= chunkWidth || pos.y >= chunkHeight || pos.z >= chunkLength);
+            return ((pos.x >= chunkWidth || pos.y >= chunkHeight || pos.z >= chunkLength) || 
+                   (pos.x < 0.0f || pos.y < 0.0f || pos.z < 0.0f));
         }
         std::array<std::array<std::array<Block, chunkWidth>, chunkHeight>, chunkLength> chunk;
+        bool blockIsVisibleToPlayer(const glm::vec3 &blockIndex) const noexcept;
         constexpr Chunk(BlockName firstLayer, BlockName beneathFirstLayer) : chunk {initChunk(firstLayer, beneathFirstLayer)} {}
 };
 
