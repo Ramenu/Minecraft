@@ -24,6 +24,7 @@ link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
 add_executable(main
 ./src/buffer.cpp
 ./src/camera.cpp
+./src/chunk.cpp
 ./src/game.cpp
 ./src/glerror.cpp
 ./src/glmath.cpp
