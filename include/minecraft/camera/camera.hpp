@@ -27,7 +27,7 @@ class Camera
     	constexpr Camera(const CameraSettings &cameraSettings) noexcept : settings {cameraSettings} {}
 		~Camera() = default;
 		CameraSettings settings;
-		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
+		glm::vec3 cameraPos {0.0f, 6.0f, 3.0f};
 		void updateCameraPos(double cursorX, double cursorY) noexcept;
 		inline glm::mat4 getView() const {return view;}
 		CameraDirections direction;
