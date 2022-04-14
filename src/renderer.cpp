@@ -1,23 +1,13 @@
 #include "minecraft/rendering/renderer.hpp"
-#include "minecraft/window/window.hpp"
 #include "minecraft/data/vertices.hpp"
-#include "minecraft/buffer/buffer.hpp"
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/data/uniformbuffer.h"
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/data/vertices.hpp"
 #include <cstdio>
+#include <algorithm>
 
 static constexpr float strideToNextBlock {0.5f};
-const glm::mat4 Renderer::projection {[]{
-        constexpr double fov {glm::radians(45.0)}, 
-        aspectRatio {Window::width/Window::height}, 
-        near {0.1}, 
-        far {100.0};
-        return glm::perspective(fov, aspectRatio, near, far);
-    }()
-};
-
-
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -27,10 +17,9 @@ Renderer::Renderer() noexcept :
 playerCamera {CameraSettings{.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f}},
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 lightSource {[this]() {
-    constexpr glm::vec3 ambient {0.25f, 0.25f, 0.25f};
-    constexpr glm::vec3 specular {1.0f, 1.0f, 1.0f};
-    constexpr glm::vec3 diffuse {0.7f, 0.7f, 0.7f};
-    constexpr LightComponents components {ambient, specular, diffuse};
+    constexpr LightComponents components {.ambient = {0.25f, 0.25f, 0.25f}, 
+                                          .specular = {1.0f, 1.0f, 1.0f}, 
+                                          .diffuse = {0.7f, 0.7f, 0.7f}};
 
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
@@ -39,18 +28,60 @@ lightSource {[this]() {
 {
     
     // Create vertex array and bind for the upcoming vertex buffer
-    glGenVertexArrays(1, &blockVao);
-    glBindVertexArray(blockVao);
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
 
     // Create vertex buffer
-    constexpr size_t positionOffset {3}, textureOffset {2}, lightDirectionOffset {3};
-    BufferData buf {.size = sizeof(cubeVertices), .data = static_cast<const float*>(cubeVertices)};
-    vertexBuffer = Buffer::createVertexBuffer(buf, std::vector<size_t>{positionOffset, textureOffset, lightDirectionOffset});
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    std::vector<CubeVertex> chunkVertices {initChunkVertices()};
+    CubeVertex cube {chunkVertices[0]};
+    for (size_t i {1}; i < chunkVertices.size(); i++)
+    {
+        cube.positionVertices.insert(cube.positionVertices.end(), 
+                                     chunkVertices[i].positionVertices.begin(), 
+                                     chunkVertices[i].positionVertices.end());
+        
+        cube.textureVertices.insert(cube.textureVertices.end(),
+                                    chunkVertices[i].textureVertices.begin(),
+                                    chunkVertices[i].textureVertices.end());
+        
+        cube.lightDirectionVertices.insert(cube.lightDirectionVertices.end(),
+                                    chunkVertices[i].lightDirectionVertices.begin(),
+                                    chunkVertices[i].lightDirectionVertices.end());
+    }
+    printf("Size of chunk vertices is: %lld\n", chunkVertices.size());
+
+    constexpr size_t verticesBytes {noOfVertices * sizeof(float)};
+
+    constexpr auto vertexData = nullptr;
+    const size_t chunkPosSize {posVerticesSize * sizeof(float) * chunkVertices.size()},
+               chunkTexSize {textureVerticesSize * sizeof(float) * chunkVertices.size()},
+               chunkLightDirSize {lightDirVerticesSize * sizeof(float) * chunkVertices.size()};
+
+    glBufferData(GL_ARRAY_BUFFER, verticesBytes * chunkVertices.size(), vertexData, GL_DYNAMIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, chunkPosSize, &cube.positionVertices[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, chunkPosSize, chunkTexSize, &cube.textureVertices[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, chunkPosSize + chunkTexSize, chunkLightDirSize, &cube.lightDirectionVertices[0]);
+
+    constexpr auto isNormalized = GL_FALSE;
+    glEnableVertexArrayAttrib(vertexBuffer, 0);
+    glVertexAttribPointer(0, positionAttributeSize, GL_FLOAT, isNormalized, 
+                          3 * sizeof(float), reinterpret_cast<const void*>(0));
+
+    glEnableVertexArrayAttrib(vertexBuffer, 1);
+    glVertexAttribPointer(1, textureAttributeSize, GL_FLOAT, isNormalized, 
+                          2 * sizeof(float), reinterpret_cast<const void*>(chunkPosSize));
+
+    glEnableVertexArrayAttrib(vertexBuffer, 2);
+    glVertexAttribPointer(2, lightAttributeSize, GL_FLOAT, isNormalized, 
+                          3 * sizeof(float), reinterpret_cast<const void*>(chunkPosSize + chunkTexSize));
+    
 
     glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
     cubeShader.useShader(); 
     cubeShader.setMat3("normalMatrix", normalMatrix);
-    cubeShader.setVec3("viewPos", playerCamera.cameraPos);
     lightSource.shaderProgramLightSource(cubeShader);
 
     cubeShader.setInt("allTextures", 0);
@@ -75,78 +106,8 @@ Renderer::~Renderer() noexcept
 {
     lightSource.removeAllLights();
     glDeleteBuffers(1, &vertexBuffer);
-    glDeleteVertexArrays(1, &blockVao);
+    glDeleteVertexArrays(1, &vertexArray);
 }
-
-
-/**
- * Returns true if the block located at 'blockCoords' intersects with the 
- * camera ray. 
- */
-bool Renderer::canHighlightBlock(const glm::vec3 &blockCoords) const noexcept
-{
-    const float distance {glm::distance(blockCoords, playerCamera.cameraPos)};
-    constexpr float playerReachableDistance {2.0f};
-    if (distance <= playerReachableDistance)
-    {
-        if (playerCamera.ray.intersectsWith(blockCoords))
-        {
-            const float distanceBetween {glm::distance(playerCamera.ray.getRay(), blockCoords)};
-            const float nextBlock {glm::distance(playerCamera.ray.getRay(), 
-                                   glm::vec3{blockCoords.x, blockCoords.y, blockCoords.z + strideToNextBlock})};
-
-            return (distanceBetween <= strideToNextBlock && distanceBetween <= nextBlock);
-        }
-    }
-    return false;
-}
-
-/** 
- * Takes the indice of the block in the vector
- * and draws or destroys it.
- */
-void Renderer::drawBlock(Block &block, const glm::vec3 &blockIndex) noexcept
-{
-    float ambient {1.2f}; // Default ambient level
-    const glm::vec3 position {GLMath::getBlockPos(blockIndex)};
-    if (canHighlightBlock(position))
-    {
-        static constinit int oldState = GLFW_RELEASE;
-        const int newState = glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_RIGHT);
-        ambient = 1.8f;
-
-        // Destroy the block player is facing
-        if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        {
-            Sound::playBlockBreakSound(block.name);
-            block.name = BlockName::Air_Block;
-            return;
-        }
-        // Place a block
-        else if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
-        {
-            const glm::vec3 index {blockIndex + (-GLMath::closestDirectionTo(playerCamera.direction.front))};
-            if (!Chunk::isOutOfChunk(index))
-            {
-                // todo: understand the format of the array, how the blocks are placed, etc.
-                if (terrain.chunk[index.x][index.y][index.z].name == BlockName::Air_Block)
-                {
-                    terrain.chunk[index.x][index.y][index.z].name = BlockName::Cobblestone_Block;
-                    Sound::playBlockPlacementSound(BlockName::Cobblestone_Block);
-                }
-            }
-        }
-        oldState = newState;
-    }
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, position)};
-    cubeShader.setMat4("model", model);
-    cubeShader.setFloat("material.ambient", ambient);
-    cubeShader.setFloat("textureY", block.getTexture());
-
-    constexpr uint8_t verticesToBeDrawn {36};
-    glDrawArrays(GL_TRIANGLES, 0, verticesToBeDrawn);
-}
-
 
 /**
  * Draws the source of the light, should only be 
@@ -180,21 +141,14 @@ void Renderer::updateView() noexcept
     #endif
 }
 
-/**
- * Draws all of the blocks in the chunk.
- */
-void Renderer::drawChunk() noexcept 
+void Renderer::draw() const noexcept 
 {
-    for (uint8_t x {}; x < chunkWidth; x++)
-    {
-        for (uint8_t y {}; y < chunkHeight; y++)
-        {
-            for (uint8_t z {}; z < chunkLength; z++)
-            {
-                if (terrain.chunk[x][y][z].name != BlockName::Air_Block && terrain.blockIsVisibleToPlayer({x, y, z}))
-                    drawBlock(terrain.chunk[x][y][z], glm::vec3{x, y, z});
-            }
-        }
-    }
+    glm::mat4 model {1.0f};
+    glm::vec3 blockPos {0.0f, 0.0f, 0.0f};
+    glm::translate(model, blockPos);
+    cubeShader.useShader();
+    cubeShader.setMat4("model", model);
+
+    glDrawArrays(GL_TRIANGLES, 0, attributesToFormCube * chunkVolume * 2 * 2);
 }
 
