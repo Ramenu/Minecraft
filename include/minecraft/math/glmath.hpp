@@ -11,8 +11,8 @@ namespace GLMath
      * Returns the position of the block
      * based on (x, y, z) coordinates passed.
      */
-    inline glm::vec3 getBlockPos(const glm::vec3 &location) {
-        return glm::vec3{0.5f * location.x, location.y, location.z * 0.5f};
+    inline glm::vec3 getBlockPos(const glm::vec3 &location, uint32_t chunkIndex) {
+        return glm::vec3{0.5f * location.x * chunkIndex, location.y, location.z * 0.5f};
     }
 }
 
