@@ -4,12 +4,17 @@
 #include "minecraft/block/blockenum.hpp"
 #include "glm/vec3.hpp"
 #include "minecraft/gfx/texture.hpp"
+#include <array>
 
-constexpr float textureCoords[noBlocks] = {
-    0.0f,
-    1.0f / Texture::atlasHeight,
-    2.0f / Texture::atlasHeight
-};
+consteval std::array<float, noBlocks> initTextureCoords()
+{
+    std::array<float, noBlocks> coords;
+    for (uint8_t i {}; i < noBlocks; i++)
+        coords[i] = static_cast<float>(i) / Texture::atlasHeight;
+    return coords;
+}
+
+constexpr std::array<float, noBlocks> textureCoords {initTextureCoords()};
 
 class Block
 {
