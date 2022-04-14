@@ -1,5 +1,7 @@
 #include "minecraft/rendering/renderer.hpp"
 
+uint32_t Chunk::chunkIndex {1};
+
 /**
  * Returns true if the block located at {x, y, z}
  * is visible to the player (that is, not hidden by other blocks
