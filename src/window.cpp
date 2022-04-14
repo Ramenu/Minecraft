@@ -33,12 +33,11 @@ namespace Window
      */
     void renderWireframes() noexcept
     {
-        static constinit bool wireFrameMode = false;
-        if (wireFrameMode)
+        static constinit bool wireFrameMode = true;
+        if ((wireFrameMode = (!wireFrameMode)))
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        wireFrameMode = !wireFrameMode;
     }
 
 
@@ -84,7 +83,7 @@ namespace Window
     {
         window = loadWindow(window, windowName);
         GLFWimage icon[1];
-        icon[0].pixels = stbi_load("icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
+        icon[0].pixels = stbi_load("./icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
         glfwSetWindowSize(window, width, height);
         glfwSetWindowIcon(window, 1, icon);
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWidth, int windowHeight) {glViewport(0, 0, windowWidth, windowHeight);});
