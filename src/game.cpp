@@ -90,7 +90,8 @@ void runGame() noexcept
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.updateView();
-        renderer.drawChunk();
+        renderer.draw();
+        
 
         glfwSwapBuffers(Window::window); // Swap color buffer
         
