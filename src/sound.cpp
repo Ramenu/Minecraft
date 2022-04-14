@@ -21,6 +21,7 @@ namespace Sound
         {
             default: return 0;
             case BlockName::Cobblestone_Block: return 1;
+            case BlockName::Stone_Block: return 1;
         }
     }
 
