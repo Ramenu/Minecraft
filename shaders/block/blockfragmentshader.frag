@@ -28,13 +28,15 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
 
+const float materialAmbient = 1.2;
+
 void main()
 {
     //fragColor = vec4(lightColor * objectColor, 1.0);
     //fragColor = texture(allTextures, TexCoord) * (ambient * objectColor, 1.0);
 
     /* Ambient */
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * material.ambient;
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * materialAmbient;
   	
     /* Diffuse */
     vec3 norm = normalize(Normal);
