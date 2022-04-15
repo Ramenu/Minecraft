@@ -11,6 +11,7 @@ static inline size_t getBlockIndex(uint8_t x, uint8_t y, uint8_t z)
     return x * chunkLength * chunkHeight + (y * chunkLength + z);
 }
 
+
 /**
  * Modifies the chunk's block located
  * at {x, y, z}. Parameters include:
@@ -22,6 +23,8 @@ void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
                         Block block,
                         const std::array<float, noOfSquaresInCube> &visible) noexcept 
 {
+    chunk[x][y][z] = block;
+    constexpr auto defaultTextureVertices {getTextureVertices(0.0f)};
     const size_t blockIndex {getBlockIndex(x, y, z)};
 
     const size_t texOffset {blockIndex * textureVerticesSize};
@@ -83,30 +86,42 @@ void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
  * loop. If necessary to make a new chunk in the loop,
  * do it in a seperate thread.
  */
-Chunk::Chunk() noexcept
+Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
 {
-    constexpr size_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
+    constexpr uint8_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
+    constexpr auto visible {getVisibleBlockVertices({1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f})};
+    uint8_t xU {}, yU {}, zU {};
     for (float x {}; x < halfOfWidth; x += 0.5f)
     {
-        for (float y {}; y < chunkHeight; y += 1.0f)
+        BlockName selectedBlock {firstLayer};
+        for (float y {chunkHeight - 1}; y >= 0; y -= 1.0f)
         {
             for (float z {}; z < halfOfLength; z += 0.5f)
             {
+                const Block block {selectedBlock};
+                chunk[xU][yU][zU] = block;
                 const auto pos {createCubeAt(x, y, z)};
+                const auto texture {getTextureVertices(block.getTexture())};
                 chunkVertices.position.insert(chunkVertices.position.end(), 
                                             std::begin(pos), 
                                             std::end(pos));
                 chunkVertices.texture.insert(chunkVertices.texture.end(),
-                                            std::begin(defaultTextureVertices),
-                                            std::end(defaultTextureVertices));
+                                            std::begin(texture),
+                                            std::end(texture));
                 chunkVertices.lightDirection.insert(chunkVertices.lightDirection.end(),
                                                     std::begin(defaultLightDirectionVertices),
                                                     std::end(defaultLightDirectionVertices));
 
                 chunkVertices.visibility.insert(chunkVertices.visibility.end(),
-                                                std::begin(defaultVisibleVertices),
-                                                std::end(defaultVisibleVertices));
+                                                std::begin(visible),
+                                                std::end(visible));
+                zU++;
             }
+            selectedBlock = bottomLayers;
+            zU = 0;
+            yU++;
         }
+        yU = 0;
+        xU++;
     }
 }
