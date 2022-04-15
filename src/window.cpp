@@ -9,7 +9,7 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processKeyboardInput(float deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept 
+    void processMovement(float deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept 
     {
         const float speedRate {speed * deltaTime};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -20,24 +20,35 @@ namespace Window
             pos -= speedRate * direction.right;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             pos += speedRate * direction.right;
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-            renderWireframes();
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
     }
 
+    /**
+     * Key callback for GLFW.
+     */
+    void key_callback(GLFWwindow *glWindow, int key, int scancode, int action, int mods)
+    {
+        switch (key)
+        {
+            case GLFW_KEY_Q: return renderWireframes();
+            case GLFW_KEY_ESCAPE: return glfwSetWindowShouldClose(glWindow, true);
+        }
+    }
 
     /**
      * Toggles wireframes. 
-     * [NOTE: CURRENTLY BUGGY]
      */
     void renderWireframes() noexcept
     {
-        static constinit bool wireFrameMode = true;
-        if ((wireFrameMode = (!wireFrameMode)))
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        // Make sure that Q is being pressed to prevent
+        // constant switches
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            static constinit bool wireFrameMode = true;
+            if ((wireFrameMode = !wireFrameMode))
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            else
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
     }
 
 
@@ -88,6 +99,7 @@ namespace Window
         glfwSetWindowIcon(window, 1, icon);
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWidth, int windowHeight) {glViewport(0, 0, windowWidth, windowHeight);});
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetKeyCallback(window, key_callback);
         stbi_image_free(icon[0].pixels);
     }
 }
