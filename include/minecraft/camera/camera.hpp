@@ -3,8 +3,9 @@
 
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "minecraft/rendering/chunk.hpp"
 
-constexpr float speed {2.5f};
+constexpr float speed {4.5f};
 constexpr glm::vec3 up {0.0f, 1.0f, 0.0f};
 
 struct CameraSettings
@@ -27,7 +28,7 @@ class Camera
     	constexpr Camera(const CameraSettings &cameraSettings) noexcept : settings {cameraSettings} {}
 		~Camera() = default;
 		CameraSettings settings;
-		glm::vec3 cameraPos {0.0f, 0.0f, 3.0f};
+		glm::vec3 cameraPos {0.0f, chunkHeight * 2, 3.0f};
 		void updateCameraPos(double cursorX, double cursorY) noexcept;
 		inline glm::mat4 getView() const {return view;}
 		CameraDirections direction;
