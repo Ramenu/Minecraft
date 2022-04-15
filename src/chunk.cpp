@@ -1,23 +1,112 @@
-#include "minecraft/rendering/renderer.hpp"
-
-uint32_t Chunk::chunkIndex {1};
+#include "minecraft/rendering/chunk.hpp"
+#include <cmath>
+#include <cstdio>
 
 /**
- * Returns true if the block located at {x, y, z}
- * is visible to the player (that is, not hidden by other blocks
- * so the player can't see it).
+ * Returns the block's position in the 
+ * layout of the vertex buffer.
  */
-bool Chunk::blockIsVisibleToPlayer(const glm::vec3 &blockIndex) const noexcept 
+static inline size_t getBlockIndex(uint8_t x, uint8_t y, uint8_t z) 
 {
-    // This means that it is on the outskirts of the chunk, which means it is visible to the player
-    if (isOutOfChunk(blockIndex + 1.0f) || isOutOfChunk(blockIndex - 1.0f))
-        return true; 
+    return x * chunkLength * chunkHeight + (y * chunkLength + z);
+}
+
+/**
+ * Modifies the chunk's block located
+ * at {x, y, z}. Parameters include:
+ * -> position of the block (x, y, z) must be three whole numbers
+ * -> textureID of the block 
+ * -> An array of 6 floats which specify which faces should be visible
+ */
+void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
+                        Block block,
+                        const std::array<float, noOfSquaresInCube> &visible) noexcept 
+{
+    const size_t blockIndex {getBlockIndex(x, y, z)};
+
+    const size_t texOffset {blockIndex * textureVerticesSize};
+    const size_t visibleOffset {blockIndex * visibleVerticesSize};
+
+    // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
+    for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
+        chunkVertices.texture[i] = defaultTextureVertices[i - texOffset] + block.getTexture();
     
-    // Check each block next to this block, if all of them are air blocks then it is not visible to the player
-    return  (chunk[blockIndex.x + 1][blockIndex.y][blockIndex.z].name == BlockName::Air_Block ||
-             chunk[blockIndex.x - 1][blockIndex.y][blockIndex.z].name == BlockName::Air_Block ||
-             chunk[blockIndex.x][blockIndex.y + 1][blockIndex.z].name == BlockName::Air_Block ||
-             chunk[blockIndex.x][blockIndex.y - 1][blockIndex.z].name == BlockName::Air_Block ||
-             chunk[blockIndex.x][blockIndex.y][blockIndex.z + 1].name == BlockName::Air_Block ||
-             chunk[blockIndex.x][blockIndex.y][blockIndex.z - 1].name == BlockName::Air_Block);
+    // Apply the visibility changes to each of the block's faces
+    chunkVertices.visibility[visibleOffset] = visible[0];
+    chunkVertices.visibility[visibleOffset + 1] = visible[0];
+    chunkVertices.visibility[visibleOffset + 2] = visible[0];
+    chunkVertices.visibility[visibleOffset + 3] = visible[0];
+    chunkVertices.visibility[visibleOffset + 4] = visible[0];
+    chunkVertices.visibility[visibleOffset + 5] = visible[0];
+
+    chunkVertices.visibility[visibleOffset + 6] = visible[1];
+    chunkVertices.visibility[visibleOffset + 7] = visible[1];
+    chunkVertices.visibility[visibleOffset + 8] = visible[1];
+    chunkVertices.visibility[visibleOffset + 9] = visible[1];
+    chunkVertices.visibility[visibleOffset + 10] = visible[1];
+    chunkVertices.visibility[visibleOffset + 11] = visible[1];
+
+    chunkVertices.visibility[visibleOffset + 12] = visible[2];
+    chunkVertices.visibility[visibleOffset + 13] = visible[2];
+    chunkVertices.visibility[visibleOffset + 14] = visible[2];
+    chunkVertices.visibility[visibleOffset + 15] = visible[2];
+    chunkVertices.visibility[visibleOffset + 16] = visible[2];
+    chunkVertices.visibility[visibleOffset + 17] = visible[2];
+
+    chunkVertices.visibility[visibleOffset + 18] = visible[3];
+    chunkVertices.visibility[visibleOffset + 19] = visible[3];
+    chunkVertices.visibility[visibleOffset + 20] = visible[3];
+    chunkVertices.visibility[visibleOffset + 21] = visible[3];
+    chunkVertices.visibility[visibleOffset + 22] = visible[3];
+    chunkVertices.visibility[visibleOffset + 23] = visible[3];
+
+    chunkVertices.visibility[visibleOffset + 24] = visible[4];
+    chunkVertices.visibility[visibleOffset + 25] = visible[4];
+    chunkVertices.visibility[visibleOffset + 26] = visible[4];
+    chunkVertices.visibility[visibleOffset + 27] = visible[4];
+    chunkVertices.visibility[visibleOffset + 28] = visible[4];
+    chunkVertices.visibility[visibleOffset + 29] = visible[4];
+
+    chunkVertices.visibility[visibleOffset + 30] = visible[5];
+    chunkVertices.visibility[visibleOffset + 31] = visible[5];
+    chunkVertices.visibility[visibleOffset + 32] = visible[5];
+    chunkVertices.visibility[visibleOffset + 33] = visible[5];
+    chunkVertices.visibility[visibleOffset + 34] = visible[5];
+    chunkVertices.visibility[visibleOffset + 35] = visible[5];
+}
+
+/**
+ * Chunk's constructor. Initializes each of the
+ * vectors to the same vertices. Though, since this
+ * is very expensive chunk construction should be kept
+ * to a minimum and be created before the main game
+ * loop. If necessary to make a new chunk in the loop,
+ * do it in a seperate thread.
+ */
+Chunk::Chunk() noexcept
+{
+    constexpr size_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
+    for (float x {}; x < halfOfWidth; x += 0.5f)
+    {
+        for (float y {}; y < chunkHeight; y += 1.0f)
+        {
+            for (float z {}; z < halfOfLength; z += 0.5f)
+            {
+                const auto pos {createCubeAt(x, y, z)};
+                chunkVertices.position.insert(chunkVertices.position.end(), 
+                                            std::begin(pos), 
+                                            std::end(pos));
+                chunkVertices.texture.insert(chunkVertices.texture.end(),
+                                            std::begin(defaultTextureVertices),
+                                            std::end(defaultTextureVertices));
+                chunkVertices.lightDirection.insert(chunkVertices.lightDirection.end(),
+                                                    std::begin(defaultLightDirectionVertices),
+                                                    std::end(defaultLightDirectionVertices));
+
+                chunkVertices.visibility.insert(chunkVertices.visibility.end(),
+                                                std::begin(defaultVisibleVertices),
+                                                std::end(defaultVisibleVertices));
+            }
+        }
+    }
 }
