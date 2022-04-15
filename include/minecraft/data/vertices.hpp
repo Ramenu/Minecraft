@@ -87,50 +87,55 @@ constexpr std::array<float, posVerticesSize> createCubeAt(float x, float y, floa
     return defaultPositionVertices;
 }
 
+constexpr std::array<float, textureVerticesSize> getTextureVertices(float textureID)
+{
+    std::array<float, textureVerticesSize> textureVertices {
+        0.0f,   yPos + textureID,
+        xPos,   0.0f + textureID,
+        xPos,   yPos + textureID,
+        xPos,   0.0f + textureID,
+        0.0f,   yPos + textureID,
+        0.0f,   0.0f + textureID,
 
-constexpr std::array<float, textureVerticesSize> defaultTextureVertices {
-    0.0f,   yPos,
-    xPos,   0.0f,
-    xPos,   yPos,
-    xPos,   0.0f,
-    0.0f,   yPos,
-    0.0f,   0.0f,
+        0.0f,   yPos + textureID,
+        xPos,   yPos + textureID,
+        xPos,   0.0f + textureID,
+        xPos,   0.0f + textureID,
+        0.0f,   0.0f + textureID,
+        0.0f,   yPos + textureID,
 
-    0.0f,   yPos,
-    xPos,   yPos,
-    xPos,   0.0f,
-    xPos,   0.0f,
-    0.0f,   0.0f,
-    0.0f,   yPos,
+        xPos,   0.0f + textureID,
+        0.0f,   yPos + textureID,
+        xPos,   yPos + textureID,
+        0.0f,   yPos + textureID,
+        xPos,   0.0f + textureID,
+        0.0f,   0.0f + textureID,
 
-    xPos,   0.0f,
-    0.0f,   yPos,
-    xPos,   yPos,
-    0.0f,   yPos,
-    xPos,   0.0f,
-    0.0f,   0.0f,
+        xPos,   0.0f + textureID,
+        xPos,   yPos + textureID,
+        0.0f,   yPos + textureID,
+        0.0f,   yPos + textureID,
+        0.0f,   0.0f + textureID,
+        xPos,   0.0f + textureID,
 
-    xPos,   0.0f,
-    xPos,   yPos,
-    0.0f,   yPos,
-    0.0f,   yPos,
-    0.0f,   0.0f,
-    xPos,   0.0f,
+        xPos,   0.0f + textureID,
+        xPos_2, yPos + textureID,
+        xPos_2, 0.0f + textureID,
+        xPos_2, yPos + textureID,
+        xPos,   0.0f + textureID,
+        xPos,   yPos + textureID,
 
-    xPos,   0.0f,
-    xPos_2, yPos,
-    xPos_2, 0.0f,
-    xPos_2, yPos,
-    xPos,   0.0f,
-    xPos,   yPos,
+        xPos_2, yPos + textureID,
+        xPos_2, 0.0f + textureID,
+        1.0f,   yPos + textureID,
+        1.0f,   yPos + textureID,
+        xPos_2, 0.0f + textureID,
+        xPos_2, 0.0f + textureID
+    };
 
-    xPos_2, yPos,
-    xPos_2, 0.0f,
-    1.0f,   yPos,
-    1.0f,   yPos,
-    xPos_2, 0.0f,
-    xPos_2, 0.0f
-};
+    return textureVertices;
+
+}
 
 constexpr std::array<float, lightDirVerticesSize> defaultLightDirectionVertices {
     0.0f,  0.0f, 1.0f,
@@ -176,49 +181,56 @@ constexpr std::array<float, lightDirVerticesSize> defaultLightDirectionVertices 
     0.0f, -1.0f, 0.0f
 };
 
-constexpr std::array<float, visibleVerticesSize> defaultVisibleVertices {
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
+constexpr std::array<float, visibleVerticesSize> getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible)
+{
+    std::array<float, visibleVerticesSize> visibleVertices {
+        1.0f + visible[0],
+        1.0f + visible[0],
+        1.0f + visible[0],
+        1.0f + visible[0],
+        1.0f + visible[0],
+        1.0f + visible[0],
 
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
+        1.0f + visible[1],
+        1.0f + visible[1],
+        1.0f + visible[1],
+        1.0f + visible[1],
+        1.0f + visible[1],
+        1.0f + visible[1],
 
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
+        1.0f + visible[2],
+        1.0f + visible[2],
+        1.0f + visible[2],
+        1.0f + visible[2],
+        1.0f + visible[2],
+        1.0f + visible[2],
 
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
+        1.0f + visible[3],
+        1.0f + visible[3],
+        1.0f + visible[3],
+        1.0f + visible[3],
+        1.0f + visible[3],
+        1.0f + visible[3],
 
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
+        1.0f + visible[4],
+        1.0f + visible[4],
+        1.0f + visible[4],
+        1.0f + visible[4],
+        1.0f + visible[4],
+        1.0f + visible[4],
 
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    1.0f
-};
+        1.0f + visible[5],
+        1.0f + visible[5],
+        1.0f + visible[5],
+        1.0f + visible[5],
+        1.0f + visible[5],
+        1.0f + visible[5]
+    };
+    return visibleVertices;
+
+}
+
+
 
 [[maybe_unused]] const std::array<float, posVerticesSize> defaultPositionVertices {
         // Back (First square)
