@@ -5,9 +5,15 @@
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/data/vertices.hpp"
 #include <cstdio>
-#include <algorithm>
 
 static constexpr float strideToNextBlock {0.5f};
+
+static constexpr size_t chunkPosSize {posVerticesSize * chunkVolume * sizeof(float)},
+               chunkTexSize {textureVerticesSize * chunkVolume * sizeof(float)},
+               chunkLightDirSize {lightDirVerticesSize * chunkVolume * sizeof(float)},
+               chunkVisibilitySize {visibleVerticesSize * chunkVolume * sizeof(float)};
+    
+static constexpr size_t verticesBytes {chunkPosSize + chunkTexSize + chunkLightDirSize + chunkVisibilitySize};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -23,7 +29,8 @@ lightSource {[this]() {
     constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     return Lighting{components, direction, position};
-}()}
+}()},
+chunk {BlockName::Grass_Block, BlockName::Dirt_Block}
 {
     
     // Create vertex array and bind for the upcoming vertex buffer
@@ -35,16 +42,10 @@ lightSource {[this]() {
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
-    const size_t chunkPosSize {chunk.getVertices().position.size() * sizeof(float)},
-               chunkTexSize {chunk.getVertices().texture.size() * sizeof(float)},
-               chunkLightDirSize {chunk.getVertices().lightDirection.size() * sizeof(float)},
-               chunkVisibilitySize {chunk.getVertices().visibility.size() * sizeof(float)};
-    
-    const size_t verticesBytes {chunkPosSize + chunkTexSize + chunkLightDirSize + chunkVisibilitySize};
 
     // First allocate enough data for the buffer to store
     constexpr auto vertexData = nullptr;
-    glBufferData(GL_ARRAY_BUFFER, verticesBytes * 500, vertexData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verticesBytes, vertexData, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
     glBufferSubData(GL_ARRAY_BUFFER, 0, chunkPosSize, &chunk.getVertices().position[0]);
@@ -56,7 +57,7 @@ lightSource {[this]() {
     constexpr auto isNormalized = GL_FALSE;
     glEnableVertexArrayAttrib(vertexBuffer, 0);
     glVertexAttribPointer(0, positionAttributeSize, GL_FLOAT, isNormalized, 
-                          positionAttributeSize * sizeof(float), reinterpret_cast<const void*>(0));
+                          positionAttributeSize * sizeof(float), nullptr);
 
     glEnableVertexArrayAttrib(vertexBuffer, 1);
     glVertexAttribPointer(1, textureAttributeSize, GL_FLOAT, isNormalized, 
