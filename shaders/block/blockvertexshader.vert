@@ -9,7 +9,6 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 
-uniform mat4 model;
 uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
 {
@@ -19,7 +18,7 @@ layout (std140, binding = 0) uniform Matrices
 
 void main()
 {
-    FragPos = vec3(model * vec4(aPos * aVisible, 1.0));
+    FragPos = aPos * aVisible;
     Normal = normalMatrix * aNormal;
     gl_Position = projection * view * vec4(FragPos, 1.0);
     TexCoord = vec2(aTexCoord.x, aTexCoord.y);
