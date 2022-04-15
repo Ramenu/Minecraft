@@ -53,8 +53,28 @@ void initGame(const char *windowTitle) noexcept
     // Initialize uniform buffer, bind it, and store the data
     glGenBuffers(1, &uniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uniformBuffer, 0, sizeof(glm::mat4));
+
+    glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
+
+    // Allocate enough space before filling in the buffer
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
+
+    // Fill in the buffer's data
+    constexpr size_t bindingPoint {0}, offset {0};
+    glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer, offset, sizeof(glm::mat4) + sizeof(glm::mat3));
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+static inline void updateCamera(const Renderer &renderer, Camera &player) noexcept
+{
+    double xPos, yPos;
+    glfwGetCursorPos(Window::window, &xPos, &yPos);
+    player.updateCameraPos(xPos, yPos);
+    renderer.cubeShader.setMat4("view", player.getView());
+    renderer.cubeShader.setVec3("viewPos", player.cameraPos);
 }
 
 /**
@@ -68,6 +88,7 @@ void runGame() noexcept
     double lastFrame {0.0}; // Time of last frame
 
     Renderer renderer;
+    Camera player {CameraSettings{.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f}};
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
     #endif
@@ -89,15 +110,14 @@ void runGame() noexcept
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderer.updateView();
+        updateCamera(renderer, player);
         renderer.draw();
-        
 
         glfwSwapBuffers(Window::window); // Swap color buffer
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        Window::processKeyboardInput(deltaTime, renderer.playerCamera.direction, renderer.playerCamera.cameraPos);
+        Window::processKeyboardInput(deltaTime, player.direction, player.cameraPos);
         #ifdef GAME_BENCHMARK
             time.end();
         #endif
