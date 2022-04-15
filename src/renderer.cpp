@@ -37,7 +37,7 @@ chunk {BlockName::Grass_Block, BlockName::Dirt_Block}
     glGenVertexArrays(1, &vertexArray);
     glBindVertexArray(vertexArray);
 
-    chunk.modifyChunk(15, 15, 15, Block{BlockName::Dirt_Block}, {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f});
+    chunk.modifyChunk(4, 15, 12, Block{BlockName::Cobblestone_Block}, {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
     // Create vertex buffer
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -121,14 +121,6 @@ void Renderer::update() noexcept
  */
 void Renderer::draw() const noexcept 
 {
-    constexpr float ambient {1.2f};
-    glm::mat4 model {1.0f};
-    glm::vec3 blockPos {0.0f, 0.0f, 0.0f};
-    glm::translate(model, blockPos);
-    cubeShader.useShader();
-    cubeShader.setMat4("model", model);
-    cubeShader.setFloat("material.ambient", ambient);
-
     glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
 }
 
