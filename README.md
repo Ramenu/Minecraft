@@ -14,17 +14,15 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.9
+CLASSIC V1.92
 ------------
-- Mainly an optimization update, there are a lot of things that have changed
-- Blocks are no longer rendered individually (instead rendered 16x16x16 in one draw call). This will significantly reduce CPU work and will help later on when more chunks will have to be rendered.
-- Block placing and destroying have been removed, though will be added in the next update. 
+- Blocks that aren't visible to player have been readded
+- Fixed wireframe mode bug
 
 
 KNOWN BUGS:
 - There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
 - Camera will make weird turns 
-- Pressing 'Q' may enable wireframe mode really fast, which will cause it to go off and on (may depend on hardware platform)
 
 Some links to the libraries I use, they are really great, go check them out:<br>
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
