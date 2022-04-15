@@ -14,9 +14,11 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.85
+CLASSIC V1.9
 ------------
-- Blocks that the player cannot see are no longer rendered 
+- Mainly an optimization update, there are a lot of things that have changed
+- Blocks are no longer rendered individually (instead rendered 16x16x16 in one draw call). This will significantly reduce CPU work and will help later on when more chunks will have to be rendered.
+- Block placing and destroying have been removed, though will be added in the next update. 
 
 
 KNOWN BUGS:
