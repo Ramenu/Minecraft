@@ -24,16 +24,14 @@ class Renderer
         Renderer() noexcept;
         ~Renderer() noexcept;
         void drawLightSource() noexcept;
-        void updateView() noexcept;
         void draw() const noexcept;
-        Camera playerCamera;
-    private:
+        void update() noexcept;
         Shader cubeShader;
+    private:
 		Lighting lightSource;
         unsigned int vertexArray;
         unsigned int vertexBuffer;
-        unsigned int lightVertexBuffer;
-        //std::array<Chunk, noOfInactiveChunks> inactiveChunks;
+        Chunk chunk;
 };
 
 #endif // RENDERER_HPP
