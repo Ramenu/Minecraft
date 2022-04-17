@@ -26,7 +26,7 @@
         /**
          * Enables the specified color in the terminal.
          */
-        void enable_terminal_color(int color)
+        void enable_terminal_color(WORD color)
         {
             HANDLE h_console = GetStdHandle(STD_OUTPUT_HANDLE);
             SetConsoleTextAttribute(h_console, color);
