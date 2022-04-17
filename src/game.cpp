@@ -33,7 +33,7 @@ void initGame(const char *windowTitle) noexcept
 {
     glfwInit();
     Window::initWindow(windowTitle);
-    glfwMakeContextCurrent(Window::window);
+    glfwMakeContextCurrent(Window::getWindow());
     
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         GLError::error_message("Failed to initialize GLAD");
@@ -45,7 +45,7 @@ void initGame(const char *windowTitle) noexcept
         GLError::enableGLDebugCallBack();
     #endif
 
-    constexpr float x {}, y {};
+    static constexpr float x {}, y {};
     glViewport(x, y, Window::width, Window::height);
     Texture::initTextureAtlas();
     Lighting::initLightVAO();
@@ -60,7 +60,7 @@ void initGame(const char *windowTitle) noexcept
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
 
     // Fill in the buffer's data
-    constexpr size_t bindingPoint {0}, offset {0};
+    static constexpr size_t bindingPoint {0}, offset {0};
     glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer, offset, sizeof(glm::mat4) + sizeof(glm::mat3));
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);
@@ -71,7 +71,7 @@ void initGame(const char *windowTitle) noexcept
 static inline void updateCamera(const Renderer &renderer, Camera &player) noexcept
 {
     double xPos, yPos;
-    glfwGetCursorPos(Window::window, &xPos, &yPos);
+    glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
     player.updateCameraPos(xPos, yPos);
     renderer.cubeShader.setMat4("view", player.getView());
     renderer.cubeShader.setVec3("viewPos", player.cameraPos);
@@ -84,8 +84,8 @@ static inline void updateCamera(const Renderer &renderer, Camera &player) noexce
  */  
 void runGame() noexcept
 {
-    double deltaTime {0.0}; // Time between current frame and last frame
-    double lastFrame {0.0}; // Time of last frame
+    float deltaTime {0.0f}; // Time between current frame and last frame
+    float lastFrame {0.0f}; // Time of last frame
 
     Renderer renderer;
     Camera player {CameraSettings{.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f}};
@@ -95,16 +95,16 @@ void runGame() noexcept
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
+    static constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
     glClearColor(red, green, blue, alpha);
     
     // Main game loop
-    while (!glfwWindowShouldClose(Window::window))
+    while (!glfwWindowShouldClose(Window::getWindow()))
     {
         #ifdef GAME_BENCHMARK
             time.start();
         #endif
-        const double currentTime = glfwGetTime();
+        const float currentTime = static_cast<float>(glfwGetTime());
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -113,7 +113,7 @@ void runGame() noexcept
         updateCamera(renderer, player);
         renderer.draw();
 
-        glfwSwapBuffers(Window::window); // Swap color buffer
+        glfwSwapBuffers(Window::getWindow()); // Swap color buffer
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
