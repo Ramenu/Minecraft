@@ -14,15 +14,10 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.92
+CLASSIC V1.93
 ------------
-- Blocks that aren't visible to player have been readded
-- Fixed wireframe mode bug
+- Camera tilt bug has been fixed so now the player can't spin their head 180 degrees
 
-
-KNOWN BUGS:
-- There is an annoying bug where sometimes the ray will highlight two blocks instead of one. I am planning to fix this sometime in the future.
-- Camera will make weird turns 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
