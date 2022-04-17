@@ -22,7 +22,7 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
 	direction.front = glm::normalize(updatedDirection);
 
     static double lastX {}, lastY {};
-    static bool firstMouseMovement = true;
+    static bool firstMouseMovement {true};
 
     if (firstMouseMovement)
     {
@@ -43,19 +43,19 @@ void Camera::updateCameraPos(const double cursorX, const double cursorY) noexcep
 
     #if 1
         // Angles in degrees
-        constexpr float angle180 {180.0f}; 
-        constexpr float angle360 {360.0f};
+        static constexpr float upDownTurnAngle {88.0f}; 
+        static constexpr float sideTurnAngle {360.0f};
 
         // Prevent the player tilting their head backwards
-        if (settings.pitch > angle180)
-            settings.pitch = angle180;
-        else if (settings.pitch < -angle180)
-            settings.pitch = -angle180;
+        if (settings.pitch > upDownTurnAngle)
+            settings.pitch = upDownTurnAngle;
+        else if (settings.pitch < -upDownTurnAngle)
+            settings.pitch = -upDownTurnAngle;
         
         // Reset the yaw so the player can spin their camera around 
-        if (settings.yaw > angle360)
+        if (settings.yaw > sideTurnAngle)
             settings.yaw = 0.0f;
-        else if (settings.yaw < -angle360)
+        else if (settings.yaw < -sideTurnAngle)
             settings.yaw = 0.0f;
     #endif
 
