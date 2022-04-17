@@ -1,4 +1,5 @@
 #include "minecraft/rendering/chunk.hpp"
+#include "misc/literals.hpp"
 #include <cmath>
 #include <cstdio>
 
@@ -25,10 +26,10 @@ void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
 {
     chunk[x][y][z] = block;
     constexpr auto defaultTextureVertices {getTextureVertices(0.0f)};
-    const size_t block3DIndex {getBlockIndex(x, y, z)};
+    const size_t index {getBlockIndex(x, y, z)};
 
-    const size_t texOffset {block3DIndex * textureVerticesSize};
-    const size_t visibleOffset {block3DIndex * visibleVerticesSize};
+    const size_t texOffset {index * textureVerticesSize};
+    const size_t visibleOffset {index * visibleVerticesSize};
 
     // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
     for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
@@ -78,25 +79,20 @@ void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
     chunkVertices.visibility[visibleOffset + 35] = visible[5];
 }
 
-bool Chunk::blockIsVisibleToPlayer(const glm::vec3 &block3DIndex) const noexcept 
+bool Chunk::blockIsVisibleToPlayer(ChunkIndex index) const noexcept 
 {
     // This means that it is on the outskirts of the chunk, which means it is visible to the player
-    if (isOutOfChunk(block3DIndex + 1.0f) || isOutOfChunk(block3DIndex - 1.0f))
+    if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
         return true; 
+    
 
-    assert((chunk[block3DIndex.x + 1][block3DIndex.y][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x - 1][block3DIndex.y][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y + 1][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y - 1][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y][block3DIndex.z + 1].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y][block3DIndex.z - 1].name == BlockName::Air_Block) == false);
     // Check each block next to this block, if all of them are not air blocks then it is not visible to the player
-    return  (chunk[block3DIndex.x + 1][block3DIndex.y][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x - 1][block3DIndex.y][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y + 1][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y - 1][block3DIndex.z].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y][block3DIndex.z + 1].name == BlockName::Air_Block ||
-             chunk[block3DIndex.x][block3DIndex.y][block3DIndex.z - 1].name == BlockName::Air_Block);
+    return  (chunk[index.x + 1_i8][index.y][index.z].name == BlockName::Air_Block ||
+             chunk[index.x - 1_i8][index.y][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y + 1_i8][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y - 1_i8][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y][index.z + 1_i8].name == BlockName::Air_Block ||
+             chunk[index.x][index.y][index.z - 1_i8].name == BlockName::Air_Block);
 }
 
 /**
@@ -108,11 +104,11 @@ bool Chunk::blockIsVisibleToPlayer(const glm::vec3 &block3DIndex) const noexcept
 void Chunk::updateChunkVisibility() noexcept 
 {
     chunkVertices.visibility.clear();
-    for (uint8_t x {}; x < chunkWidth; x++)
+    for (int8_t x {}; x < chunkWidth; x++)
     {
-        for (uint8_t y {}; y < chunkHeight; y++)
+        for (int8_t y {}; y < chunkHeight; y++)
         {
-            for (uint8_t z {}; z < chunkLength; z++)
+            for (int8_t z {}; z < chunkLength; z++)
             {
                 const auto visible {(blockIsVisibleToPlayer({x, y, z})) ? 
                                     getVisibleBlockVertices({1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}) :
@@ -135,7 +131,7 @@ void Chunk::updateChunkVisibility() noexcept
  */
 Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
 {
-    constexpr uint8_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
+    static constexpr uint8_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
     uint8_t xU {}, yU {}, zU {};
     for (float x {}; x < halfOfWidth; x += 0.5f)
     {
