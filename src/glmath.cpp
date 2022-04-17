@@ -1,5 +1,8 @@
 #include "minecraft/math/glmath.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wduplicated-branches"
 #include "glm/glm.hpp"
+#pragma GCC diagnostic pop
 #include "minecraft/glerror/glerror.hpp"
 #include <cmath>
 
@@ -12,7 +15,7 @@ namespace GLMath
     glm::vec3 closestDirectionTo(const glm::vec3 &vec) noexcept
     {
         const glm::vec3 normVec {glm::normalize(vec)};
-        constexpr glm::vec3 directions[6] {
+        static constexpr glm::vec3 directions[6] {
             {1.0f, 0.0f, 0.0f},
             {-1.0f, 0.0f, 0.0f},
             {0.0f, 1.0f, 0.0f},
@@ -35,6 +38,15 @@ namespace GLMath
         }
         return closest;
     }
+
+    #if 0
+    glm::vec3 nearestBlockTo(const glm::vec3 &vec) noexcept 
+    {
+        
+        
+    
+    }
+    #endif
 
 
 }
