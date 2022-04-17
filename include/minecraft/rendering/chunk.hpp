@@ -10,6 +10,27 @@
 constexpr uint8_t chunkWidth {16}, chunkHeight {16}, chunkLength {16};
 constexpr uint32_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
 
+struct ChunkIndex
+{
+    int8_t x;
+    int8_t y;
+    int8_t z;
+    ChunkIndex operator+(int8_t num)
+    {
+        const int8_t newX = x + num,
+                     newY = y + num,
+                     newZ = z + num;
+        return ChunkIndex{newX, newY, newZ};
+    }
+    ChunkIndex operator-(int8_t num)
+    {
+        const int8_t newX = x - num,
+                     newY = y - num,
+                     newZ = z - num;
+        return ChunkIndex{newX, newY, newZ};
+    }
+};
+
 class Chunk
 {
     private:
@@ -21,15 +42,15 @@ class Chunk
                          Block block,
                          const std::array<float, noOfSquaresInCube> &visible) noexcept;
         inline ChunkVertex getVertices() const {return chunkVertices;}
-        bool blockIsVisibleToPlayer(const glm::vec3 &block3DIndex) const noexcept;
+        bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
         /**
          * This function requires a 3D vector with 3 indices
          * to access the block. Returns true if any of the indices
          * are out of the chunk's array boundaries.
          */
-        static inline bool isOutOfChunk(const glm::vec3 &pos) {
-            return ((pos.x < 0.0f || pos.y < 0.0f || pos.z < 0.0f) ||
-                   (pos.x >= chunkWidth || pos.y >= chunkHeight || pos.z >= chunkLength));
+        static inline bool isOutOfChunk(ChunkIndex index) {
+            return ((index.x < 0 || index.y < 0 || index.z < 0) ||
+                   (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
         }
 
         std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
