@@ -6,6 +6,10 @@
 
 namespace Window
 {
+    static GLFWwindow *window;
+
+    GLFWwindow *getWindow() noexcept {return window;}
+
     /**
      * Handles keyboard input.
      */
@@ -25,7 +29,7 @@ namespace Window
     /**
      * Key callback for GLFW.
      */
-    void key_callback(GLFWwindow *glWindow, int key, int scancode, int action, int mods)
+    static void key_callback(GLFWwindow *glWindow, int key, int, int, int)
     {
         switch (key)
         {
