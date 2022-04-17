@@ -31,7 +31,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     const uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
-    checkShaderCompilationErrors(vertexShader, GL_VERTEX_SHADER, vertexShaderSource);
+    checkShaderCompilationErrors(vertexShader, vertexShaderSource);
 
     // Compile fragment shader
     const std::string fragmentShaderCode {fragmentShaderStream.str()};
@@ -39,7 +39,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     const uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);
-    checkShaderCompilationErrors(fragmentShader, GL_FRAGMENT_SHADER, fragmentShaderSource);
+    checkShaderCompilationErrors(fragmentShader, fragmentShaderSource);
     
     shaderProgram = glCreateProgram();
 
@@ -59,7 +59,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
  * the program will print an error message to stderr before
  * terminating the program.
  */
-void Shader::checkShaderCompilationErrors(const uint32_t& shader, int shaderType, const char *shaderPath) const noexcept
+void Shader::checkShaderCompilationErrors(const uint32_t& shader, const char *shaderPath) const noexcept
 {
     int success {};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
