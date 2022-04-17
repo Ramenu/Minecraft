@@ -25,7 +25,7 @@ class Camera
 {
     public:
 		Camera() = default;
-    	constexpr Camera(const CameraSettings &cameraSettings) noexcept : settings {cameraSettings} {}
+    	constexpr explicit Camera(const CameraSettings &cameraSettings) noexcept : settings {cameraSettings} {}
 		~Camera() = default;
 		CameraSettings settings;
 		glm::vec3 cameraPos {0.0f, chunkHeight * 2, 3.0f};

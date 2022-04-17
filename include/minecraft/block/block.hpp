@@ -20,7 +20,7 @@ class Block
 {
     public:
         Block() = default;
-        constexpr Block(BlockName blockName) : name {blockName} {}
+        constexpr explicit Block(BlockName blockName) : name {blockName} {}
         inline float getTexture() const {
             return textureCoords[name - 1]; 
         }
