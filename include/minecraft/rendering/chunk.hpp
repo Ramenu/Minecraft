@@ -35,12 +35,11 @@ class Chunk
 {
     private:
         ChunkVertex chunkVertices;
-        void updateChunkVisibility() noexcept;
+        std::array<float, noOfSquaresInCube> getVisibleFaces(ChunkIndex index) const noexcept;
     public:
+        void updateChunkVisibility() noexcept;
         Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept;
-        void modifyChunk(uint8_t x, uint8_t y, uint8_t z,
-                         Block block,
-                         const std::array<float, noOfSquaresInCube> &visible) noexcept;
+        void modifyChunk(ChunkIndex chunkIndex, Block block) noexcept;
         inline ChunkVertex getVertices() const {return chunkVertices;}
         bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
         /**
@@ -48,7 +47,7 @@ class Chunk
          * to access the block. Returns true if any of the indices
          * are out of the chunk's array boundaries.
          */
-        static inline bool isOutOfChunk(ChunkIndex index) {
+        static inline bool isOutOfChunk(ChunkIndex index) noexcept {
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
                    (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
         }
