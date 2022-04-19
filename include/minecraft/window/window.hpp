@@ -9,7 +9,7 @@ namespace Window
     extern GLFWwindow *getWindow() noexcept;
     extern GLFWwindow *loadWindow(GLFWwindow *window, const char &title) noexcept;
     extern void initWindow(const char *windowName) noexcept;
-    extern void processMovement(float deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept; 
+    extern void processMovement(float deltaTime) noexcept; 
     extern void renderWireframes() noexcept;
     extern void destroyWindow() noexcept;
     constexpr double width {512}, height {512};

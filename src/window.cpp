@@ -13,17 +13,18 @@ namespace Window
     /**
      * Handles keyboard input.
      */
-    void processMovement(float deltaTime, const CameraDirections &direction, glm::vec3 &pos) noexcept 
+    void processMovement(float deltaTime) noexcept 
     {
+        using namespace Camera;
         const float speedRate {speed * deltaTime};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            pos += speedRate * direction.front;
+            cameraPos += speedRate * direction.front;
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            pos -= speedRate * direction.front;
+            cameraPos -= speedRate * direction.front;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            pos -= speedRate * direction.right;
+            cameraPos -= speedRate * direction.right;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            pos += speedRate * direction.right;
+            cameraPos += speedRate * direction.right;
     }
 
     /**
