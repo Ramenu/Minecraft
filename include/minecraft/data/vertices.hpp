@@ -8,21 +8,21 @@
 
 using namespace Texture;
 
-constexpr size_t attributesToFormCube {36};
+static constexpr size_t attributesToFormCube {36};
 
-constexpr size_t noOfSquaresInCube {6};
+static constexpr size_t noOfSquaresInCube {6};
 
-constexpr size_t positionAttributeSize {3}, textureAttributeSize {2}, 
+static constexpr size_t positionAttributeSize {3}, textureAttributeSize {2}, 
                  lightAttributeSize {3}, visibleAttributeSize {1}, 
                  allAttributeSize {positionAttributeSize + textureAttributeSize + lightAttributeSize + visibleAttributeSize};
 
-constexpr size_t posVerticesSize {positionAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
+static constexpr size_t posVerticesSize {positionAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
                  textureVerticesSize {textureAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
                  lightDirVerticesSize {lightAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
                  visibleVerticesSize {visibleAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
                  noOfVertices {posVerticesSize + textureVerticesSize + lightDirVerticesSize + visibleVerticesSize};
 
-constexpr float xPos_2 {(atlasWidth - 1) * xPos};
+static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
 
 struct ChunkVertex
 {
@@ -137,7 +137,7 @@ constexpr std::array<float, textureVerticesSize> getTextureVertices(float textur
 
 }
 
-constexpr std::array<float, lightDirVerticesSize> defaultLightDirectionVertices {
+static constexpr std::array<float, lightDirVerticesSize> defaultLightDirectionVertices {
     0.0f,  0.0f, 1.0f,
     0.0f,  0.0f, 1.0f,
     0.0f,  0.0f, 1.0f,
@@ -232,7 +232,7 @@ constexpr std::array<float, visibleVerticesSize> getVisibleBlockVertices(const s
 
 
 
-[[maybe_unused]] const std::array<float, posVerticesSize> defaultPositionVertices {
+[[maybe_unused]] static constexpr std::array<float, posVerticesSize> defaultPositionVertices {
         // Back (First square)
         -0.5f, -0.5f, 0.0f,
          0.0f,  0.5f, 0.0f,
