@@ -36,7 +36,8 @@ chunk {BlockName::Grass_Block, BlockName::Dirt_Block}
     // Bind our vertex array first
     vertexArray.bind();
 
-    chunk.modifyChunk(4, 15, 12, Block{BlockName::Cobblestone_Block}, {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
+    static constexpr auto blockPos {ChunkIndex{5, 15, 12}};
+    chunk.modifyChunk(blockPos, Block{BlockName::Air_Block});
 
     // Now bind vertex buffer
     vertexBuffer.bind();
@@ -65,7 +66,7 @@ chunk {BlockName::Grass_Block, BlockName::Dirt_Block}
     glVertexAttribPointer(2, lightAttributeSize, GL_FLOAT, isNormalized, 
                           lightAttributeSize * sizeof(float), reinterpret_cast<const void*>(chunkPosSize + chunkTexSize));
 
-    glEnableVertexArrayAttrib(vertexBuffer.getBuffer(), 3);
+    glEnableVertexArrayAttrib(vertexBuffer.getBuffer(), 3); 
     glVertexAttribPointer(3, visibleAttributeSize, GL_FLOAT, isNormalized, visibleAttributeSize * sizeof(float),
                           reinterpret_cast<const void*>(chunkPosSize + chunkTexSize + chunkLightDirSize));
     
