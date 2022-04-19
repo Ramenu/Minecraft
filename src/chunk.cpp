@@ -1,15 +1,19 @@
 #include "minecraft/rendering/chunk.hpp"
 #include "misc/literals.hpp"
+#include "minecraft/camera/camera.hpp"
+#include "minecraft/math/glmath.hpp"
 #include <cmath>
 #include <cstdio>
+
+static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
 /**
  * Returns the block's position in the 
  * layout of the vertex buffer.
  */
-static inline size_t getBlockIndex(uint8_t x, int8_t y, uint8_t z) 
+static inline size_t getBlockIndex(ChunkIndex index) noexcept
 {
-    return x * chunkLength * chunkHeight + ((-y - 1) * chunkLength + z);
+    return index.x * chunkLength * chunkHeight + ((-index.y - 1) * chunkLength + index.z);
 }
 
 
@@ -20,79 +24,70 @@ static inline size_t getBlockIndex(uint8_t x, int8_t y, uint8_t z)
  * -> textureID of the block 
  * -> An array of 6 floats which specify which faces should be visible
  */
-void Chunk::modifyChunk(uint8_t x, uint8_t y, uint8_t z,
-                        Block block,
-                        const std::array<float, noOfSquaresInCube> &visible) noexcept 
+void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept 
 {
+    const int8_t x {chunkIndex.x}, y {chunkIndex.y}, z {chunkIndex.z};
     chunk[x][y][z] = block;
-    constexpr auto defaultTextureVertices {getTextureVertices(0.0f)};
-    const size_t index {getBlockIndex(x, y, z)};
 
-    const size_t texOffset {index * textureVerticesSize};
-    const size_t visibleOffset {index * visibleVerticesSize};
+    const size_t index {getBlockIndex(chunkIndex)};
 
-    // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
-    for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
-        chunkVertices.texture[i] = defaultTextureVertices[i - texOffset] + block.getTexture();
-    
-    // Apply the visibility changes to each of the block's faces
-    chunkVertices.visibility[visibleOffset] = visible[0];
-    chunkVertices.visibility[visibleOffset + 1] = visible[0];
-    chunkVertices.visibility[visibleOffset + 2] = visible[0];
-    chunkVertices.visibility[visibleOffset + 3] = visible[0];
-    chunkVertices.visibility[visibleOffset + 4] = visible[0];
-    chunkVertices.visibility[visibleOffset + 5] = visible[0];
 
-    chunkVertices.visibility[visibleOffset + 6] = visible[1];
-    chunkVertices.visibility[visibleOffset + 7] = visible[1];
-    chunkVertices.visibility[visibleOffset + 8] = visible[1];
-    chunkVertices.visibility[visibleOffset + 9] = visible[1];
-    chunkVertices.visibility[visibleOffset + 10] = visible[1];
-    chunkVertices.visibility[visibleOffset + 11] = visible[1];
+    if (block.name != BlockName::Air_Block)
+    {
+        static constexpr auto defaultTextureVertices {getTextureVertices(0.0f)};
 
-    chunkVertices.visibility[visibleOffset + 12] = visible[2];
-    chunkVertices.visibility[visibleOffset + 13] = visible[2];
-    chunkVertices.visibility[visibleOffset + 14] = visible[2];
-    chunkVertices.visibility[visibleOffset + 15] = visible[2];
-    chunkVertices.visibility[visibleOffset + 16] = visible[2];
-    chunkVertices.visibility[visibleOffset + 17] = visible[2];
+        // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
+        const size_t texOffset {index * textureVerticesSize};
+        for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
+            chunkVertices.texture[i] = defaultTextureVertices[i - texOffset] + block.getTexture();
+    }
+    updateChunkVisibility();
 
-    chunkVertices.visibility[visibleOffset + 18] = visible[3];
-    chunkVertices.visibility[visibleOffset + 19] = visible[3];
-    chunkVertices.visibility[visibleOffset + 20] = visible[3];
-    chunkVertices.visibility[visibleOffset + 21] = visible[3];
-    chunkVertices.visibility[visibleOffset + 22] = visible[3];
-    chunkVertices.visibility[visibleOffset + 23] = visible[3];
-
-    chunkVertices.visibility[visibleOffset + 24] = visible[4];
-    chunkVertices.visibility[visibleOffset + 25] = visible[4];
-    chunkVertices.visibility[visibleOffset + 26] = visible[4];
-    chunkVertices.visibility[visibleOffset + 27] = visible[4];
-    chunkVertices.visibility[visibleOffset + 28] = visible[4];
-    chunkVertices.visibility[visibleOffset + 29] = visible[4];
-
-    chunkVertices.visibility[visibleOffset + 30] = visible[5];
-    chunkVertices.visibility[visibleOffset + 31] = visible[5];
-    chunkVertices.visibility[visibleOffset + 32] = visible[5];
-    chunkVertices.visibility[visibleOffset + 33] = visible[5];
-    chunkVertices.visibility[visibleOffset + 34] = visible[5];
-    chunkVertices.visibility[visibleOffset + 35] = visible[5];
 }
 
-bool Chunk::blockIsVisibleToPlayer(ChunkIndex index) const noexcept 
+/**
+ * Returns the visible faces of the block in
+ * an array of six floats (1.0f = visible, 0.0f = not visible)
+ * Checks the neighbor of each block's direction and if it
+ * is out of the chunk's border OR is an air block the face
+ * will be visible.
+ */
+std::array<float, noOfSquaresInCube> Chunk::getVisibleFaces(ChunkIndex index) const noexcept 
 {
-    // This means that it is on the outskirts of the chunk, which means it is visible to the player
-    if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
-        return true; 
-    
+    std::array<float, noOfSquaresInCube> visibleFaces {};
 
-    // Check each block next to this block, if all of them are not air blocks then it is not visible to the player
-    return  (chunk[index.x + 1_i8][index.y][index.z].name == BlockName::Air_Block ||
-             chunk[index.x - 1_i8][index.y][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y + 1_i8][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y - 1_i8][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y][index.z + 1_i8].name == BlockName::Air_Block ||
-             chunk[index.x][index.y][index.z - 1_i8].name == BlockName::Air_Block);
+    // Back face
+    // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
+    if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z - 1)}) || 
+            chunk[index.x][index.y][index.z - 1].name == BlockName::Air_Block)
+                visibleFaces[0] = 1.0f;
+
+    // Front face
+    if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z + 1)}) ||
+        chunk[index.x][index.y][index.z + 1].name == BlockName::Air_Block)
+            visibleFaces[1] = 1.0f;
+
+    // Right face
+    if (isOutOfChunk({static_cast<int8_t>(index.x + 1), index.y, index.z}) ||
+        chunk[index.x + 1][index.y][index.z].name == BlockName::Air_Block)
+            visibleFaces[2] = 1.0f;
+    
+    // Left face
+    if (isOutOfChunk({static_cast<int8_t>(index.x - 1), index.y, index.z}) || 
+        chunk[index.x - 1][index.y][index.z].name == BlockName::Air_Block)
+            visibleFaces[3] = 1.0f;
+    
+    // Top face
+    if (isOutOfChunk({index.x ,static_cast<int8_t>(index.y + 1), index.z}) ||
+        chunk[index.x][index.y + 1][index.z].name == BlockName::Air_Block)
+            visibleFaces[4] = 1.0f;
+
+    // Bottom face
+    if (isOutOfChunk({index.x ,static_cast<int8_t>(index.y - 1), index.z}) || 
+        chunk[index.x][index.y - 1][index.z].name == BlockName::Air_Block)
+            visibleFaces[5] = 1.0f;
+    
+    return visibleFaces;
 }
 
 /**
@@ -106,20 +101,47 @@ void Chunk::updateChunkVisibility() noexcept
     chunkVertices.visibility.clear();
     for (int8_t x {}; x < chunkWidth; x++)
     {
-        for (int8_t y {}; y < chunkHeight; y++)
+        for (int8_t y {chunkHeight - 1_i8}; y >= 0; y--)
         {
             for (int8_t z {}; z < chunkLength; z++)
             {
-                const auto visible {(blockIsVisibleToPlayer({x, y, z})) ? 
-                                    getVisibleBlockVertices({1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}) :
-                                    getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
+                const ChunkIndex index {ChunkIndex{x, y, z}};
+                if (blockIsVisibleToPlayer(index) && chunk[x][y][z].name != BlockName::Air_Block)
+                {
+                    const auto visible {getVisibleBlockVertices(getVisibleFaces(index))};
+                    chunkVertices.visibility.insert(chunkVertices.visibility.end(),
+                                                    std::begin(visible),
+                                                    std::end(visible));
+                    continue;
+                }
+                const auto visible {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
                 chunkVertices.visibility.insert(chunkVertices.visibility.end(),
-                                                std::begin(visible),
-                                                std::end(visible));
+                                                visible.begin(),
+                                                visible.end());
             }
         }
     }
 }
+
+
+bool Chunk::blockIsVisibleToPlayer(ChunkIndex index) const noexcept 
+{
+    // This means that it is on the outskirts of the chunk, which means it is visible to the player
+    if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
+    {
+        return true; 
+    }
+    
+
+    // Check each block next to this block, if all of them are not air blocks then it is not visible to the player
+    return  (chunk[index.x + 1_i8][index.y][index.z].name == BlockName::Air_Block ||
+             chunk[index.x - 1_i8][index.y][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y + 1_i8][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y - 1_i8][index.z].name == BlockName::Air_Block ||
+             chunk[index.x][index.y][index.z + 1_i8].name == BlockName::Air_Block ||
+             chunk[index.x][index.y][index.z - 1_i8].name == BlockName::Air_Block);
+}
+
 
 /**
  * Chunk's constructor. Initializes each of the
