@@ -57,7 +57,7 @@ target_compile_options(main PRIVATE
 -Wdouble-promotion
 -Wimplicit-fallthrough
 -Wmissing-include-dirs
--Wconversion
+#-Wconversion
 -Wduplicated-branches
 -Wduplicated-cond
 -Wshadow
