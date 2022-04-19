@@ -68,13 +68,13 @@ void initGame(const char *windowTitle) noexcept
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-static inline void updateCamera(const Renderer &renderer, Camera &player) noexcept
+static inline void updateCamera(const Renderer &renderer) noexcept
 {
     double xPos, yPos;
     glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
-    player.updateCameraPos(xPos, yPos);
-    renderer.cubeShader.setMat4("view", player.getView());
-    renderer.cubeShader.setVec3("viewPos", player.cameraPos);
+    Camera::updateCameraPos(xPos, yPos);
+    renderer.cubeShader.setMat4("view", Camera::getView());
+    renderer.cubeShader.setVec3("viewPos", Camera::cameraPos);
 }
 
 /**
@@ -88,7 +88,6 @@ void runGame() noexcept
     float lastFrame {0.0f}; // Time of last frame
 
     Renderer renderer;
-    Camera player {CameraSettings{.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f}};
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
     #endif
@@ -110,14 +109,14 @@ void runGame() noexcept
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        updateCamera(renderer, player);
+        updateCamera(renderer);
         renderer.draw();
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        Window::processMovement(deltaTime, player.direction, player.cameraPos);
+        Window::processMovement(deltaTime);
         #ifdef GAME_BENCHMARK
             time.end();
         #endif
