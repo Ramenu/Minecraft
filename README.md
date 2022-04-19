@@ -14,9 +14,11 @@ limitations under the License.-->
 
 
 
-CLASSIC V1.93
+CLASSIC V2.0
 ------------
-- Camera tilt bug has been fixed so now the player can't spin their head 180 degrees
+- Face culling has been improved further (no blocks that the player cannot see will be rendered)
+- Chunk visibility is now updated when the chunk has been modified
+- Removed camera class as I felt it was unnecessary for the time being
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
