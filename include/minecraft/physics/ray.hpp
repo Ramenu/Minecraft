@@ -10,6 +10,8 @@
 
 class Ray
 {
+    private:
+        glm::vec3 ray {};
     public:
         constexpr Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
         inline void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept
@@ -27,8 +29,6 @@ class Ray
                 (ray.x >= b.x - blockWidth && ray.x < b.x) &&
                 (ray.y >= b.y - blockWidth && ray.y < b.y + blockWidth));
         }
-    private:
-        glm::vec3 ray {};
 };
 
 #endif // RAY_HPP
