@@ -29,9 +29,9 @@ class Shader
         inline void setFloat(const char *name, float value) const noexcept {
             glUniform1f(glGetUniformLocation(shaderProgram, name), value);
         }
-        inline uint32_t getShader() const noexcept {return shaderProgram;}
+        inline GLuint getShader() const noexcept {return shaderProgram;}
     private:
-        uint32_t shaderProgram;
+        GLuint shaderProgram;
         void checkShaderCompilationErrors(const uint32_t &shader, const char *shaderPath) const noexcept;
         void checkLinkageErrors() const noexcept;
 };
