@@ -22,13 +22,12 @@ out vec4 fragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in float blockAmbient;
 
 uniform sampler2D allTextures;
 uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
-
-const float materialAmbient = 1.2;
 
 void main()
 {
@@ -36,7 +35,7 @@ void main()
     //fragColor = texture(allTextures, TexCoord) * (ambient * objectColor, 1.0);
 
     /* Ambient */
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * materialAmbient;
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * blockAmbient;
   	
     /* Diffuse */
     vec3 norm = normalize(Normal);
