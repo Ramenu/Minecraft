@@ -53,6 +53,8 @@ class Chunk
         void updateBuffer() const noexcept;
 
         bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
+
+        void highlightBlock(ChunkIndex index, float ambient) noexcept;
         
         /**
          * This function requires a 3D vector with 3 indices
