@@ -6,7 +6,7 @@
 class VertexArray
 {
     private:
-        unsigned int vertexArray;
+        GLuint vertexArray;
     public:
         inline VertexArray() noexcept {
             glGenVertexArrays(1, &vertexArray);
