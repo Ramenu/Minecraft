@@ -44,6 +44,8 @@ target_compile_options(main PRIVATE
 -Werror
 -Wpedantic
 -Wextra
+-ffunction-sections
+-fdata-sections
 -fstrict-enums
 -fsanitize=leak
 -Wctor-dtor-privacy
@@ -57,6 +59,7 @@ target_compile_options(main PRIVATE
 -Wdouble-promotion
 -Wimplicit-fallthrough
 -Wmissing-include-dirs
+-Wformat=2
 #-Wconversion
 -Wduplicated-branches
 -Wduplicated-cond
@@ -80,12 +83,16 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "Running release build")
     target_compile_options(main PRIVATE
     -O3
-    -ffast-math)
+    -ffast-math
+    -flto
+    -fprofile-generate=./profile # This executes the binary a few times for sample analysis (Replace with "fprofile-use=PATH" once complete)
+    -fprofile-partial-training
+    -march=native)
     target_link_options(main PUBLIC -flto -s)
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 # Linker flags
-target_link_options(main PUBLIC ../icons/icon.res)
+target_link_options(main PUBLIC ../icons/icon.res -Wl,--gc-sections)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
