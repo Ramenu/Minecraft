@@ -1,10 +1,9 @@
 #ifndef CHUNK_HPP
 #define CHUNK_HPP
 
-#include <cstdint>
+#include "minecraft/data/vertexarray.hpp"
 #include "minecraft/block/block.hpp"
-#include "glm/vec3.hpp"
-#include <array>
+#include "minecraft/data/vertexbuffer.hpp"
 #include "minecraft/data/vertices.hpp"
 
 constexpr uint8_t chunkWidth {16}, chunkHeight {16}, chunkLength {16};
@@ -15,14 +14,14 @@ struct ChunkIndex
     int8_t x;
     int8_t y;
     int8_t z;
-    ChunkIndex operator+(int8_t num)
+    inline constexpr ChunkIndex operator+(int8_t num) const noexcept
     {
         const int8_t newX = x + num,
                      newY = y + num,
                      newZ = z + num;
         return ChunkIndex{newX, newY, newZ};
     }
-    ChunkIndex operator-(int8_t num)
+    inline constexpr ChunkIndex operator-(int8_t num) const noexcept
     {
         const int8_t newX = x - num,
                      newY = y - num,
@@ -34,14 +33,27 @@ struct ChunkIndex
 class Chunk
 {
     private:
+        VertexBuffer vertexBuffer;
+        VertexArray vertexArray;
         ChunkVertex chunkVertices;
         std::array<float, noOfSquaresInCube> getVisibleFaces(ChunkIndex index) const noexcept;
     public:
         void updateChunkVisibility() noexcept;
+
         Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept;
+
         void modifyChunk(ChunkIndex chunkIndex, Block block) noexcept;
-        inline ChunkVertex getVertices() const {return chunkVertices;}
+
+        inline void drawChunk() const noexcept
+        {
+            vertexArray.bind();
+            glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
+        }
+
+        void update() const noexcept;
+
         bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
+        
         /**
          * This function requires a 3D vector with 3 indices
          * to access the block. Returns true if any of the indices
@@ -53,7 +65,6 @@ class Chunk
         }
 
         std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
-        
 
 };
 
