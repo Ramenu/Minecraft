@@ -23,18 +23,15 @@ Renderer::Renderer() noexcept :
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
 lightSource {[this]() {
     static constexpr LightComponents components {.ambient = {0.25f, 0.25f, 0.25f}, 
-                                          .specular = {1.0f, 1.0f, 1.0f}, 
-                                          .diffuse = {0.7f, 0.7f, 0.7f}};
+                                                 .specular = {1.0f, 1.0f, 1.0f}, 
+                                                 .diffuse = {0.7f, 0.7f, 0.7f}};
 
     static constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
     static constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
     return Lighting{components, direction, position};
 }()},
-activeChunk {BlockName::Grass_Block, BlockName::Dirt_Block}
+activeChunk {BlockName::Grass_Block, Dirt_Block}
 {
-    
-   
-    
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 
@@ -58,12 +55,9 @@ Renderer::~Renderer() noexcept
     lightSource.removeAllLights();
 }
 
-/**
- * Updates the vertex buffer's data.
- */
+
 void Renderer::update() noexcept
 {
-    activeChunk.update();
 }
 
 /**
