@@ -2,8 +2,8 @@
 #define RENDERER_HPP
 
 #include "minecraft/block/block.hpp"
-#include "minecraft/camera/camera.hpp"
 #include "minecraft/lighting/lighting.hpp"
+#include "minecraft/camera/camera.hpp"
 #include "minecraft/rendering/chunk.hpp"
 #include "minecraft/window/window.hpp"
 #include "minecraft/data/vertexbuffer.hpp"
@@ -30,9 +30,7 @@ class Renderer
         Shader cubeShader;
     private:
 		Lighting lightSource;
-        VertexBuffer vertexBuffer;
-        VertexArray vertexArray;
-        Chunk chunk;
+        Chunk activeChunk;
 };
 
 #endif // RENDERER_HPP
