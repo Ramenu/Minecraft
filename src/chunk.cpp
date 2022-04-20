@@ -4,32 +4,20 @@
 #include "minecraft/math/glmath.hpp"
 #include <cmath>
 #include <cstdio>
+#include <numeric>
 
 static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
-static constexpr std::array<size_t, totalAttributes> sizesOfVertices {
-    posVerticesSize,
-    textureVerticesSize,
-    lightDirVerticesSize,
-    visibleVerticesSize
-};
 
-// Compile-time lambda
-static constexpr std::array<size_t, totalAttributes> sizeOfChunkVertices {[]() consteval {
-    std::array<size_t, totalAttributes> vertices {};
+static constexpr std::array<size_t, attributes.size()> sizeOfChunkVertices {[]() consteval {
+    std::array<size_t, attributes.size()> vertices {};
 
     for (size_t i {}; i < vertices.size(); i++)
-        vertices[i] = sizesOfVertices[i] * chunkVolume * sizeof(float);  
+        vertices[i] = verticesSizes[i] * chunkVolume * sizeof(float);  
 
     return vertices;
 }()};
 
-static constexpr size_t totalBytes {[]() consteval {
-    size_t sum {};
-    for (const auto &i: sizeOfChunkVertices)
-        sum += i;
-    return sum;
-}()};
 
 /**
  * Returns the block's attributes[Attribute::Position] in the 
@@ -37,7 +25,7 @@ static constexpr size_t totalBytes {[]() consteval {
  */
 static inline size_t getBlockIndex(ChunkIndex index) noexcept
 {
-    return index.x * chunkLength * chunkHeight + ((-index.y - 1) * chunkLength + index.z);
+    return ((index.y * chunkHeight + index.z) + index.x * chunkLength * chunkHeight);
 }
 
 
@@ -46,27 +34,41 @@ static inline size_t getBlockIndex(ChunkIndex index) noexcept
  * at {x, y, z}. Parameters include:
  * -> The index of the block (x, y, z) must be three whole numbers
  * -> The name of the block
+ * 
+ * If the name of the block is an air block, the block will
+ * just be rendered invisible. Otherwise, the block's texture
+ * will change corresponding to the name given.
  */
 void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept 
 {
     const int8_t x {chunkIndex.x}, y {chunkIndex.y}, z {chunkIndex.z};
     chunk[x][y][z] = block;
-
     const size_t index {getBlockIndex(chunkIndex)};
-
-
     if (block.name != BlockName::Air_Block)
     {
         static constexpr auto defaultTexCoordVertices {getTextureVertices(0.0f)};
 
         // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
-        const size_t texOffset {index * textureVerticesSize};
-        for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
+        const size_t texOffset {index * verticesSizes[Attribute::TexCoord]};
+        for (size_t i {texOffset + 1}; i < texOffset + verticesSizes[Attribute::TexCoord]; i += 2)
             chunkVertices.attributes[Attribute::TexCoord][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();
     }
     updateChunkVisibility();
     updateBuffer();
 
+}
+
+/**
+ * Highlights the block located at (x, y, z)
+ * with the ambient level given.
+ */
+void Chunk::highlightBlock(ChunkIndex index, float ambient) noexcept 
+{
+    const size_t ambientOffset {getBlockIndex(index) * verticesSizes[Attribute::Ambient]};
+
+    for (size_t i {ambientOffset}; i < ambientOffset + verticesSizes[Attribute::Ambient]; i++)
+        chunkVertices.attributes[Attribute::Ambient][i] = ambient;
+    updateBuffer();
 }
 
 /**
@@ -77,7 +79,7 @@ void Chunk::updateBuffer() const noexcept
     vertexArray.bind();
     vertexBuffer.bind();
     size_t offset {};
-    for (size_t i {}; i < totalAttributes; i++)
+    for (size_t i {}; i < attributes.size(); i++)
     {
         glBufferSubData(GL_ARRAY_BUFFER, offset, sizeOfChunkVertices[i], &chunkVertices.attributes[i][0]);
         offset += sizeOfChunkVertices[i];
@@ -137,10 +139,11 @@ std::array<float, noOfSquaresInCube> Chunk::getVisibleFaces(ChunkIndex index) co
  */
 void Chunk::updateChunkVisibility() noexcept 
 {
+    static constexpr auto invisible {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
     chunkVertices.attributes[Attribute::Visibility].clear();
     for (int8_t x {}; x < chunkWidth; x++)
     {
-        for (int8_t y {chunkHeight - 1_i8}; y >= 0; y--)
+        for (int8_t y {}; y < chunkHeight; y++)
         {
             for (int8_t z {}; z < chunkLength; z++)
             {
@@ -153,10 +156,9 @@ void Chunk::updateChunkVisibility() noexcept
                                                                            std::end(visible));
                     continue;
                 }
-                const auto visible {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
                 chunkVertices.attributes[Attribute::Visibility].insert(chunkVertices.attributes[Attribute::Visibility].end(),
-                                                                       visible.begin(),
-                                                                       visible.end());
+                                                                       invisible.begin(),
+                                                                       invisible.end());
             }
         }
     }
@@ -193,12 +195,13 @@ bool Chunk::blockIsVisibleToPlayer(ChunkIndex index) const noexcept
 Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
 {
     static constexpr uint8_t halfOfWidth {chunkWidth / 2}, halfOfLength {chunkLength / 2};
+    static constexpr auto blockAmbientLevel {getAmbientVertices(1.5f)};
     uint8_t xU {}, yU {}, zU {};
     for (float x {}; x < halfOfWidth; x += 0.5f)
     {
-        BlockName selectedBlock {firstLayer};
-        for (float y {chunkHeight - 1}; y >= 0; y -= 1.0f)
+        for (float y {}; y < chunkHeight; y += 1.0f)
         {
+            BlockName selectedBlock {(static_cast<uint8_t>(y) == chunkHeight - 1) ? (firstLayer) : (bottomLayers)};
             for (float z {}; z < halfOfLength; z += 0.5f)
             {
                 const Block block {selectedBlock};
@@ -206,18 +209,19 @@ Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
                 const auto pos {createCubeAt(x, y, z)};
                 const auto texture {getTextureVertices(block.getTexture())};
                 chunkVertices.attributes[Attribute::Position].insert(chunkVertices.attributes[Attribute::Position].end(), 
-                                                                   std::begin(pos), 
-                                                                   std::end(pos));
+                                                                     std::begin(pos), 
+                                                                     std::end(pos));
                 chunkVertices.attributes[Attribute::TexCoord].insert(chunkVertices.attributes[Attribute::TexCoord].end(),
-                                                                   std::begin(texture),
-                                                                   std::end(texture));
+                                                                     std::begin(texture),
+                                                                     std::end(texture));
                 chunkVertices.attributes[Attribute::LightDirection].insert(chunkVertices.attributes[Attribute::LightDirection].end(),
-                                                                         std::begin(defaultLightDirectionVertices),
-                                                                         std::end(defaultLightDirectionVertices));
-
+                                                                           std::begin(defaultLightDirectionVertices),
+                                                                           std::end(defaultLightDirectionVertices));
+                chunkVertices.attributes[Attribute::Ambient].insert(chunkVertices.attributes[Attribute::Ambient].end(),
+                                                                    std::begin(blockAmbientLevel),
+                                                                    std::end(blockAmbientLevel));
                 zU++;
             }
-            selectedBlock = bottomLayers;
             zU = 0;
             yU++;
         }
@@ -235,6 +239,7 @@ Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
     // First allocate enough data for the buffer to store
     vertexArray.bind();
     vertexBuffer.bind();
+    static constexpr size_t totalBytes {std::accumulate(sizeOfChunkVertices.begin(), sizeOfChunkVertices.end(), 0)};
     glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
@@ -243,10 +248,10 @@ Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
     // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
     static constexpr auto isNormalized {GL_FALSE};
     size_t offset {};
-    for (size_t i {}; i < totalAttributes; i++)
+    for (size_t i {}; i < attributes.size(); i++)
     {
         glEnableVertexArrayAttrib(vertexBuffer.getBuffer(), i);
-        glVertexAttribPointer(i, 
+        glVertexAttribPointer(i,
                               attributes[i], 
                               GL_FLOAT, 
                               isNormalized, 
