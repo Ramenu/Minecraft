@@ -14,11 +14,11 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.0
+CLASSIC V2.1
 ------------
-- Face culling has been improved further (no blocks that the player cannot see will be rendered)
-- Chunk visibility is now updated when the chunk has been modified
-- Removed camera class as I felt it was unnecessary for the time being
+- Added block highlighting again, although the player cannot highlight blocks 
+- Added Minecraft sounds to the repository (so now you can actually run the game), however these will be replaced in future updates
+- fixed getBlockFunction as it didn't correctly get the block position before (now it does, and returns the index of the block as if it were in the chunk 3D-array)
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
@@ -27,6 +27,9 @@ https://github.com/SFML/SFML (I use it for audio, but they support graphics, net
 I'm also using other tools to help make the code look cleaner, and hopefully 'safer'. Hope you find them interesting:
 https://github.com/danmar/cppcheck<br>
 https://clang.llvm.org/extra/clang-tidy/<br>
+
+The SFX does not belong to me, and is used for private purposes by me only. When the game is released,
+I will add my own SFX.
 
 HOW TO BUILD:
 -------------
