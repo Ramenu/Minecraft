@@ -1,9 +1,9 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "minecraft/rendering/chunk.hpp"
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "minecraft/rendering/chunk.hpp"
 
 static constexpr float speed {4.5f};
 static constexpr glm::vec3 up {0.0f, 1.0f, 0.0f};
