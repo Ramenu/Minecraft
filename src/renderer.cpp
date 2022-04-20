@@ -8,12 +8,7 @@
 
 static constexpr float strideToNextBlock {0.5f};
 
-static constexpr size_t chunkPosSize {posVerticesSize * chunkVolume * sizeof(float)},
-               chunkTexSize {textureVerticesSize * chunkVolume * sizeof(float)},
-               chunkLightDirSize {lightDirVerticesSize * chunkVolume * sizeof(float)},
-               chunkVisibilitySize {visibleVerticesSize * chunkVolume * sizeof(float)};
-    
-static constexpr size_t verticesBytes {chunkPosSize + chunkTexSize + chunkLightDirSize + chunkVisibilitySize};
+static constexpr float highlightedAmbient {1.9f};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -32,6 +27,7 @@ lightSource {[this]() {
 }()},
 activeChunk {BlockName::Grass_Block, Dirt_Block}
 {
+    activeChunk.highlightBlock({0, 15, 0}, highlightedAmbient);
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 
@@ -47,8 +43,7 @@ activeChunk {BlockName::Grass_Block, Dirt_Block}
 }
 
 /**
- * Eliminates the positional light source and deletes
- * the vertex buffer and vertex array.
+ * Eliminates the positional light source.
  */
 Renderer::~Renderer() noexcept
 {
@@ -65,6 +60,6 @@ void Renderer::update() noexcept
  */
 void Renderer::draw() const noexcept 
 {
-    glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
+    activeChunk.drawChunk();
 }
 
