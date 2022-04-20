@@ -44,9 +44,8 @@ static inline size_t getBlockIndex(ChunkIndex index) noexcept
 /**
  * Modifies the chunk's block located
  * at {x, y, z}. Parameters include:
- * -> attributes[Attribute::Position] of the block (x, y, z) must be three whole numbers
- * -> textureID of the block 
- * -> An array of 6 floats which specify which faces should be visible
+ * -> The index of the block (x, y, z) must be three whole numbers
+ * -> The name of the block
  */
 void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept 
 {
@@ -63,14 +62,17 @@ void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept
         // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
         const size_t texOffset {index * textureVerticesSize};
         for (size_t i {texOffset + 1}; i < texOffset + textureVerticesSize; i += 2)
-            chunkVertices.attributes[Attribute::Visibility][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();
+            chunkVertices.attributes[Attribute::TexCoord][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();
     }
     updateChunkVisibility();
+    updateBuffer();
 
 }
 
-
-void Chunk::update() const noexcept 
+/**
+ * Updates this chunk's vertex buffer data.
+ */
+void Chunk::updateBuffer() const noexcept 
 {
     vertexArray.bind();
     vertexBuffer.bind();
@@ -236,7 +238,7 @@ Chunk::Chunk(BlockName firstLayer, BlockName bottomLayers) noexcept
     glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
-    update();
+    updateBuffer();
 
     // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
     static constexpr auto isNormalized {GL_FALSE};
