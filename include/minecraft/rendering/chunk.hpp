@@ -50,7 +50,7 @@ class Chunk
             glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
         }
 
-        void update() const noexcept;
+        void updateBuffer() const noexcept;
 
         bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
         
