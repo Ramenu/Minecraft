@@ -1,35 +1,45 @@
 #ifndef VERTICES_HPP
 #define VERTICES_HPP
 
-#include "minecraft/rendering/chunk.hpp"
-#include "glm/vec2.hpp"
 #include "minecraft/gfx/texture.hpp"
 #include <vector>
+#include <array>
 
 using namespace Texture;
+
+enum Attribute
+{
+    Position = 0,
+    TexCoord = 1,
+    LightDirection = 2,
+    Visibility = 3
+};
+
+static constexpr size_t totalAttributes {4};
 
 static constexpr size_t attributesToFormCube {36};
 
 static constexpr size_t noOfSquaresInCube {6};
 
-static constexpr size_t positionAttributeSize {3}, textureAttributeSize {2}, 
-                 lightAttributeSize {3}, visibleAttributeSize {1}, 
-                 allAttributeSize {positionAttributeSize + textureAttributeSize + lightAttributeSize + visibleAttributeSize};
 
-static constexpr size_t posVerticesSize {positionAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
-                 textureVerticesSize {textureAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
-                 lightDirVerticesSize {lightAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
-                 visibleVerticesSize {visibleAttributeSize * noOfSquaresInCube * noOfSquaresInCube},
+static constexpr size_t attributes[totalAttributes] {
+    3, // Position 
+    2, // Texture
+    3, // Light direction
+    1  // Visibility
+};
+
+static constexpr size_t posVerticesSize {attributes[Attribute::Position] * noOfSquaresInCube * noOfSquaresInCube},
+                 textureVerticesSize {attributes[Attribute::TexCoord] * noOfSquaresInCube * noOfSquaresInCube},
+                 lightDirVerticesSize {attributes[Attribute::LightDirection] * noOfSquaresInCube * noOfSquaresInCube},
+                 visibleVerticesSize {attributes[Attribute::Visibility] * noOfSquaresInCube * noOfSquaresInCube},
                  noOfVertices {posVerticesSize + textureVerticesSize + lightDirVerticesSize + visibleVerticesSize};
 
 static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
 
 struct ChunkVertex
 {
-    std::vector<float> position;
-    std::vector<float> texture;
-    std::vector<float> lightDirection;
-    std::vector<float> visibility;
+    std::array<std::vector<float>, totalAttributes> attributes; 
 };
 
 constexpr std::array<float, posVerticesSize> createCubeAt(float x, float y, float z)
