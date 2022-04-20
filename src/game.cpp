@@ -16,7 +16,7 @@
  * Returns true if the debug output context
  * was successfully initialized.
  */
-static bool initializedDebugContext()
+static bool initializedDebugContext() noexcept
 {
     int flag;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flag);
