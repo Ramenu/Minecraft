@@ -5,8 +5,6 @@
 #include <vector>
 #include <array>
 
-using namespace Texture;
-
 enum Attribute
 {
     Position = 0,
@@ -16,13 +14,12 @@ enum Attribute
     Ambient = 4
 };
 
-
 static constexpr size_t attributesToFormCube {36};
 
 static constexpr size_t noOfSquaresInCube {6};
 
 
-constexpr std::array attributes {
+static constexpr std::array attributes {
     3, // Position 
     2, // Texture
     3, // Light direction
@@ -30,14 +27,14 @@ constexpr std::array attributes {
     1
 };
 
-static constexpr std::array<size_t, attributes.size()> verticesSizes {[]() consteval {
+static constexpr std::array<size_t, attributes.size()> verticesSizes {[](){
     std::array<size_t, attributes.size()> ver {};
     for (size_t i {}; i < ver.size(); i++)
         ver[i] = attributes[i] * noOfSquaresInCube * noOfSquaresInCube;
     return ver;
 }()};
 
-static constexpr size_t noOfVertices {[]() consteval {
+static constexpr size_t noOfVertices {[](){
     size_t sum {};
     for (const auto&i: verticesSizes)
         sum += i;
