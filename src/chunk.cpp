@@ -9,7 +9,7 @@
 static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
 
-static constexpr std::array<size_t, attributes.size()> sizeOfChunkVertices {[]() consteval {
+static constexpr std::array<size_t, attributes.size()> sizeOfChunkVertices {[](){
     std::array<size_t, attributes.size()> vertices {};
 
     for (size_t i {}; i < vertices.size(); i++)
