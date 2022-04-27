@@ -10,7 +10,7 @@
  * If there are any errors during compilation or linking then 
  * it will print them to stderr. 
  */
-Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource) noexcept
+Shader::Shader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) noexcept
 {
     std::stringstream vertexShaderStream, fragmentShaderStream;
     std::ifstream vertexShaderFile, fragmentShaderFile;
@@ -28,7 +28,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     // Compile vertex shader
     const std::string vertexShaderCode {vertexShaderStream.str()};
     const char *cstrVertexShaderCode {vertexShaderCode.c_str()};
-    const uint32_t vertexShader {glCreateShader(GL_VERTEX_SHADER)};
+    const GLuint vertexShader {glCreateShader(GL_VERTEX_SHADER)};
     glShaderSource(vertexShader, 1, &cstrVertexShaderCode, NULL);
     glCompileShader(vertexShader);
     checkShaderCompilationErrors(vertexShader, vertexShaderSource);
@@ -36,7 +36,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
     // Compile fragment shader
     const std::string fragmentShaderCode {fragmentShaderStream.str()};
     const char *cstrFragmentShaderCode {fragmentShaderCode.c_str()};
-    const uint32_t fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
+    const GLuint fragmentShader {glCreateShader(GL_FRAGMENT_SHADER)};
     glShaderSource(fragmentShader, 1, &cstrFragmentShaderCode, NULL);
     glCompileShader(fragmentShader);
     checkShaderCompilationErrors(fragmentShader, fragmentShaderSource);
@@ -59,7 +59,7 @@ Shader::Shader(const char *vertexShaderSource, const char *fragmentShaderSource)
  * the program will print an error message to stderr before
  * terminating the program.
  */
-void Shader::checkShaderCompilationErrors(const uint32_t& shader, const char *shaderPath) const noexcept
+void Shader::checkShaderCompilationErrors(const GLuint& shader, const std::string &shaderPath) const noexcept
 {
     int success {};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -67,7 +67,7 @@ void Shader::checkShaderCompilationErrors(const uint32_t& shader, const char *sh
     {
         char infoLog[512] {};
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        GLError::error_message("Failed to compile shader \"" + std::string{shaderPath} + "\". " + std::string{infoLog});
+        GLError::error_message("Failed to compile shader \"" + shaderPath + "\". " + std::string{infoLog});
     }
 }
 
