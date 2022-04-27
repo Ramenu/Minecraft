@@ -1,7 +1,6 @@
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/data/vertices.hpp"
 #include "minecraft/audio/sound.hpp"
-#include "minecraft/data/uniformbuffer.h"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/data/vertices.hpp"
 #include <cstdio>
