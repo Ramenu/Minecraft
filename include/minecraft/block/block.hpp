@@ -6,22 +6,20 @@
 #include "minecraft/gfx/texture.hpp"
 #include <array>
 
-consteval std::array<float, noBlocks> initTextureCoords()
-{
+
+static constexpr std::array<float, noBlocks> textureCoords {[](){
     std::array<float, noBlocks> coords;
     for (uint8_t i {}; i < noBlocks; i++)
-        coords[i] = static_cast<float>(i) / Texture::atlasHeight;
+        coords[i] = static_cast<float>(i) / atlasHeight;
     return coords;
-}
-
-constexpr std::array<float, noBlocks> textureCoords {initTextureCoords()};
+}()};
 
 class Block
 {
     public:
         Block() = default;
-        constexpr explicit Block(BlockName blockName) : name {blockName} {}
-        inline float getTexture() const {
+        inline constexpr explicit Block(BlockName blockName) noexcept : name {blockName} {}
+        inline float getTexture() const noexcept {
             return textureCoords[name - 1]; 
         }
         BlockName name;
