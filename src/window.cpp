@@ -98,14 +98,14 @@ namespace Window
     void initWindow(const char *windowName) noexcept
     {
         window = loadWindow(window, windowName);
-        GLFWimage icon[1];
-        icon[0].pixels = stbi_load("./icons/icon.png", &icon[0].width, &icon[0].height, 0, 4);
+        GLFWimage icon;
+        icon.pixels = stbi_load("./icons/icon.png", &icon.width, &icon.height, 0, 0);
         glfwSetWindowSize(window, width, height);
-        glfwSetWindowIcon(window, 1, icon);
+        glfwSetWindowIcon(window, 1, &icon);
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWidth, int windowHeight) {glViewport(0, 0, windowWidth, windowHeight);});
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetKeyCallback(window, key_callback);
-        stbi_image_free(icon[0].pixels);
+        stbi_image_free(icon.pixels);
     }
 }
 
