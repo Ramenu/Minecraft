@@ -9,8 +9,8 @@
 #ifdef GAME_BENCHMARK
     #include "timer.hpp"
 #endif
-#include "minecraft/data/uniformbuffer.h"
 
+static GLuint uniformBuffer;
 
 /**
  * Returns true if the debug output context
@@ -47,7 +47,6 @@ void initGame(const char *windowTitle) noexcept
 
     static constexpr float x {}, y {};
     glViewport(x, y, Window::width, Window::height);
-    Texture::initTextureAtlas();
     Lighting::initLightVAO();
 
     // Initialize uniform buffer, bind it, and store the data
@@ -70,9 +69,9 @@ void initGame(const char *windowTitle) noexcept
 
 static inline void updateCamera(const Renderer &renderer) noexcept
 {
-    double xPos, yPos;
-    glfwGetCursorPos(Window::getWindow(), &xPos, &yPos);
-    Camera::updateCameraPos(xPos, yPos);
+    double mouseXPos, mouseYPos;
+    glfwGetCursorPos(Window::getWindow(), &mouseXPos, &mouseYPos);
+    Camera::updateCameraPos(mouseXPos, mouseYPos);
     renderer.cubeShader.setMat4("view", Camera::getView());
     renderer.cubeShader.setVec3("viewPos", Camera::cameraPos);
 }
@@ -87,6 +86,7 @@ void runGame() noexcept
     float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
+    Texture textureAtlas {"./textures/textureatlas.jpg"};
     Renderer renderer;
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
@@ -124,8 +124,6 @@ void runGame() noexcept
 
     // Free up remaining resources used by the game
     glDeleteBuffers(1, &uniformBuffer);
-    Texture::deleteTextureAtlas();
-    Window::destroyWindow();
     glfwTerminate();
     #ifdef GAME_BENCHMARK
         time.detailedDisplay();
