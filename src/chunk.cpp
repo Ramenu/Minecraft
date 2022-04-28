@@ -2,6 +2,7 @@
 #include "misc/literals.hpp"
 #include "minecraft/camera/camera.hpp"
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/audio/sound.hpp"
 #include <cmath>
 #include <cstdio>
 #include <numeric>
@@ -52,12 +53,18 @@ void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept
         for (size_t i {texOffset + 1}; i < texOffset + verticesSizes[Attribute::TexCoord]; i += 2)
             chunkVertices.attributes[Attribute::TexCoord][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();
     }
-    else
-        updateChunkVisibility();
+    updateChunkVisibility();
     updateBuffer();
 }
 
-void Chunk::updateHighlightedBlocks() noexcept 
+/**
+ * Updates the state of the blocks.
+ * (which blocks are to be highlighted, 
+ * which have been destroyed, or placed, etc).
+ * It is recommended that this method be used
+ * for the active chunk only for performance.
+ */
+void Chunk::updateBlocks() noexcept 
 {
     static constexpr float normalAmbientLevel {1.5f}, highlightedAmbientLevel {1.9f};
     for (int8_t x {}; x < chunkWidth; x++)
@@ -66,25 +73,61 @@ void Chunk::updateHighlightedBlocks() noexcept
         {
             for (int8_t z {}; z < chunkLength; z++)
             {
-                const bool rayLookingAtBlock {static_cast<int8_t>(Camera::ray.getRay().x) == x && 
-                                              static_cast<int8_t>(Camera::ray.getRay().y) == y && 
-                                              static_cast<int8_t>(Camera::ray.getRay().z) == z};
+                // Not necessary to check if the player is looking at an air block
+                if (chunk[x][y][z].name != Air_Block)
+                {
+                    const bool rayLookingAtBlock {static_cast<int8_t>(Camera::ray.getRay().x) == x && 
+                                                static_cast<int8_t>(Camera::ray.getRay().y) == y && 
+                                                static_cast<int8_t>(Camera::ray.getRay().z) == z};
 
-                // If the block is highlighted check to see if its still being looked at by the player
-                if (highlightedBlocks[x][y][z])
-                {
-                    if (!rayLookingAtBlock)
+                    // If the block is highlighted check to see if its still being looked at by the player
+                    if (highlightedBlocks[x][y][z])
                     {
-                        highlightedBlocks[x][y][z] = false;
-                        highlightBlock({x, y, z}, normalAmbientLevel); // un-highlight the block
+                        const ChunkIndex index {x, y, z};
+                        if (!rayLookingAtBlock)
+                        {
+                            highlightedBlocks[x][y][z] = false;
+                            highlightBlock(index, normalAmbientLevel); // un-highlight the block
+                        }
+                        // Destroy the block if the left mouse button is clicked
+                        if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+                        {
+                            Sound::playBlockBreakSound(chunk[x][y][z].name);
+                            modifyChunk(index, Block{Air_Block});
+                        }
+
+                        // Place a block if the right mouse button is clicked
+                        static constinit int oldState {GLFW_RELEASE};
+                        const int newState {glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_RIGHT)};
+                        if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
+                        {
+                            const glm::vec3 blockDirection {-getDirectionVector(GLMath::getDirectionClosestTo(Camera::direction.front))};
+
+                            // this cast seems weird and unsafe, though the chunk boundaries have already been checked for overflow
+                            // so it is fine to do this (but perhaps there is a better way to do this more neatly).
+                            const ChunkIndex blockPosition {static_cast<int8_t>(x + static_cast<int8_t>(blockDirection.x)), 
+                                                            static_cast<int8_t>(y + static_cast<int8_t>(blockDirection.y)), 
+                                                            static_cast<int8_t>(z + static_cast<int8_t>(blockDirection.z))};
+
+                            // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
+                            // placed on an air block
+                            if (!isOutOfChunk(blockPosition) && chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
+                            {
+                                modifyChunk(blockPosition, Block{Cobblestone_Block});
+                                updateBuffer();
+                                Sound::playBlockPlacementSound(chunk[blockPosition.x][blockPosition.y][blockPosition.z].name);
+                            }
+                        }
+                        oldState = newState;
                     }
-                }
-                else
-                {
-                    if (rayLookingAtBlock)
+                    else
                     {
-                        highlightedBlocks[x][y][z] = true;
-                        highlightBlock({x, y, z}, highlightedAmbientLevel); // highlight the block
+                        if (rayLookingAtBlock)
+                        {
+                            const ChunkIndex index {x, y, z};
+                            highlightedBlocks[x][y][z] = true;
+                            highlightBlock(index, highlightedAmbientLevel); // highlight the block
+                        }
                     }
                 }
             }
