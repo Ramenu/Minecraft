@@ -2,11 +2,11 @@
 #define GLMATH_HPP
 
 #include "glm/vec3.hpp"
+#include "minecraft/math/direction.hpp"
 
 namespace GLMath
 {
-    extern glm::vec3 closestDirectionTo(const glm::vec3 &vec) noexcept;
-    
+    extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
 }
 
 #endif // GLMATH_HPP
