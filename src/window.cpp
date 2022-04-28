@@ -6,6 +6,8 @@
 
 namespace Window
 {
+    static void renderWireFrames() noexcept;
+    static GLFWwindow *loadWindow(GLFWwindow *window, const char *title) noexcept;
     static GLFWwindow *window;
 
     GLFWwindow *getWindow() noexcept {return window;}
@@ -30,11 +32,11 @@ namespace Window
     /**
      * Key callback for GLFW.
      */
-    static void key_callback(GLFWwindow *glWindow, int key, int, int, int)
+    static void key_callback(GLFWwindow *glWindow, int key, int, int, int) noexcept
     {
         switch (key)
         {
-            case GLFW_KEY_Q: return renderWireframes();
+            case GLFW_KEY_Q: return renderWireFrames();
             case GLFW_KEY_ESCAPE: return glfwSetWindowShouldClose(glWindow, true);
         }
     }
@@ -42,7 +44,7 @@ namespace Window
     /**
      * Toggles wireframes. 
      */
-    void renderWireframes() noexcept
+    static void renderWireFrames() noexcept
     {
         // Make sure that Q is being pressed to prevent
         // constant switches
@@ -58,7 +60,7 @@ namespace Window
 
 
     //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
-    GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title) noexcept
+    static GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title) noexcept
     {
         //Specify version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -82,13 +84,6 @@ namespace Window
             GLError::error_message("Failed to contextualize window");
         } 
         return glWindow; 
-    }
-
-    /* Destroys the window. */
-    void destroyWindow() noexcept
-    {
-        if (window != nullptr)
-            glfwDestroyWindow(window);
     }
 
     /**
