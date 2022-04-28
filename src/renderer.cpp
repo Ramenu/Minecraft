@@ -51,7 +51,7 @@ Renderer::~Renderer() noexcept
 
 void Renderer::update() noexcept
 {
-    activeChunk.updateHighlightedBlocks();
+    activeChunk.updateBlocks();
 }
 
 /**
