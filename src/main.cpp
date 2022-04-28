@@ -1,10 +1,7 @@
 #include "minecraft/game/game.hpp"
 #include <cstdint>
 #include "minecraft/glerror/glerror.hpp"
-extern "C"
-{
-    #include "misc/terminal.h"
-}
+#include "misc/terminal.h"
 
 int main()
 {
@@ -17,10 +14,10 @@ int main()
         } 
         else
             GLError::error_message("Failed to enable virtual terminal processing");
-    #else // ANSI color codes are automatically supported on UNIX systems
+    #else // ANSI color codes are automatically enabled on UNIX systems
         initGame("Minecraft");
         runGame();
     #endif
-    
+
     return 0;
 }
