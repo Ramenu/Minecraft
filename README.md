@@ -14,10 +14,10 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.2
+CLASSIC V2.3
 ------------
-- Removed a significant memory leak (over 100000 bytes) coming from stb_image. I forgot to free the data once I passed it to OpenGL
-- Added Texture class (for the reason given above)
+- Block highlighting has been added, whenever the ray intersects with a block the block will highlight
+- Ray is also significantly better than it was before (but still, I didn't like the implementation of it)
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
