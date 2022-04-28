@@ -15,20 +15,20 @@ namespace Sound
      * the enum cannot be used directly. That is why
      * this function exists.
      */
-    static uint8_t getSoundID(BlockName name)
+    static uint8_t getSoundID(BlockName name) noexcept
     {
         switch (name)
         {
             default: return 0;
-            case BlockName::Cobblestone_Block: return 1;
-            case BlockName::Stone_Block: return 1;
+            case Cobblestone_Block: return 1;
+            case Stone_Block: return 1;
         }
     }
 
     /**
      * Plays the block's sound on creation.
      */
-    void playBlockPlacementSound(BlockName name) 
+    void playBlockPlacementSound(BlockName name) noexcept
     {
         blockSounds[getSoundID(name)].first.audio.play();
     }
@@ -36,7 +36,7 @@ namespace Sound
     /**
      * Plays the block's destruction sound.
      */
-    void playBlockBreakSound(BlockName name) 
+    void playBlockBreakSound(BlockName name) noexcept
     {
         blockSounds[getSoundID(name)].second.audio.play();
     }

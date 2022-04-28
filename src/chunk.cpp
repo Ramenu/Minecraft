@@ -100,32 +100,32 @@ std::array<float, noOfSquaresInCube> Chunk::getVisibleFaces(ChunkIndex index) co
     // Back face
     // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
     if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z - 1)}) || 
-            chunk[index.x][index.y][index.z - 1].name == BlockName::Air_Block)
+        chunk[index.x][index.y][index.z - 1].name == Air_Block)
                 visibleFaces[0] = 1.0f;
 
     // Front face
     if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z + 1)}) ||
-        chunk[index.x][index.y][index.z + 1].name == BlockName::Air_Block)
+        chunk[index.x][index.y][index.z + 1].name == Air_Block)
             visibleFaces[1] = 1.0f;
 
     // Right face
     if (isOutOfChunk({static_cast<int8_t>(index.x + 1), index.y, index.z}) ||
-        chunk[index.x + 1][index.y][index.z].name == BlockName::Air_Block)
+        chunk[index.x + 1][index.y][index.z].name == Air_Block)
             visibleFaces[2] = 1.0f;
     
     // Left face
     if (isOutOfChunk({static_cast<int8_t>(index.x - 1), index.y, index.z}) || 
-        chunk[index.x - 1][index.y][index.z].name == BlockName::Air_Block)
+        chunk[index.x - 1][index.y][index.z].name == Air_Block)
             visibleFaces[3] = 1.0f;
     
     // Top face
     if (isOutOfChunk({index.x ,static_cast<int8_t>(index.y + 1), index.z}) ||
-        chunk[index.x][index.y + 1][index.z].name == BlockName::Air_Block)
+        chunk[index.x][index.y + 1][index.z].name == Air_Block)
             visibleFaces[4] = 1.0f;
 
     // Bottom face
     if (isOutOfChunk({index.x ,static_cast<int8_t>(index.y - 1), index.z}) || 
-        chunk[index.x][index.y - 1][index.z].name == BlockName::Air_Block)
+        chunk[index.x][index.y - 1][index.z].name == Air_Block)
             visibleFaces[5] = 1.0f;
     
     return visibleFaces;
@@ -147,7 +147,7 @@ void Chunk::updateChunkVisibility() noexcept
         {
             for (int8_t z {}; z < chunkLength; z++)
             {
-                const ChunkIndex index {ChunkIndex{x, y, z}};
+                const ChunkIndex index {x, y, z};
                 if (blockIsVisibleToPlayer(index) && chunk[x][y][z].name != BlockName::Air_Block)
                 {
                     const auto visible {getVisibleBlockVertices(getVisibleFaces(index))};
@@ -175,12 +175,12 @@ bool Chunk::blockIsVisibleToPlayer(ChunkIndex index) const noexcept
     
 
     // Check each block next to this block, if all of them are not air blocks then it is not visible to the player
-    return  (chunk[index.x + 1_i8][index.y][index.z].name == BlockName::Air_Block ||
-             chunk[index.x - 1_i8][index.y][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y + 1_i8][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y - 1_i8][index.z].name == BlockName::Air_Block ||
-             chunk[index.x][index.y][index.z + 1_i8].name == BlockName::Air_Block ||
-             chunk[index.x][index.y][index.z - 1_i8].name == BlockName::Air_Block);
+    return  (chunk[index.x + 1_i8][index.y][index.z].name == Air_Block ||
+             chunk[index.x - 1_i8][index.y][index.z].name == Air_Block ||
+             chunk[index.x][index.y + 1_i8][index.z].name == Air_Block ||
+             chunk[index.x][index.y - 1_i8][index.z].name == Air_Block ||
+             chunk[index.x][index.y][index.z + 1_i8].name == Air_Block ||
+             chunk[index.x][index.y][index.z - 1_i8].name == Air_Block);
 }
 
 
