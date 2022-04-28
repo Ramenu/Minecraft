@@ -16,10 +16,10 @@ class Ray
         inline constexpr Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
         inline void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept
         {
-            // x and y are multiplied by 2 because the width of each block is only 0.5
-            // so when the block's x 14, the ray's x will be roughly half of that.
-            ray = glm::vec3{origin.x * 2, origin.y - 0.1f, origin.z * 2} + direction;
-            setTitle(ray);
+            ray = origin + direction;
+            #if 0
+                setTitle({static_cast<int8_t>(ray.x), static_cast<int8_t>(ray.y), static_cast<int8_t>(ray.z)});
+            #endif
         }
         inline glm::vec3 getRay() const noexcept {return ray;}
         inline bool intersectsWith(const glm::vec3 &b) const noexcept
