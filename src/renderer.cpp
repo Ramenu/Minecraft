@@ -26,7 +26,6 @@ lightSource {[this]() {
 }()},
 activeChunk {BlockName::Grass_Block, Dirt_Block}
 {
-    activeChunk.highlightBlock({0, 15, 0}, highlightedAmbient);
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 
@@ -52,6 +51,7 @@ Renderer::~Renderer() noexcept
 
 void Renderer::update() noexcept
 {
+    activeChunk.updateHighlightedBlocks();
 }
 
 /**
