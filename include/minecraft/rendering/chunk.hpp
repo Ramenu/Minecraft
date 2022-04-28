@@ -53,7 +53,7 @@ class Chunk
             glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
         }
 
-        void updateHighlightedBlocks() noexcept;
+        void updateBlocks() noexcept;
 
         void updateBuffer() const noexcept;
 
