@@ -1,4 +1,5 @@
 #include "minecraft/camera/camera.hpp"
+#include "minecraft/math/glmath.hpp"
 
 namespace Camera
 {
@@ -45,26 +46,35 @@ namespace Camera
         settings.yaw += xOffset;
         settings.pitch += yOffset;
 
-        #if 1
-            // Angles in degrees
-            static constexpr float upDownTurnAngle {88.0f}; 
-            static constexpr float sideTurnAngle {360.0f};
+        // Angles in degrees
+        static constexpr float upDownTurnAngle {88.0f}; 
+        static constexpr float sideTurnAngle {360.0f};
 
-            // Prevent the player tilting their head backwards
-            if (settings.pitch > upDownTurnAngle)
-                settings.pitch = upDownTurnAngle;
-            else if (settings.pitch < -upDownTurnAngle)
-                settings.pitch = -upDownTurnAngle;
-            
-            // Reset the yaw so the player can spin their camera around 
-            if (settings.yaw > sideTurnAngle)
-                settings.yaw = 0.0f;
-            else if (settings.yaw < -sideTurnAngle)
-                settings.yaw = 0.0f;
-        #endif
+        // Prevent the player tilting their head backwards
+        if (settings.pitch > upDownTurnAngle)
+            settings.pitch = upDownTurnAngle;
+        if (settings.pitch < -upDownTurnAngle)
+            settings.pitch = -upDownTurnAngle;
+        
+        // Reset the yaw so the player can spin their camera around 
+        if (settings.yaw > sideTurnAngle)
+            settings.yaw = 0.0f;
+        if (settings.yaw < -sideTurnAngle)
+            settings.yaw = 0.0f;
 
         #if 1
-            ray.updateRay(cameraPos, direction.front);
+            // x and z are multiplied by 2 because the width of each block is only 0.5
+            // (for instance, when the block's x 14, the ray's x will be roughly half of that).
+            const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
+            switch (nearestDirectionToPlayer)
+            {
+                default: ray.updateRay({cameraPos.x * 2 + 1, cameraPos.y, cameraPos.z * 2}, direction.front); break; // Up
+                case West: ray.updateRay({cameraPos.x * 2, cameraPos.y, cameraPos.z * 2}, direction.front); break;
+                case East: ray.updateRay({cameraPos.x * 2 + 2, cameraPos.y, cameraPos.z * 2}, direction.front); break;
+                case North: ray.updateRay({cameraPos.x * 2 + 1, cameraPos.y, cameraPos.z * 2 + 1}, direction.front); break;
+                case South: ray.updateRay({cameraPos.x * 2 + 1, cameraPos.y, cameraPos.z * 2 - 1}, direction.front); break;
+                case Down: ray.updateRay({cameraPos.x * 2 + 1, cameraPos.y, cameraPos.z * 2}, direction.front); break;
+            }
         #endif
 
     }
