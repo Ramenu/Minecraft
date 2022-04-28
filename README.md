@@ -14,10 +14,10 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.3
+CLASSIC V2.4
 ------------
-- Block highlighting has been added, whenever the ray intersects with a block the block will highlight
-- Ray is also significantly better than it was before (but still, I didn't like the implementation of it)
+- Added block breaking again (Along with the corresponding block break sound being played once it is broken)
+- Added block placing again (Along with the corresponding block placement sound being played once it is played, though you still can't place outside of the chunk bounds for now)
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
