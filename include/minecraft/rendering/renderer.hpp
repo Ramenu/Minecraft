@@ -9,7 +9,7 @@
 #include "minecraft/data/vertexbuffer.hpp"
 #include "minecraft/data/vertexarray.hpp"
 
-constexpr uint8_t noOfInactiveChunks {5};
+static constexpr uint8_t noOfInactiveChunks {5};
 
 const glm::mat4 projection {[]{
         constexpr double fov {glm::radians(45.0)}, 

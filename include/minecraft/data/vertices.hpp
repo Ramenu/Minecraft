@@ -91,7 +91,7 @@ consteval std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertice
     };
 }
 
-constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(float x, float y, float z)
+constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(float x, float y, float z) noexcept
 {
     const std::array<float, verticesSizes[Attribute::Position]> defaultPositionVertices {
         // Back (First square)
@@ -146,7 +146,7 @@ constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(flo
     return defaultPositionVertices;
 }
 
-constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID)
+constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
 {
     std::array<float, verticesSizes[Attribute::TexCoord]> textureVertices {
         0.0f,   yPos + textureID,
@@ -241,7 +241,7 @@ static constexpr std::array<float, verticesSizes[Attribute::LightDirection]> def
 };
 
 constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
-getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible)
+getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible) noexcept
 {
     std::array<float, verticesSizes[Attribute::Visibility]> visibleVertices {
         1.0f * visible[0],

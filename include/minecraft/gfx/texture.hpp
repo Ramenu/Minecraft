@@ -4,8 +4,8 @@
 #include "minecraft/block/blockenum.hpp"
 #include <string>
 
-constexpr uint8_t atlasWidth {3}, atlasHeight {noBlocks - 1};
-constexpr float xPos {1.0f / atlasWidth}, yPos {1.0f / atlasHeight};
+static constexpr uint8_t atlasWidth {3}, atlasHeight {noBlocks - 1};
+static constexpr float xPos {1.0f / atlasWidth}, yPos {1.0f / atlasHeight};
 
 class Texture
 {

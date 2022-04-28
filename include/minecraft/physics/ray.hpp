@@ -13,7 +13,7 @@ class Ray
     private:
         glm::vec3 ray {};
     public:
-        constexpr Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
+        inline constexpr Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
         inline void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept
         {
             // x and y are multiplied by 2 because the width of each block is only 0.5

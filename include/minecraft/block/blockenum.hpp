@@ -11,6 +11,6 @@ enum BlockName : uint8_t
     Dirt_Block,
     Stone_Block
 };
-constexpr uint8_t noBlocks {5}; 
+static constexpr uint8_t noBlocks {5}; 
 
 #endif // BLOCKENUM_HPP

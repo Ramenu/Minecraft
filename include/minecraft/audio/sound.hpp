@@ -5,8 +5,8 @@
 
 namespace Sound
 {
-    extern void playBlockPlacementSound(BlockName name);
-    extern void playBlockBreakSound(BlockName name);
+    extern void playBlockPlacementSound(BlockName name) noexcept;
+    extern void playBlockBreakSound(BlockName name) noexcept;
 }
 
 #endif // SOUND_HPP
