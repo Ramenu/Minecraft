@@ -1,8 +1,7 @@
 #ifndef GLERROR_HPP
 #define GLERROR_HPP
 
-#define MC_DEBUG_BUILD
-
+#include "minecraft/debug/debugmacro.h"
 #include <string_view>
 
 namespace GLError
