@@ -6,7 +6,6 @@
 #include <cstdio>
 #include <numeric>
 
-static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
 
 static constexpr std::array<size_t, attributes.size()> sizeOfChunkVertices {[](){
@@ -53,9 +52,44 @@ void Chunk::modifyChunk(ChunkIndex chunkIndex, Block block) noexcept
         for (size_t i {texOffset + 1}; i < texOffset + verticesSizes[Attribute::TexCoord]; i += 2)
             chunkVertices.attributes[Attribute::TexCoord][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();
     }
-    updateChunkVisibility();
+    else
+        updateChunkVisibility();
     updateBuffer();
+}
 
+void Chunk::updateHighlightedBlocks() noexcept 
+{
+    static constexpr float normalAmbientLevel {1.5f}, highlightedAmbientLevel {1.9f};
+    for (int8_t x {}; x < chunkWidth; x++)
+    {
+        for (int8_t y {}; y < chunkHeight; y++)
+        {
+            for (int8_t z {}; z < chunkLength; z++)
+            {
+                const bool rayLookingAtBlock {static_cast<int8_t>(Camera::ray.getRay().x) == x && 
+                                              static_cast<int8_t>(Camera::ray.getRay().y) == y && 
+                                              static_cast<int8_t>(Camera::ray.getRay().z) == z};
+
+                // If the block is highlighted check to see if its still being looked at by the player
+                if (highlightedBlocks[x][y][z])
+                {
+                    if (!rayLookingAtBlock)
+                    {
+                        highlightedBlocks[x][y][z] = false;
+                        highlightBlock({x, y, z}, normalAmbientLevel); // un-highlight the block
+                    }
+                }
+                else
+                {
+                    if (rayLookingAtBlock)
+                    {
+                        highlightedBlocks[x][y][z] = true;
+                        highlightBlock({x, y, z}, highlightedAmbientLevel); // highlight the block
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**

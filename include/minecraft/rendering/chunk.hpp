@@ -8,6 +8,7 @@
 
 constexpr uint8_t chunkWidth {16}, chunkHeight {16}, chunkLength {16};
 constexpr uint32_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
+static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
 struct ChunkIndex
 {
@@ -37,6 +38,8 @@ class Chunk
         VertexArray vertexArray;
         ChunkVertex chunkVertices;
         std::array<float, noOfSquaresInCube> getVisibleFaces(ChunkIndex index) const noexcept;
+        bool highlightedBlocks[chunkWidth][chunkHeight][chunkLength] {};
+        void highlightBlock(ChunkIndex index, float ambient) noexcept;
     public:
         void updateChunkVisibility() noexcept;
 
@@ -50,11 +53,11 @@ class Chunk
             glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
         }
 
+        void updateHighlightedBlocks() noexcept;
+
         void updateBuffer() const noexcept;
 
         bool blockIsVisibleToPlayer(ChunkIndex index) const noexcept;
-
-        void highlightBlock(ChunkIndex index, float ambient) noexcept;
         
         /**
          * This function requires a 3D vector with 3 indices
