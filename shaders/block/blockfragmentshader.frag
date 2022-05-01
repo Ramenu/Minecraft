@@ -29,6 +29,10 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
 
+const float fogDensity = 0.007;
+const float fogGradient = 1.5;
+
+
 void main()
 {
     //fragColor = vec4(lightColor * objectColor, 1.0);
@@ -58,5 +62,6 @@ void main()
     vec3 specular = light.specular * (spec * material.specular);
 
     vec3 result = (ambient + diffuse + specular);
+
     fragColor = vec4(result, 1.0);
 }
