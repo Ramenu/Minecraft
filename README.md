@@ -14,10 +14,12 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.4
+CLASSIC V2.5
 ------------
-- Added block breaking again (Along with the corresponding block break sound being played once it is broken)
-- Added block placing again (Along with the corresponding block placement sound being played once it is played, though you still can't place outside of the chunk bounds for now)
+- Multiple chunks are now rendered
+- Removed unseen wireframes from being drawn in between chunks
+- When a block breaks, only the blocks adjacent to it are updated instead of the entire chunk (optimization)
+- Entire chunk buffer does not get updated when a block breaks, or is placed, only the block adjacent to it (for visibility) and the block itself for texture changes, if needed (optimization)
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
