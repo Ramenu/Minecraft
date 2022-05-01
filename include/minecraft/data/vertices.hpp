@@ -49,7 +49,7 @@ struct ChunkVertex
 };
 
 
-consteval std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertices(float ambient)
+constexpr std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertices(float ambient) noexcept
 {
     return {
         ambient,
