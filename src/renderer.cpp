@@ -7,6 +7,7 @@
 #include "minecraft/block/face.h"
 #include <cstdio>
 
+
 static constexpr float highlightedAmbient {1.9f};
 static constexpr float noOfChunksOnStart {4.0f};
 
@@ -25,41 +26,9 @@ lightSource {[this]() noexcept {
     return Lighting{components, direction, position};
 }()}
 {
-    #if 1
     for (float x {}; x < noOfChunksOnStart; x += 1.0f)
         for (float z {}; z < noOfChunksOnStart; z += 1.0f)
-            allChunks[{static_cast<size_t>(x), static_cast<size_t>(z)}].initChunk({x, 0.0f, z});
-    #else
-    allChunks[{0, 0}].initChunk({0.0f, 0.0f, 0.0f});
-    #endif
-
-    #if 0
-    allChunks[{0, 0}].initChunk({0.0f, 0.0f, 0.0f});
-    allChunks[{0, 1}].initChunk({0.0f, 0.0f, 1.0f});
-    allChunks[{0, 2}].initChunk({0.0f, 0.0f, 2.0f});
-    allChunks[{0, 3}].initChunk({0.0f, 0.0f, 3.0f});
-    allChunks[{0, 4}].initChunk({0.0f, 0.0f, 4.0f});
-    allChunks[{0, 5}].initChunk({0.0f, 0.0f, 5.0f});
-    #else
-        #if 0
-        allChunks[{0, 0}].initChunk({0.0f, 0.0f, 0.0f});
-        allChunks[{1, 0}].initChunk({1.0f, 0.0f, 0.0f});
-        allChunks[{2, 0}].initChunk({2.0f, 0.0f, 0.0f});
-        allChunks[{3, 0}].initChunk({3.0f, 0.0f, 0.0f});
-        allChunks[{4, 0}].initChunk({4.0f, 0.0f, 0.0f});
-        allChunks[{5, 0}].initChunk({5.0f, 0.0f, 0.0f});
-        #endif
-    #endif
-    #if 1
-    //static constexpr float maxChunkLimit {2.0f};
-    #else
-    for (size_t i {}; i < 4; i++)
-        allChunks.emplace_back(Chunk{});
-    allChunks[0].initChunk({0.0f, 0.0f, 0.0f});
-    allChunks[1].initChunk({0.0f, 0.0f, 1.0f});
-    allChunks[2].initChunk({1.0f, 0.0f, 0.0f});
-    allChunks[3].initChunk({1.0f, 0.0f, 1.0f});
-    #endif
+            allChunks[{static_cast<size_t>(x), static_cast<size_t>(z), 0}].initChunk({x, z, 0});
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 
@@ -90,19 +59,25 @@ Renderer::~Renderer() noexcept
  */
 void Renderer::updateActiveChunks() noexcept
 {
-    for (auto&[chunkPos, chunk]: allChunks)
+    for (const auto&[chunkPos, chunk]: allChunks)
     {
-        // Note that y is a subsitute for z since it is a vec2
-        const uint64_t z {chunkPos.y};
-        if (z > 0)
-        {
-            chunk.updateChunkVisibilityToNeighbor(allChunks[{chunkPos.x, z - 1}], BackFace);
-            allChunks[{chunkPos.x, z - 1}].updateChunkVisibilityToNeighbor(chunk, FrontFace);
-        } 
         if (chunkPos.x > 0)
         {
-            chunk.updateChunkVisibilityToNeighbor(allChunks[{chunkPos.x - 1, z}], LeftFace);
-            allChunks[{chunkPos.x - 1, z}].updateChunkVisibilityToNeighbor(chunk, RightFace);
+            const Chunk *chunkX {&allChunks[{chunkPos.x - 1, chunkPos.y, chunkPos.z}]};
+            chunk.updateChunkVisibilityToNeighbor(*chunkX, LeftFace);
+            chunkX->updateChunkVisibilityToNeighbor(chunk, RightFace);
+        } 
+        if (chunkPos.y > 0)
+        {
+            const Chunk *chunkY {&allChunks[{chunkPos.x, chunkPos.y - 1, chunkPos.z}]};
+            chunk.updateChunkVisibilityToNeighbor(*chunkY, BottomFace);
+            chunkY->updateChunkVisibilityToNeighbor(chunk, TopFace);
+        }
+        if (chunkPos.z > 0)
+        {
+            const Chunk *chunkZ {&allChunks[{chunkPos.x, chunkPos.y, chunkPos.z - 1}]};
+            chunk.updateChunkVisibilityToNeighbor(*chunkZ, BackFace);
+            chunkZ->updateChunkVisibilityToNeighbor(chunk, FrontFace);
         } 
     }
 }
@@ -111,34 +86,27 @@ void Renderer::updateActiveChunks() noexcept
  * Updates the chunks visibility adjacent to
  * the one located at the key given.
  */
-void Renderer::updateAdjacentChunks(const glm::u64vec2 &key) noexcept
+void Renderer::updateAdjacentChunks(const glm::u64vec3 &key) noexcept
 {
-    const size_t z {key.y};
     const Chunk *chosenChunk {&allChunks[key]};
 
-    if (z > 0)
-    {
-        //chosenChunk->updateChunkVisibilityToNeighbor(allChunks[{key.x, z - 1}], BackFace);
-        allChunks[{key.x, z - 1}].updateChunkVisibilityToNeighbor(*chosenChunk, FrontFace);
-    }
-
-    if (allChunks.find({key.x, z + 1}) != allChunks.end())
-    {
-        //chosenChunk->updateChunkVisibilityToNeighbor(allChunks[{key.x, z + 1}], BackFace);
-        allChunks[{key.x, z + 1}].updateChunkVisibilityToNeighbor(*chosenChunk, BackFace);
-    }
-
     if (key.x > 0)
-    {
-        //chosenChunk->updateChunkVisibilityToNeighbor(allChunks[{key.x - 1, z}], LeftFace);
-        allChunks[{key.x - 1, z}].updateChunkVisibilityToNeighbor(*chosenChunk, RightFace);
-    }
+        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, RightFace);
 
-    if (allChunks.find({key.x + 1, z}) != allChunks.end())
-    {
-        //chosenChunk->updateChunkVisibilityToNeighbor(allChunks[{key.x + 1, z}], LeftFace);
-        allChunks[{key.x + 1, z}].updateChunkVisibilityToNeighbor(*chosenChunk, LeftFace);
-    }
+    if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
+        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, LeftFace);
+
+    if (key.y > 0)
+        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, TopFace);
+
+    if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
+        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, BottomFace);
+
+    if (key.z > 0)
+        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(*chosenChunk, FrontFace);
+
+    if (allChunks.find({key.x, key.y, key.z + 1}) != allChunks.end())
+        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(*chosenChunk, BackFace);
 }
 
 /**
@@ -147,10 +115,10 @@ void Renderer::updateAdjacentChunks(const glm::u64vec2 &key) noexcept
 void Renderer::update() noexcept
 {
     bool updateNearChunks {};
-    allChunks[{0, 0}].updateChunk(updateNearChunks);
+    allChunks[{0, 0, 0}].updateChunk(updateNearChunks);
 
     if (updateNearChunks)
-        updateAdjacentChunks({0, 0});
+        updateAdjacentChunks({0, 0, 0});
     
     // This updates all of the chunks, and should be only set to true
     // sparingly.
@@ -166,7 +134,7 @@ void Renderer::update() noexcept
  */
 void Renderer::draw() const noexcept 
 {
-    for (const auto&chunk: allChunks)
-        chunk.second.drawChunk();
+    for (const auto&[chunkPos, chunk]: allChunks)
+        chunk.drawChunk();
 }
 
