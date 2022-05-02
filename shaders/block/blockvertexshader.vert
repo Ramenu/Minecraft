@@ -1,10 +1,13 @@
 #version 460 core
 
+#define BLOCK_ATTRIBUTES (36)
+#define ATTRIBUTE_ID ((gl_VertexID) % (BLOCK_ATTRIBUTES))
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
-layout (location = 2) in vec3 aNormal;
-layout (location = 3) in float aVisible;
-layout (location = 4) in float aAmbient;
+layout (location = 2) in float aVisible;
+layout (location = 3) in float aAmbient;
+
 
 out vec2 TexCoord;
 out vec3 Normal;
@@ -18,10 +21,54 @@ layout (std140, binding = 0) uniform Matrices
     uniform mat3 normalMatrix;
 };
 
+const vec3[BLOCK_ATTRIBUTES] lightDirections = {
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+
+    vec3(0.0,  1.0,  0.0),
+    vec3(0.0,  1.0,  0.0),
+    vec3(0.0,  1.0,  0.0),
+    vec3(0.0,  1.0,  0.0),
+    vec3(0.0,  1.0,  0.0),
+    vec3(0.0,  1.0,  0.0),
+
+    vec3(0.0, -1.0,  0.0),
+    vec3(0.0, -1.0,  0.0),
+    vec3(0.0, -1.0,  0.0),
+    vec3(0.0, -1.0,  0.0),
+    vec3(0.0, -1.0,  0.0),
+    vec3(0.0, -1.0,  0.0)
+};
+
 void main()
 {
     FragPos = aPos * aVisible;
-    Normal = normalMatrix * aNormal;
+    Normal = normalMatrix * lightDirections[ATTRIBUTE_ID];
     gl_Position = projection * view * vec4(FragPos, 1.0);
     TexCoord = vec2(aTexCoord.x, aTexCoord.y);
     blockAmbient = aAmbient;
