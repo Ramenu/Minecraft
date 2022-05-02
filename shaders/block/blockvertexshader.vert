@@ -22,6 +22,7 @@ layout (std140, binding = 0) uniform Matrices
 };
 
 const vec3[BLOCK_ATTRIBUTES] lightDirections = {
+    // Back face
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
@@ -29,6 +30,7 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
 
+    // Front face
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
@@ -36,6 +38,7 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
 
+    // Right face
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
@@ -43,6 +46,7 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
 
+    // Left face
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
@@ -50,6 +54,7 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  0.0,  1.0),
     vec3(0.0,  0.0,  1.0),
 
+    // Top face
     vec3(0.0,  1.0,  0.0),
     vec3(0.0,  1.0,  0.0),
     vec3(0.0,  1.0,  0.0),
@@ -57,6 +62,7 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  1.0,  0.0),
     vec3(0.0,  1.0,  0.0),
 
+    // Bottom face
     vec3(0.0, -1.0,  0.0),
     vec3(0.0, -1.0,  0.0),
     vec3(0.0, -1.0,  0.0),
