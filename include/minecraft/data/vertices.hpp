@@ -9,9 +9,8 @@ enum Attribute
 {
     Position = 0,
     TexCoord = 1,
-    LightDirection = 2,
-    Visibility = 3,
-    Ambient = 4
+    Visibility = 2,
+    Ambient = 3
 };
 
 static constexpr size_t attributesToFormCube {36};
@@ -22,7 +21,6 @@ static constexpr size_t noOfSquaresInCube {6};
 static constexpr std::array attributes {
     3, // Position 
     2, // Texture
-    3, // Light direction
     1, // Visibility
     1
 };
@@ -93,57 +91,56 @@ constexpr std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertice
 
 constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(float x, float y, float z) noexcept
 {
-    const std::array<float, verticesSizes[Attribute::Position]> defaultPositionVertices {
+    return {
         // Back (First square)
-        -0.5f + x, -0.5f + y, 0.0f + z,
-         0.0f + x,  0.5f + y, 0.0f + z,
-         0.0f + x, -0.5f + y, 0.0f + z,
-         0.0f + x,  0.5f + y, 0.0f + z,
-        -0.5f + x, -0.5f + y, 0.0f + z,
-        -0.5f + x,  0.5f + y, 0.0f + z,
+        -0.5f + x, -0.5f + y, -0.5f + z,
+         0.5f + x,  0.5f + y, -0.5f + z,
+         0.5f + x, -0.5f + y, -0.5f + z,
+         0.5f + x,  0.5f + y, -0.5f + z,
+        -0.5f + x, -0.5f + y, -0.5f + z,
+        -0.5f + x,  0.5f + y, -0.5f + z,
 
         // Front (second square) 
         -0.5f + x, -0.5f + y, 0.5f + z,
-         0.0f + x, -0.5f + y, 0.5f + z,
-         0.0f + x,  0.5f + y, 0.5f + z,
-         0.0f + x,  0.5f + y, 0.5f + z,
+         0.5f + x, -0.5f + y, 0.5f + z,
+         0.5f + x,  0.5f + y, 0.5f + z,
+         0.5f + x,  0.5f + y, 0.5f + z,
         -0.5f + x,  0.5f + y, 0.5f + z,
         -0.5f + x, -0.5f + y, 0.5f + z,
 
         // Right (third square)
-         0.0f + x,  0.5f + y, 0.0f + z,
-         0.0f + x, -0.5f + y, 0.5f + z,
-         0.0f + x, -0.5f + y, 0.0f + z,
-         0.0f + x, -0.5f + y, 0.5f + z,
-         0.0f + x,  0.5f + y, 0.0f + z,
-         0.0f + x,  0.5f + y, 0.5f + z,
+         0.5f + x,  0.5f + y, -0.5f + z,
+         0.5f + x, -0.5f + y,  0.5f + z,
+         0.5f + x, -0.5f + y, -0.5f + z,
+         0.5f + x, -0.5f + y,  0.5f + z,
+         0.5f + x,  0.5f + y, -0.5f + z,
+         0.5f + x,  0.5f + y,  0.5f + z,
 
         // Left square (fourth square)
-        -0.5f + x,  0.5f + y, 0.0f + z,
-        -0.5f + x, -0.5f + y, 0.0f + z,
-        -0.5f + x, -0.5f + y, 0.5f + z,
-        -0.5f + x, -0.5f + y, 0.5f + z,
-        -0.5f + x,  0.5f + y, 0.5f + z,
-        -0.5f + x,  0.5f + y, 0.0f + z,
+        -0.5f + x,  0.5f + y, -0.5f + z,
+        -0.5f + x, -0.5f + y, -0.5f + z,
+        -0.5f + x, -0.5f + y,  0.5f + z,
+        -0.5f + x, -0.5f + y,  0.5f + z,
+        -0.5f + x,  0.5f + y,  0.5f + z,
+        -0.5f + x,  0.5f + y, -0.5f + z,
 
         // Top square (fifth square)
-        -0.5f + x,  0.5f + y, 0.0f + z,
-         0.0f + x,  0.5f + y, 0.5f + z,
-         0.0f + x,  0.5f + y, 0.0f + z,
-         0.0f + x,  0.5f + y, 0.5f + z,
-        -0.5f + x,  0.5f + y, 0.0f + z,
-        -0.5f + x,  0.5f + y, 0.5f + z,
+        -0.5f + x,  0.5f + y, -0.5f + z,
+         0.5f + x,  0.5f + y,  0.5f + z,
+         0.5f + x,  0.5f + y, -0.5f + z,
+         0.5f + x,  0.5f + y,  0.5f + z,
+        -0.5f + x,  0.5f + y, -0.5f + z,
+        -0.5f + x,  0.5f + y,  0.5f + z,
 
         // Bottom square (sixth square)
-        -0.5f + x, -0.5f + y, 0.5f + z,
-        -0.5f + x, -0.5f + y, 0.0f + z,
-         0.0f + x, -0.5f + y, 0.5f + z,
-         0.0f + x, -0.5f + y, 0.5f + z,
-        -0.5f + x, -0.5f + y, 0.0f + z,
-         0.0f + x, -0.5f + y, 0.0f + z
+        -0.5f + x, -0.5f + y,  0.5f + z,
+        -0.5f + x, -0.5f + y, -0.5f + z,
+         0.5f + x, -0.5f + y,  0.5f + z,
+         0.5f + x, -0.5f + y,  0.5f + z,
+        -0.5f + x, -0.5f + y, -0.5f + z,
+         0.5f + x, -0.5f + y, -0.5f + z
     };
 
-    return defaultPositionVertices;
 }
 
 constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
@@ -196,49 +193,6 @@ constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertic
 
 }
 
-static constexpr std::array<float, verticesSizes[Attribute::LightDirection]> defaultLightDirectionVertices {
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-    0.0f,  0.0f, 1.0f,
-
-    0.0f,  1.0f, 0.0f,
-    0.0f,  1.0f, 0.0f,
-    0.0f,  1.0f, 0.0f,
-    0.0f,  1.0f, 0.0f,
-    0.0f,  1.0f, 0.0f,
-    0.0f,  1.0f, 0.0f,
-
-    0.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 0.0f
-};
 
 constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
 getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible) noexcept
