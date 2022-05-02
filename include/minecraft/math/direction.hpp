@@ -3,7 +3,7 @@
 
 #include "glm/vec3.hpp"
 
-constexpr glm::vec3 directions[6] {
+static constexpr glm::vec3 directions[6] {
     {1.0f, 0.0f, 0.0f},
     {-1.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f},
