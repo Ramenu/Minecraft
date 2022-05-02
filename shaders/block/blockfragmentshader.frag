@@ -1,5 +1,8 @@
 #version 460 core
 
+#define FOG_DENSITY (0.007)
+#define FOG_GRADIENT (1.5)
+
 struct Material 
 {
     sampler2D diffuse;
@@ -29,9 +32,6 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
 
-const float fogDensity = 0.007;
-const float fogGradient = 1.5;
-
 
 void main()
 {
@@ -39,29 +39,29 @@ void main()
     //fragColor = texture(allTextures, TexCoord) * (ambient * objectColor, 1.0);
 
     /* Ambient */
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * blockAmbient;
+    const vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * blockAmbient;
   	
     /* Diffuse */
-    vec3 norm = normalize(Normal);
+    const vec3 norm = normalize(Normal);
     // vec3 lightDir = normalize(lightPos - FragPos); // Calculate difference between vectors
-    vec3 lightDir = normalize(-light.direction);
+    const vec3 lightDir = normalize(-light.direction);
 
     // If the angle between both vectors is greater than 90 degrees the result of the dot product will be negative, which will result in
     // a negative diffuse component
-    float diff = max(dot(norm, lightDir), 0.0); // Calculate diffuse impact of the light 
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoord));
+    const float diff = max(dot(norm, lightDir), 0.0); // Calculate diffuse impact of the light 
+    const vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoord));
 
     /* Specular */
-    float specularStrength = 0.5;
-    vec3 viewDir = normalize(viewPos - FragPos); 
+    const float specularStrength = 0.5;
+    const vec3 viewDir = normalize(viewPos - FragPos); 
     // lightDir is negated because the function expects the first vector to point from the light source towards the fragment's position
-    vec3 reflectDir = reflect(-lightDir, norm); // Returns the reflection vector
+    const vec3 reflectDir = reflect(-lightDir, norm); // Returns the reflection vector
 
     // The higher the last argument is, the smaller the highlight becomes
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shine); // Raise dot product between view and reflect direction to "shine"
-    vec3 specular = light.specular * (spec * material.specular);
+    const float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shine); // Raise dot product between view and reflect direction to "shine"
+    const vec3 specular = light.specular * (spec * material.specular);
 
-    vec3 result = (ambient + diffuse + specular);
+    const vec3 result = (ambient + diffuse + specular);
 
     fragColor = vec4(result, 1.0);
 }
