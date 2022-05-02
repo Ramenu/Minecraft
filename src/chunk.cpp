@@ -74,11 +74,6 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
     {
         const size_t bufferOffset {getBlockIndex(index)};
         const auto defaultTexCoordVertices {getTextureVertices(block.getTexture())};
-
-        // Start from texOffset + 1 so we can start from y coordinate (changes the block's texture)
-        /*const size_t texOffset {bufferOffset * verticesSizes[Attribute::TexCoord]};
-        for (size_t i {texOffset + 1}; i < texOffset + verticesSizes[Attribute::TexCoord]; i += 2)
-            chunkVertices.attributes[Attribute::TexCoord][i] = defaultTexCoordVertices[i - texOffset] + block.getTexture();*/
         updateBuffer(bufferOffset, Attribute::TexCoord, defaultTexCoordVertices);
     }
 
@@ -122,6 +117,7 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
                         if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
                         {
                             Sound::playBlockBreakSound(chunk[x][y][z].name);
+                            blockStates[x][y][z] = BlockState::None;
                             modifyChunk(index, Block{Air_Block});
                             if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
                                 updateNeeded = true;
@@ -156,6 +152,7 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
                     {
                         if (rayLookingAtBlock)
                         {
+                            blockStates[x][y][z] = BlockState::Highlighted;
                             const glm::i8vec3 index {x, y, z};
                             highlightBlock(index, highlightedAmbientLevel); // highlight the block
                         }
@@ -174,7 +171,6 @@ void Chunk::highlightBlock(glm::i8vec3 index, float ambient) noexcept
 {
     const size_t bufferIndex {getBlockIndex(index)};
     const auto vertices {getAmbientVertices(ambient)}; 
-    blockStates[index.x][index.y][index.z] = BlockState::Highlighted;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     updateBuffer(bufferIndex, Attribute::Ambient, vertices);
 }
@@ -194,6 +190,7 @@ void Chunk::highlightBlock(glm::i8vec3 index, float ambient) noexcept
  */
 void Chunk::updateChunkVisibility(glm::i8vec3 index) const noexcept
 {
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     const auto adjacentBlocks {getBlocksSurrounding(index)};
     for (const auto&blockCoords: adjacentBlocks)
     {
@@ -215,8 +212,8 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) const noexcept
 
     // Update this block's visibility
     const auto visibilityVertices {(chunk[index.x][index.y][index.z].name == Air_Block) ?
-                                   getVisibleBlockVertices({Visible, Visible, Visible, Visible, Visible, Visible}) :
-                                   getVisibleBlockVertices({NotVisible, NotVisible, NotVisible, NotVisible, NotVisible, NotVisible})};
+                                   getVisibleBlockVertices({NotVisible, NotVisible, NotVisible, NotVisible, NotVisible, NotVisible}) :
+                                   getVisibleBlockVertices({Visible, Visible, Visible, Visible, Visible, Visible})};
     updateBuffer(getBlockIndex(index), Attribute::Visibility, visibilityVertices);
 }
 
@@ -446,7 +443,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glGenBuffers(1, &vertexBuffer);
     ChunkVertex chunkVertices;
     static constexpr auto blockAmbientLevel {getAmbientVertices(defaultAmbientLevel)};
-    position = {position.x, position.y * chunkHeight, position.z};
+    position = {position.x * chunkWidth, position.y * chunkHeight, position.z * chunkLength};
 
     for (float x {}; x < chunkWidth; x += 1.0f)
     {
@@ -466,11 +463,6 @@ void Chunk::initChunk(glm::vec3 position) noexcept
                 chunkVertices.attributes[Attribute::TexCoord].insert(chunkVertices.attributes[Attribute::TexCoord].end(),
                                                                      std::begin(texture),
                                                                      std::end(texture));
-                #if 0
-                chunkVertices.attributes[Attribute::LightDirection].insert(chunkVertices.attributes[Attribute::LightDirection].end(),
-                                                                           std::begin(defaultLightDirectionVertices),
-                                                                           std::end(defaultLightDirectionVertices));
-                #endif
                 chunkVertices.attributes[Attribute::Ambient].insert(chunkVertices.attributes[Attribute::Ambient].end(),
                                                                     std::begin(blockAmbientLevel),
                                                                     std::end(blockAmbientLevel));
