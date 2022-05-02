@@ -20,10 +20,12 @@ class Chunk
         GLuint vertexArray;
         GLuint vertexBuffer;
         std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
-        bool highlightedBlocks[chunkWidth][chunkHeight][chunkLength] {};
-        void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
+        BlockState blockStates[chunkWidth][chunkHeight][chunkLength] {};
+        void highlightBlock(glm::i8vec3 index, float ambient) noexcept;
         std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) const noexcept;
         void updateChunkVisibility(glm::i8vec3 index) const noexcept;
+        void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
+                          std::span<const float> vertices, Face face=BackFace) const noexcept; // make this static?
     public:
 
         void updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face face) const noexcept;
@@ -34,11 +36,7 @@ class Chunk
 
         void modifyChunk(glm::i8vec3 blockIndex, Block block) noexcept;
 
-        inline void drawChunk() const noexcept
-        {
-            glBindVertexArray(vertexArray);
-            glDrawArrays(GL_TRIANGLES, 0, chunkVolume * attributesToFormCube);
-        }
+        void drawChunk() const noexcept;
 
         inline ~Chunk() noexcept
         {
@@ -47,11 +45,6 @@ class Chunk
         }
 
         void updateChunk(bool &updateNeeded) noexcept;
-
-        void updateBuffer(const ChunkVertex &chunkVertices) const noexcept;
-
-        void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
-                          std::span<const float> vertices, Face face=BackFace) const noexcept;
 
         bool blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept;
         
