@@ -3,6 +3,13 @@
 
 #include <cstdint>
 
+enum class BlockState : uint8_t
+{
+    None,
+    Highlighted,
+    Visible
+};
+
 enum BlockName : uint8_t
 {
     Air_Block,
