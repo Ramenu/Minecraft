@@ -33,10 +33,10 @@ class Renderer
         Shader cubeShader;
     private:
 		Lighting lightSource;
-        void updateAdjacentChunks(const glm::u64vec2 &key) noexcept;
+        void updateAdjacentChunks(const glm::u64vec3 &key) noexcept;
         void updateActiveChunks() noexcept;
         size_t activeChunkIndex {};
-        std::unordered_map<glm::u64vec2, Chunk> allChunks;
+        std::unordered_map<glm::u64vec3, Chunk> allChunks;
         bool needsUpdate {true};
 };
 
