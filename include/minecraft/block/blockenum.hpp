@@ -6,8 +6,7 @@
 enum class BlockState : uint8_t
 {
     None,
-    Highlighted,
-    Visible
+    Highlighted
 };
 
 enum BlockName : uint8_t
