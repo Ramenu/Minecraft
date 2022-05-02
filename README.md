@@ -14,12 +14,11 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.5
+CLASSIC V2.6
 ------------
-- Multiple chunks are now rendered
-- Removed unseen wireframes from being drawn in between chunks
-- When a block breaks, only the blocks adjacent to it are updated instead of the entire chunk (optimization)
-- Entire chunk buffer does not get updated when a block breaks, or is placed, only the block adjacent to it (for visibility) and the block itself for texture changes, if needed (optimization)
+- Chunks above or below a chunk can now be rendered without wireframes appearing in between
+- Removed light direction attribute (as it is too much data to send to the GPU). Light direction now computed in shader instead
+- Made block vertices look like an actual cube rather than a small rectangle
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
