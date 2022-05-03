@@ -4,7 +4,7 @@
 #include "minecraft/data/vertexarray.hpp"
 #include "minecraft/block/block.hpp"
 #include "minecraft/data/vertexbuffer.hpp"
-#include "minecraft/data/vertices.hpp"
+#include "minecraft/mesh/chunkmesh.hpp"
 #include "minecraft/block/face.h"
 #include <span>
 #include <optional>
@@ -24,8 +24,8 @@ class Chunk
         void highlightBlock(glm::i8vec3 index, float ambient) noexcept;
         std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) const noexcept;
         void updateChunkVisibility(glm::i8vec3 index) const noexcept;
-        void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
-                          std::span<const float> vertices, Face face=BackFace) const noexcept; // make this static?
+        static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
+                                 std::span<const float> vertices, Face face=BackFace) noexcept; // make this static?
     public:
 
         void updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face face) const noexcept;
@@ -58,7 +58,7 @@ class Chunk
                    (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
         }
 
-        std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
+        Block chunk[chunkWidth][chunkHeight][chunkLength];
 
 };
 
