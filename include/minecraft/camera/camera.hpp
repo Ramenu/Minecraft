@@ -5,7 +5,7 @@
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-static constexpr float speed {6.0f};
+static constexpr float speed {12.0f};
 static constexpr glm::vec3 up {0.0f, 1.0f, 0.0f};
 
 struct CameraSettings
