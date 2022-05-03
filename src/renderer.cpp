@@ -1,15 +1,10 @@
 #include "minecraft/rendering/renderer.hpp"
-#include "minecraft/data/vertices.hpp"
-#include "minecraft/audio/sound.hpp"
-#include "minecraft/math/glmath.hpp"
-#include "minecraft/data/vertices.hpp"
-#include "minecraft/rendering/chunk.hpp"
 #include "minecraft/block/face.h"
 #include <cstdio>
 
 
 static constexpr float highlightedAmbient {1.9f};
-static constexpr float noOfChunksOnStart {4.0f};
+static constexpr float noOfChunksOnStart {3.0f};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
