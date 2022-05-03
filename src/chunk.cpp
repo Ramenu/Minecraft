@@ -40,18 +40,19 @@ static constexpr std::array<size_t, attributes.size()> offsets {[](){
 static constexpr size_t totalBytes {std::accumulate(sizeOfChunkVertices.begin(), sizeOfChunkVertices.end(), 0)};
 
 /**
- * Returns a single index based on a three dimensional
+ * Returns a single index (from 0 to 'CHUNKVOLUME') 
+ * based on a three dimensional
  * array index.
  */
-static inline size_t getBlockIndex(glm::i8vec3 index) noexcept
-{
+static inline constexpr size_t getBlockIndex(glm::i8vec3 index) noexcept {
     return ((index.y * chunkHeight + index.z) + index.x * chunkLength * chunkHeight);
 }
 
 void Chunk::drawChunk() const noexcept
 {
+    static constexpr size_t first {0}, count {chunkVolume * attributesToFormCube};
     glBindVertexArray(vertexArray);
-    glDrawArrays(GL_TRIANGLES, 0, attributesToFormCube * chunkVolume);
+    glDrawArrays(GL_TRIANGLES, first, count - first);
 }
 
 
@@ -312,7 +313,7 @@ void Chunk::updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face fac
  * the attribute index. Requires that the
  * vertex buffer be binded before this is called!
  */
-void Chunk::updateBuffer(size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) const noexcept
+void Chunk::updateBuffer(size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) noexcept
 {
     const size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + offsets[attributeIndex])
                                 + face * noOfSquaresInCube * sizeof(float)};
@@ -441,7 +442,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 {
     glGenVertexArrays(1, &vertexArray);
     glGenBuffers(1, &vertexBuffer);
-    ChunkVertex chunkVertices;
+    ChunkMesh chunkVertices;
     static constexpr auto blockAmbientLevel {getAmbientVertices(defaultAmbientLevel)};
     position = {position.x * chunkWidth, position.y * chunkHeight, position.z * chunkLength};
 
@@ -458,14 +459,14 @@ void Chunk::initChunk(glm::vec3 position) noexcept
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
                 const auto texture {getTextureVertices(block.getTexture())};
                 chunkVertices.attributes[Attribute::Position].insert(chunkVertices.attributes[Attribute::Position].end(), 
-                                                                     std::begin(pos), 
-                                                                     std::end(pos));
+                                                                     pos.begin(), 
+                                                                     pos.end());
                 chunkVertices.attributes[Attribute::TexCoord].insert(chunkVertices.attributes[Attribute::TexCoord].end(),
-                                                                     std::begin(texture),
-                                                                     std::end(texture));
+                                                                     texture.begin(),
+                                                                     texture.end());
                 chunkVertices.attributes[Attribute::Ambient].insert(chunkVertices.attributes[Attribute::Ambient].end(),
-                                                                    std::begin(blockAmbientLevel),
-                                                                    std::end(blockAmbientLevel));
+                                                                    blockAmbientLevel.begin(),
+                                                                    blockAmbientLevel.end());
             }
         }
     }
