@@ -68,12 +68,12 @@ namespace Camera
             const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
             switch (nearestDirectionToPlayer)
             {
-                default: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break; // Up
-                case West: ray.updateRay({cameraPos.x, cameraPos.y, cameraPos.z}, direction.front); break;
-                case East: ray.updateRay({cameraPos.x + 2, cameraPos.y, cameraPos.z}, direction.front); break;
-                case North: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z + 1}, direction.front); break;
-                case South: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z - 1}, direction.front); break;
-                case Down: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
+                default: ray.updateRay({cameraPos.x, cameraPos.y - 1, cameraPos.z}, direction.front); break; // Up
+                case West: ray.updateRay({cameraPos.x - 1, cameraPos.y - 1, cameraPos.z}, direction.front); break;
+                case East: ray.updateRay({cameraPos.x + 2, cameraPos.y - 1, cameraPos.z}, direction.front); break;
+                case North: ray.updateRay({cameraPos.x, cameraPos.y - 1, cameraPos.z + 2}, direction.front); break;
+                case South: ray.updateRay({cameraPos.x, cameraPos.y - 1, cameraPos.z - 1}, direction.front); break;
+                case Down: ray.updateRay({cameraPos.x + 1, cameraPos.y - 1, cameraPos.z}, direction.front); break;
             }
         #endif
 
