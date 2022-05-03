@@ -63,8 +63,7 @@ namespace Camera
             settings.yaw = 0.0f;
 
         #if 1
-            // x and z are multiplied by 2 because the width of each block is only 0.5
-            // (for instance, when the block's x 14, the ray's x will be roughly half of that).
+            //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
             const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
             switch (nearestDirectionToPlayer)
             {
