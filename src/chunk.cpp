@@ -8,12 +8,6 @@
 #include <cstdio>
 #include <numeric>
 
-enum VisibilityLevels
-{
-    NotVisible = 0,
-    Visible = 1
-};
-
 static constexpr auto invisibleVertices {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
 static constexpr float defaultAmbientLevel {1.5f};
 
@@ -212,9 +206,10 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) const noexcept
     }
 
     // Update this block's visibility
+    static constexpr float invisible {0.0f};
     const auto visibilityVertices {(chunk[index.x][index.y][index.z].name == Air_Block) ?
-                                   getVisibleBlockVertices({NotVisible, NotVisible, NotVisible, NotVisible, NotVisible, NotVisible}) :
-                                   getVisibleBlockVertices({Visible, Visible, Visible, Visible, Visible, Visible})};
+                                   getVisibleBlockVertices({invisible, invisible, invisible, invisible, invisible, invisible}) :
+                                   getVisibleBlockVertices(getVisibleFaces(index))};
     updateBuffer(getBlockIndex(index), Attribute::Visibility, visibilityVertices);
 }
 
@@ -237,14 +232,14 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
     // adjacent to it can be returned.
     if (!isOutOfChunk(index + 1_i8) && !isOutOfChunk(index - 1_i8)) 
     {
-        using opt = std::optional<glm::i8vec3>;
+        using optional = std::optional<glm::i8vec3>;
         return {
-            opt{blockAtBack},
-            opt{blockAtFront},
-            opt{blockAtRight},
-            opt{blockAtLeft},
-            opt{blockAtTop},
-            opt{blockAtBottom}
+            optional{blockAtBack},
+            optional{blockAtFront},
+            optional{blockAtRight},
+            optional{blockAtLeft},
+            optional{blockAtTop},
+            optional{blockAtBottom}
         };
     }
 
@@ -272,6 +267,7 @@ void Chunk::updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face fac
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     int8_t begin {0}, end {chunkHeight - 1};
+    static constexpr float completelyVisible {1.0f};
     if (face == FrontFace || face == RightFace || face == TopFace)
         std::swap(begin, end);
     for (int8_t a {}; a < chunkWidth; a++)
@@ -284,19 +280,19 @@ void Chunk::updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face fac
             {
                 index = {a, v, begin};
                 if (chunk[a][v][begin].name != Air_Block && chunkNeighbor.chunk[a][v][end].name == Air_Block)
-                    visibleLevel = Visible;
+                    visibleLevel = completelyVisible;
             }
             else if (face == TopFace || face == BottomFace) // Check faces on Y
             {
                 index = {a, begin, v};
                 if (chunk[a][begin][v].name != Air_Block && chunkNeighbor.chunk[a][end][v].name == Air_Block)
-                    visibleLevel = Visible;
+                    visibleLevel = completelyVisible;
             }
             else // Check faces on X
             {
                 index = {begin, v, a};
                 if (chunk[begin][v][a].name != Air_Block && chunkNeighbor.chunk[end][v][a].name == Air_Block)
-                    visibleLevel = Visible;
+                    visibleLevel = completelyVisible;
             }
 
             const size_t blockOffset {getBlockIndex(index)};
@@ -332,38 +328,39 @@ void Chunk::updateBuffer(size_t bufferIndex, Attribute attributeIndex, std::span
 std::array<float, noOfSquaresInCube> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
+    static constexpr float completelyVisible {1.0f};
     std::array<float, noOfSquaresInCube> visibleFaces {};
 
     // Back face
     // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
     if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z - 1)}) || 
         chunk[index.x][index.y][index.z - 1].name == Air_Block)
-                visibleFaces[0] = 1.0f;
+            visibleFaces[Face::BackFace] = completelyVisible;
 
     // Front face
     if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z + 1)}) ||
         chunk[index.x][index.y][index.z + 1].name == Air_Block)
-            visibleFaces[1] = 1.0f;
+            visibleFaces[Face::FrontFace] = completelyVisible;
 
     // Right face
     if (isOutOfChunk({static_cast<int8_t>(index.x + 1), index.y, index.z}) ||
         chunk[index.x + 1][index.y][index.z].name == Air_Block)
-            visibleFaces[2] = 1.0f;
+            visibleFaces[Face::RightFace] = completelyVisible;
     
     // Left face
     if (isOutOfChunk({static_cast<int8_t>(index.x - 1), index.y, index.z}) || 
         chunk[index.x - 1][index.y][index.z].name == Air_Block)
-            visibleFaces[3] = 1.0f;
+            visibleFaces[Face::LeftFace] = completelyVisible;
     
     // Top face
     if (isOutOfChunk({index.x , static_cast<int8_t>(index.y + 1), index.z}) ||
         chunk[index.x][index.y + 1][index.z].name == Air_Block)
-            visibleFaces[4] = 1.0f;
+            visibleFaces[Face::TopFace] = completelyVisible;
 
     // Bottom face
     if (isOutOfChunk({index.x , static_cast<int8_t>(index.y - 1), index.z}) || 
         chunk[index.x][index.y - 1][index.z].name == Air_Block)
-            visibleFaces[5] = 1.0f;
+            visibleFaces[Face::BottomFace] = completelyVisible;
     
     return visibleFaces;
 }
