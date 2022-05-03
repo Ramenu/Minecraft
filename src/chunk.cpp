@@ -136,21 +136,22 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
                             if (!isOutOfChunk(blockPosition) && chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
                             {
                                 modifyChunk(blockPosition, Block{Cobblestone_Block});
+                                // Highlighting it is necessary, so in the next call the method can decide whether to still keep
+                                // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
+                                blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = BlockState::Highlighted;
                                 Sound::playBlockPlacementSound(chunk[blockPosition.x][blockPosition.y][blockPosition.z].name);
                                 if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
                                     updateNeeded = true;
                             }
                         }
                         oldState = newState;
+                        continue;
                     }
-                    else
+                    if (rayLookingAtBlock)
                     {
-                        if (rayLookingAtBlock)
-                        {
-                            blockStates[x][y][z] = BlockState::Highlighted;
-                            const glm::i8vec3 index {x, y, z};
-                            highlightBlock(index, highlightedAmbientLevel); // highlight the block
-                        }
+                        blockStates[x][y][z] = BlockState::Highlighted;
+                        const glm::i8vec3 index {x, y, z};
+                        highlightBlock(index, highlightedAmbientLevel); // highlight the block
                     }
                 }
             }
