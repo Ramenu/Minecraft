@@ -4,7 +4,7 @@
 
 
 static constexpr float highlightedAmbient {1.9f};
-static constexpr float noOfChunksOnStart {3.0f};
+static constexpr float noOfChunksOnStart {4.0f};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -58,19 +58,19 @@ void Renderer::updateActiveChunks() noexcept
     {
         if (chunkPos.x > 0)
         {
-            const Chunk *chunkX {&allChunks[{chunkPos.x - 1, chunkPos.y, chunkPos.z}]};
+            const Chunk* const chunkX {&allChunks[{chunkPos.x - 1, chunkPos.y, chunkPos.z}]};
             chunk.updateChunkVisibilityToNeighbor(*chunkX, LeftFace);
             chunkX->updateChunkVisibilityToNeighbor(chunk, RightFace);
         } 
         if (chunkPos.y > 0)
         {
-            const Chunk *chunkY {&allChunks[{chunkPos.x, chunkPos.y - 1, chunkPos.z}]};
+            const Chunk* const chunkY {&allChunks[{chunkPos.x, chunkPos.y - 1, chunkPos.z}]};
             chunk.updateChunkVisibilityToNeighbor(*chunkY, BottomFace);
             chunkY->updateChunkVisibilityToNeighbor(chunk, TopFace);
         }
         if (chunkPos.z > 0)
         {
-            const Chunk *chunkZ {&allChunks[{chunkPos.x, chunkPos.y, chunkPos.z - 1}]};
+            const Chunk* const chunkZ {&allChunks[{chunkPos.x, chunkPos.y, chunkPos.z - 1}]};
             chunk.updateChunkVisibilityToNeighbor(*chunkZ, BackFace);
             chunkZ->updateChunkVisibilityToNeighbor(chunk, FrontFace);
         } 
@@ -83,7 +83,7 @@ void Renderer::updateActiveChunks() noexcept
  */
 void Renderer::updateAdjacentChunks(const glm::u64vec3 &key) noexcept
 {
-    const Chunk *chosenChunk {&allChunks[key]};
+    const Chunk* const chosenChunk {&allChunks[key]};
 
     if (key.x > 0)
         allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, RightFace);
