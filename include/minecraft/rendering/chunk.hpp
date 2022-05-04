@@ -9,7 +9,7 @@
 #include <span>
 #include <optional>
 
-static constexpr uint8_t chunkWidth {16}, chunkHeight {16}, chunkLength {16};
+static constexpr uint8_t chunkWidth {16}, chunkHeight {chunkWidth}, chunkLength {chunkWidth};
 static constexpr uint32_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
 static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
@@ -22,15 +22,16 @@ class Chunk
         std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[chunkWidth][chunkHeight][chunkLength] {};
         void highlightBlock(glm::i8vec3 index, float ambient) noexcept;
-        std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) const noexcept;
-        void updateChunkVisibility(glm::i8vec3 index) const noexcept;
+        static std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) noexcept;
+        void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept; // make this static?
+        static bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
     public:
 
         void updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face face) const noexcept;
 
-        void updateChunkVisibility() const noexcept;
+        void updateChunkVisibility() noexcept;
 
         void initChunk(glm::vec3 position) noexcept;
 
