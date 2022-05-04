@@ -3,11 +3,30 @@
 
 #include <cstdint>
 
-enum class BlockState : uint8_t
+enum BlockState : uint8_t
 {
-    None,
-    Highlighted
+    None = 1,
+    Visible = 2,
+    Highlighted = 4
 };
+
+inline constexpr BlockState operator|(BlockState a, BlockState b) noexcept {
+    return static_cast<BlockState>(static_cast<uint8_t>(a)|static_cast<uint8_t>(b));
+}
+
+inline constexpr BlockState operator&(BlockState a, BlockState b) noexcept {
+    return static_cast<BlockState>(static_cast<uint8_t>(a)&static_cast<uint8_t>(b));
+}
+
+inline constexpr BlockState &operator|=(BlockState &a, BlockState b) noexcept {
+    a = a | b;
+    return a;
+}
+
+inline constexpr BlockState &operator&=(BlockState &a, BlockState b) noexcept {
+    a = a & b;
+    return a;
+}
 
 enum BlockName : uint8_t
 {
