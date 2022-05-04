@@ -13,7 +13,7 @@
 
 static constexpr uint8_t noOfInactiveChunks {5};
 
-const glm::mat4 projection {[]() noexcept {
+static const glm::mat4 projection {[]() noexcept {
         static constexpr double fov {glm::radians(45.0)}, 
         aspectRatio {Window::width/Window::height}, 
         near {0.1}, 
