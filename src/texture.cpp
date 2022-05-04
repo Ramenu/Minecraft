@@ -12,7 +12,7 @@
 #pragma GCC diagnostic pop
 #include "minecraft/glerror/glerror.hpp"
 
-namespace fs = std::filesystem;
+namespace std_fs = std::filesystem;
 
 
 /**
@@ -21,7 +21,7 @@ namespace fs = std::filesystem;
  */
 Texture::Texture(const std::string &pathToTexture) noexcept
 {
-    if (fs::exists(pathToTexture))
+    if (std_fs::exists(pathToTexture))
     {
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
