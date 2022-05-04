@@ -53,7 +53,7 @@ void initGame(const char *windowTitle) noexcept
     glGenBuffers(1, &uniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
 
-    glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
+    const glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
 
     // Allocate enough space before filling in the buffer
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
