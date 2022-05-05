@@ -1,10 +1,7 @@
 #include "minecraft/glerror/glerror.hpp"
 #include "glad/glad.h"
 #include <iostream>
-extern "C" 
-{
-    #include "misc/color.h"
-}
+#include "misc/color.h"
 
 namespace GLError
 {
