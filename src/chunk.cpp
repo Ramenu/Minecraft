@@ -166,7 +166,7 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
  * Highlights the block located at (x, y, z)
  * with the ambient level given.
  */
-void Chunk::highlightBlock(glm::i8vec3 index, float ambient) noexcept 
+void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept 
 {
     const size_t bufferIndex {getBlockIndex(index)};
     const auto vertices {getAmbientVertices(ambient)}; 

@@ -21,7 +21,7 @@ class Chunk
         GLuint vertexBuffer;
         std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[chunkWidth][chunkHeight][chunkLength] {};
-        void highlightBlock(glm::i8vec3 index, float ambient) noexcept;
+        void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
         static std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) noexcept;
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
