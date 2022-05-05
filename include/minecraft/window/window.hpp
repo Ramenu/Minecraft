@@ -8,7 +8,7 @@ namespace Window
     extern GLFWwindow *getWindow() noexcept;
     extern void initWindow(const char *windowName) noexcept;
     extern void processMovement(float deltaTime) noexcept; 
-    static constexpr double width {512}, height {512};
+    static constexpr size_t width {512}, height {512};
 }
 
 #endif // WINDOW_HPP
