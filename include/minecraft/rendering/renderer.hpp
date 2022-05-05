@@ -14,11 +14,8 @@
 static constexpr uint8_t noOfInactiveChunks {5};
 
 static const glm::mat4 projection {[]() noexcept {
-        static constexpr double fov {glm::radians(45.0)}, 
-        aspectRatio {Window::width/Window::height}, 
-        near {0.1}, 
-        far {100.0};
-        return glm::perspective(fov, aspectRatio, near, far);
+        static constexpr float near {0.1f}, far {100.0f};
+        return glm::perspective(Camera::fov, Window::aspectRatio, near, far);
     }()
 };
 
@@ -33,6 +30,9 @@ class Renderer
         Shader cubeShader;
     private:
 		Lighting lightSource;
+        inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
+            return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
+        }
         void updateAdjacentChunks(const glm::u64vec3 &key) noexcept;
         void updateActiveChunks() noexcept;
         size_t activeChunkIndex {};
