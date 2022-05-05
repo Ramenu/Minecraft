@@ -9,6 +9,7 @@ namespace Window
     extern void initWindow(const char *windowName) noexcept;
     extern void processMovement(float deltaTime) noexcept; 
     static constexpr size_t width {512}, height {512};
+    static constexpr float aspectRatio {width/height};
 }
 
 #endif // WINDOW_HPP
