@@ -40,7 +40,7 @@ void main()
 
     /* Ambient */
     const vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)) * blockAmbient;
-  	
+   
     /* Diffuse */
     const vec3 norm = normalize(Normal);
     // vec3 lightDir = normalize(lightPos - FragPos); // Calculate difference between vectors
