@@ -89,6 +89,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     -fprofile-partial-training
     -march=native)
     target_link_options(main PUBLIC -flto -s)
+    target_link_libraries(main PUBLIC gcov)
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 # Linker flags
