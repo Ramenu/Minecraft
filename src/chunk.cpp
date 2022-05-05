@@ -44,9 +44,6 @@ static inline constexpr size_t getBlockIndex(glm::i8vec3 index) noexcept {
 
 void Chunk::drawChunk() const noexcept
 {
-    // there are a few ways we can make this faster.
-    // If we use instancing for the transformations, and texture, ambient, visibility calculation in the shaders. 
-    // We can improve performance significantly on the CPU side
     static constexpr size_t first {0}, count {attributesToFormCube * chunkVolume};
     glBindVertexArray(vertexArray);
     glDrawArrays(GL_TRIANGLES, first, count - first);
