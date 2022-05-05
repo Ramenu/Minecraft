@@ -7,7 +7,7 @@
 #include "minecraft/window/window.hpp"
 #include "minecraft/gfx/texture.hpp"
 #ifdef GAME_BENCHMARK
-    #include "timer.hpp"
+    #include "misc/timer.hpp"
 #endif
 
 static GLuint uniformBuffer;
