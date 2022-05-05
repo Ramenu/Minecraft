@@ -25,7 +25,7 @@ class Chunk
         static std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) noexcept;
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
-                                 std::span<const float> vertices, Face face=BackFace) noexcept; // make this static?
+                                 std::span<const float> vertices, Face face=BackFace) noexcept;
         static bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
     public:
 
