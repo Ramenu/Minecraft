@@ -10,10 +10,10 @@ static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
 
 enum Attribute
 {
-    Position = 0,
-    TexCoord = 1,
-    Visibility = 2,
-    Ambient = 3
+    Position,
+    TexCoord,
+    Visibility,
+    Ambient
 };
 
 static constexpr std::array attributes {
