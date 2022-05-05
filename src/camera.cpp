@@ -16,7 +16,7 @@ namespace Camera
         const float cosPitch {cosf(glm::radians(settings.pitch))};
 
         // Calculate a 3D vector given the yaw and pitch
-        glm::vec3 updatedDirection {
+        const glm::vec3 updatedDirection {
             cosf(glm::radians(settings.yaw)) * cosPitch,
             sinf(glm::radians(settings.pitch)),
             sinf(glm::radians(settings.yaw)) * cosPitch
