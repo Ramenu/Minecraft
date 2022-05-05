@@ -17,9 +17,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Directories to search for libraries
-link_directories(C:/Users/ramen/Clibrary/public)
-link_directories(C:/Users/ramen/Clibrary/public/OpenGL/lib)
-link_directories(C:/Users/ramen/Clibrary/public/SFML/lib/shared)
+link_directories("./lib")
 
 add_executable(main
 ./src/camera.cpp
@@ -99,17 +97,11 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
 # Include directories
-target_include_directories(main PUBLIC 
-"./include"
-"C:/Users/ramen/Clibrary/public/OpenGL"
-"C:/Users/ramen/Clibrary/public/SFML"
-"C:/Users/ramen/Clibrary/public"
-)
+target_include_directories(main PUBLIC "./include")
 
 
 # Link libraries
 target_link_libraries(main PUBLIC 
-terminal
 glad
 glfw3
 sfml-system-3
