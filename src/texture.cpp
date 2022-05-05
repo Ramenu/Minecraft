@@ -8,7 +8,7 @@
 #pragma GCC diagnostic ignored "-Wuseless-cast"
 #pragma GCC diagnostic ignored "-Wduplicated-branches"
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <stb-master/stb_image.h>
+#include "stb-master/stb_image.h"
 #pragma GCC diagnostic pop
 #include "minecraft/glerror/glerror.hpp"
 
