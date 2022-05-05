@@ -14,11 +14,9 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.6
+CLASSIC V2.61
 ------------
-- Chunks above or below a chunk can now be rendered without wireframes appearing in between
-- Removed light direction attribute (as it is too much data to send to the GPU). Light direction now computed in shader instead
-- Made block vertices look like an actual cube rather than a small rectangle
+- Build now uses relative path names rather than the absolute path (my directories) so it is now possible to build them yourself, however you still have to build the third-party libraries yourself
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
