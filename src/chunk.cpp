@@ -44,7 +44,10 @@ static inline constexpr size_t getBlockIndex(glm::i8vec3 index) noexcept {
 
 void Chunk::drawChunk() const noexcept
 {
-    static constexpr size_t first {0}, count {chunkVolume * attributesToFormCube};
+    // there are a few ways we can make this faster.
+    // If we use instancing for the transformations, and texture, ambient, visibility calculation in the shaders. 
+    // We can improve performance significantly on the CPU side
+    static constexpr size_t first {0}, count {attributesToFormCube * chunkVolume};
     glBindVertexArray(vertexArray);
     glDrawArrays(GL_TRIANGLES, first, count - first);
 }
@@ -243,14 +246,13 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
     // adjacent to it can be returned.
     if (!isOutOfChunk(index + 1_i8) && !isOutOfChunk(index - 1_i8)) 
     {
-        using optional = std::optional<glm::i8vec3>;
         return {
-            optional{blockAtBack},
-            optional{blockAtFront},
-            optional{blockAtRight},
-            optional{blockAtLeft},
-            optional{blockAtTop},
-            optional{blockAtBottom}
+            std::optional{blockAtBack},
+            std::optional{blockAtFront},
+            std::optional{blockAtRight},
+            std::optional{blockAtLeft},
+            std::optional{blockAtTop},
+            std::optional{blockAtBottom}
         };
     }
 
@@ -501,7 +503,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 
     glBindVertexArray(vertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_STATIC_DRAW);
 
     // Now fill in the buffer's data
     for (size_t i {}; i < attributes.size(); ++i)
@@ -509,15 +511,15 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
-    static constexpr auto isNormalized {GL_FALSE};
+    static constexpr int normalizedAttributes[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
     for (size_t i {}; i < attributes.size(); ++i)
     {
         glEnableVertexArrayAttrib(vertexBuffer, i);
         glVertexAttribPointer(i,
                               attributes[i], 
                               GL_FLOAT, 
-                              isNormalized, 
-                              attributes[i] * sizeof(float), 
+                              normalizedAttributes[i], 
+                              0, // values are understood to be tightly-packed in array
                               reinterpret_cast<const void*>(offsets[i]));
     }
 
