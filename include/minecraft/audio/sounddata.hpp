@@ -11,7 +11,7 @@
 class SoundData
 {
     public:
-        explicit SoundData(const char *soundFilePath) noexcept;
+        explicit SoundData(const std::string &soundFilePath) noexcept;
         sf::Sound audio;
     private:
         sf::SoundBuffer buffer;
