@@ -1,5 +1,6 @@
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/block/face.h"
+#include "minecraft/math/frustum.hpp"
 #include <cstdio>
 
 
