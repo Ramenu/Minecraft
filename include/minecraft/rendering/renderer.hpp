@@ -5,19 +5,19 @@
 
 #include "minecraft/lighting/lighting.hpp"
 #include "minecraft/camera/camera.hpp"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wduplicated-branches"
-#include "glm/gtx/hash.hpp"
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wduplicated-branches"
+    #include "glm/gtx/hash.hpp"
+    #pragma GCC diagnostic pop
+#else
+    #include "glm/gtx/hash.hpp"
+#endif
 #include <unordered_map>
 
 static constexpr uint8_t noOfInactiveChunks {5};
 
-static const glm::mat4 projection {[]() noexcept {
-        static constexpr float near {0.1f}, far {100.0f};
-        return glm::perspective(Camera::fov, Window::aspectRatio, near, far);
-    }()
-};
+static const glm::mat4 projection {glm::perspective(Camera::fov.value(), Window::aspectRatio, Camera::near, Camera::far)};
 
 
 class Renderer
