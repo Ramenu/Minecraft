@@ -1,12 +1,17 @@
 #ifndef PLANE_HPP
 #define PLANE_HPP
 
-#include "glm/vec3.hpp"
+#include "misc/boilerplate/glm_noerr.hpp"
 
-struct Plane
+class Plane
 {
-    glm::vec3 normal {0.0f, 1.0f, 0.0f};
-    float distance {0.0f};
+    public:
+        Plane() = default;
+        inline Plane(const glm::vec3 &vec, const glm::vec3 &norm) noexcept :
+            normal {glm::normalize(vec)},
+            distance {glm::dot(vec, norm)} {}
+        glm::vec3 normal {0.0f, 1.0f, 0.0f};
+        float distance {0.0f};
 };
 
 #endif // PLANE_HPP
