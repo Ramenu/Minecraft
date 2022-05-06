@@ -2,14 +2,18 @@
 #include "glad/glad.h"
 #include <filesystem>
 #include "minecraft/gfx/texture.hpp"
-#pragma GCC diagnostic push 
-#pragma GCC diagnostic ignored "-Wdouble-promotion"
-#pragma GCC diagnostic ignored "-Wcast-qual"
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wduplicated-branches"
-#pragma GCC diagnostic ignored "-Wconversion"
-#include "stb-master/stb_image.h"
+#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+    #pragma GCC diagnostic push 
+    #pragma GCC diagnostic ignored "-Wdouble-promotion"
+    #pragma GCC diagnostic ignored "-Wcast-qual"
+    #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic ignored "-Wduplicated-branches"
+    #pragma GCC diagnostic ignored "-Wconversion"
+    #include "stb-master/stb_image.h"
 #pragma GCC diagnostic pop
+#else
+    #include "stb-master/stb_image.h"
+#endif
 #include "minecraft/glerror/glerror.hpp"
 
 namespace std_fs = std::filesystem;

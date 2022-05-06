@@ -1,8 +1,6 @@
 #include "minecraft/math/glmath.hpp"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wduplicated-branches"
-#include "glm/glm.hpp"
-#pragma GCC diagnostic pop
+
+#include "misc/boilerplate/glm_noerr.hpp"
 #include "minecraft/glerror/glerror.hpp"
 #include <cmath>
 
@@ -31,6 +29,5 @@ namespace GLMath
         }
         return nearestDirection;
     }
-
 
 }

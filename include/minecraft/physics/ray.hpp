@@ -1,10 +1,14 @@
 #ifndef RAY_HPP
 #define RAY_HPP
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#include "glm/vec3.hpp"
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #include "glm/vec3.hpp"
+    #pragma GCC diagnostic pop
+#else
+    #include "glm/vec3.hpp"
+#endif
 #include "minecraft/debug/debug.hpp"
 
 
