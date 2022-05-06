@@ -22,6 +22,7 @@ link_directories("./lib")
 add_executable(main
 ./src/camera.cpp
 ./src/chunk.cpp
+./src/frustum.cpp
 ./src/game.cpp
 ./src/glerror.cpp
 ./src/glmath.cpp
