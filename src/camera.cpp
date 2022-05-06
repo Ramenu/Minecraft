@@ -13,28 +13,21 @@ namespace Camera
      */
     void updateCameraPos(const double cursorX, const double cursorY) noexcept
     {
-        const float cosPitch {cosf(glm::radians(settings.pitch))};
+        const float yawRadians {glm::radians(settings.yaw)}, pitchRadians {glm::radians(settings.pitch)};
+        const float cosPitch {std::cos(pitchRadians)};
 
         // Calculate a 3D vector given the yaw and pitch
         const glm::vec3 updatedDirection {
-            cosf(glm::radians(settings.yaw)) * cosPitch,
-            sinf(glm::radians(settings.pitch)),
-            sinf(glm::radians(settings.yaw)) * cosPitch
+            std::cos(yawRadians) * cosPitch,
+            std::sin(pitchRadians),
+            std::sin(yawRadians) * cosPitch
         };
 
         view = glm::lookAt(cameraPos, cameraPos + direction.front, up);
         direction.right = glm::normalize(glm::cross(direction.front, up));
         direction.front = glm::normalize(updatedDirection);
 
-        static double lastX {}, lastY {};
-        static bool firstMouseMovement {true};
-
-        if (firstMouseMovement)
-        {
-            lastX = cursorX;
-            lastY = cursorY;
-            firstMouseMovement = false;
-        }
+        static double lastX {cursorX}, lastY {cursorY};
 
         const float xOffset {static_cast<float>((cursorX - lastX)) * settings.sensitivity};
         const float yOffset {static_cast<float>((lastY - cursorY)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
