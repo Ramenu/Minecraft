@@ -4,13 +4,14 @@
 #include "minecraft/rendering/chunk.hpp"
 #include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
+#include "minecraft/math/radians.hpp"
 
 
 namespace Camera
 {
-	
-	static constexpr float speed {12.0f}, fov {glm::radians(45.0f)};
+	static constexpr float near {0.1f}, far {100.0f};
+	static constexpr float speed {12.0f};
+	static constexpr Radians fov {45.0f};
 	static constexpr glm::vec3 up {0.0f, 1.0f, 0.0f};
 
 	struct CameraSettings
