@@ -273,7 +273,8 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
     return surroundingBlocks;
 }
 
-void Chunk::updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face face) const noexcept 
+void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunkNeighbor, 
+                                            Face face) const noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     int8_t begin {0}, end {chunkHeight - 1};
@@ -289,19 +290,19 @@ void Chunk::updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face fac
             if (face == FrontFace || face == BackFace) // Check faces on Z
             {
                 index = {a, v, begin};
-                if (chunk[a][v][begin].name != Air_Block && chunkNeighbor.chunk[a][v][end].name == Air_Block)
+                if (chunk[a][v][begin].name != Air_Block && chunkNeighbor[a][v][end].name == Air_Block)
                     visibleLevel = completelyVisible;
             }
             else if (face == TopFace || face == BottomFace) // Check faces on Y
             {
                 index = {a, begin, v};
-                if (chunk[a][begin][v].name != Air_Block && chunkNeighbor.chunk[a][end][v].name == Air_Block)
+                if (chunk[a][begin][v].name != Air_Block && chunkNeighbor[a][end][v].name == Air_Block)
                     visibleLevel = completelyVisible;
             }
             else // Check faces on X
             {
                 index = {begin, v, a};
-                if (chunk[begin][v][a].name != Air_Block && chunkNeighbor.chunk[end][v][a].name == Air_Block)
+                if (chunk[begin][v][a].name != Air_Block && chunkNeighbor[end][v][a].name == Air_Block)
                     visibleLevel = completelyVisible;
             }
 

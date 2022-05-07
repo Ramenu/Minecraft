@@ -27,9 +27,13 @@ class Chunk
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
         static bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
+        std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
     public:
 
-        void updateChunkVisibilityToNeighbor(const Chunk &chunkNeighbor, Face face) const noexcept;
+        inline auto getChunk() const noexcept {return chunk;}
+        
+        void updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunkNeighbor,
+                                             Face face) const noexcept;
 
         void updateChunkVisibility() noexcept;
 
@@ -59,7 +63,6 @@ class Chunk
                    (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
         }
 
-        Block chunk[chunkWidth][chunkHeight][chunkLength];
 
 };
 
