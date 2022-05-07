@@ -60,20 +60,20 @@ void Renderer::updateActiveChunks() noexcept
         if (chunkPos.x > 0)
         {
             const Chunk* const chunkX {&allChunks[{chunkPos.x - 1, chunkPos.y, chunkPos.z}]};
-            chunk.updateChunkVisibilityToNeighbor(*chunkX, LeftFace);
-            chunkX->updateChunkVisibilityToNeighbor(chunk, RightFace);
+            chunk.updateChunkVisibilityToNeighbor(chunkX->getChunk(), LeftFace);
+            chunkX->updateChunkVisibilityToNeighbor(chunk.getChunk(), RightFace);
         } 
         if (chunkPos.y > 0)
         {
             const Chunk* const chunkY {&allChunks[{chunkPos.x, chunkPos.y - 1, chunkPos.z}]};
-            chunk.updateChunkVisibilityToNeighbor(*chunkY, BottomFace);
-            chunkY->updateChunkVisibilityToNeighbor(chunk, TopFace);
+            chunk.updateChunkVisibilityToNeighbor(chunkY->getChunk(), BottomFace);
+            chunkY->updateChunkVisibilityToNeighbor(chunk.getChunk(), TopFace);
         }
         if (chunkPos.z > 0)
         {
             const Chunk* const chunkZ {&allChunks[{chunkPos.x, chunkPos.y, chunkPos.z - 1}]};
-            chunk.updateChunkVisibilityToNeighbor(*chunkZ, BackFace);
-            chunkZ->updateChunkVisibilityToNeighbor(chunk, FrontFace);
+            chunk.updateChunkVisibilityToNeighbor(chunkZ->getChunk(), BackFace);
+            chunkZ->updateChunkVisibilityToNeighbor(chunk.getChunk(), FrontFace);
         } 
     }
 }
@@ -84,25 +84,25 @@ void Renderer::updateActiveChunks() noexcept
  */
 void Renderer::updateAdjacentChunks(const glm::u64vec3 &key) noexcept
 {
-    const Chunk* const chosenChunk {&allChunks[key]};
+    const auto* const chosenChunk {&allChunks[key]};
 
     if (key.x > 0)
-        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, RightFace);
+        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), RightFace);
 
     if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
-        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, LeftFace);
+        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), LeftFace);
 
     if (key.y > 0)
-        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, TopFace);
+        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), TopFace);
 
     if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
-        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(*chosenChunk, BottomFace);
+        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), BottomFace);
 
     if (key.z > 0)
-        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(*chosenChunk, FrontFace);
+        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), FrontFace);
 
     if (allChunks.find({key.x, key.y, key.z + 1}) != allChunks.end())
-        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(*chosenChunk, BackFace);
+        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), BackFace);
 }
 
 /**
