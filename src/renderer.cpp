@@ -82,27 +82,26 @@ void Renderer::updateActiveChunks() noexcept
  * Updates the chunks visibility adjacent to
  * the one located at the key given.
  */
-void Renderer::updateAdjacentChunks(const glm::u64vec3 &key) noexcept
+void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chosenChunk,
+                                    const glm::u64vec3 &key) noexcept
 {
-    const auto* const chosenChunk {&allChunks[key]};
-
     if (key.x > 0)
-        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), RightFace);
+        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, RightFace);
 
     if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
-        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), LeftFace);
+        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, LeftFace);
 
     if (key.y > 0)
-        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), TopFace);
+        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, TopFace);
 
     if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
-        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), BottomFace);
+        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, BottomFace);
 
     if (key.z > 0)
-        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), FrontFace);
+        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(chosenChunk, FrontFace);
 
     if (allChunks.find({key.x, key.y, key.z + 1}) != allChunks.end())
-        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(chosenChunk->getChunk(), BackFace);
+        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(chosenChunk, BackFace);
 }
 
 /**
@@ -111,10 +110,12 @@ void Renderer::updateAdjacentChunks(const glm::u64vec3 &key) noexcept
 void Renderer::update() noexcept
 {
     bool updateNearChunks {};
-    allChunks[{0, 0, 0}].updateChunk(updateNearChunks);
+    const glm::u64vec3 activeChunkKey {0, 0, 0};
+    Chunk *activeChunk {&allChunks[activeChunkKey]};
+    activeChunk->updateChunk(updateNearChunks);
 
     if (updateNearChunks)
-        updateAdjacentChunks({0, 0, 0});
+        updateAdjacentChunks(activeChunk->getChunk(), activeChunkKey);
     
     // This updates all of the chunks, and should be only set to true
     // sparingly.

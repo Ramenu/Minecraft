@@ -33,7 +33,8 @@ class Renderer
         inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
-        void updateAdjacentChunks(const glm::u64vec3 &key) noexcept;
+        void updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunk,
+                                  const glm::u64vec3 &key) noexcept;
         void updateActiveChunks() noexcept;
         size_t activeChunkIndex {};
         std::unordered_map<glm::u64vec3, Chunk> allChunks;
