@@ -335,11 +335,10 @@ void Chunk::updateBuffer(size_t bufferIndex, Attribute attributeIndex, std::span
  */
 bool Chunk::anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
 {
-    static constexpr float completelyVisible {1.0f};
-    for (const auto& face: faces)
-        if (face >= completelyVisible)
-            return true;
-    return false;
+    return (std::any_of(faces.begin(), faces.end(), [](const auto &face) {
+        static constexpr float completelyVisible {1.0f};
+        return face >= completelyVisible;
+    }));
 }
 
 /**
@@ -398,7 +397,8 @@ Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept
 void Chunk::updateChunkVisibility() noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    std::vector<float> visibleAttributes {};
+    
+    std::vector<float> visibleAttributes {}; 
     for (int8_t x {}; x < chunkWidth; ++x)
     {
         for (int8_t y {}; y < chunkHeight; ++y)
@@ -422,6 +422,7 @@ void Chunk::updateChunkVisibility() noexcept
     glBufferSubData(GL_ARRAY_BUFFER, 
                     offsets[Attribute::Visibility], 
                     sizeOfChunkVertices[Attribute::Visibility], 
+    // cppcheck-suppress containerOutOfBounds ; needed otherwise it gives a false positive
                     &visibleAttributes[0]);
 }
 
