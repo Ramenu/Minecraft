@@ -7,7 +7,7 @@
 namespace Window
 {
     static void renderWireFrames() noexcept;
-    static GLFWwindow *loadWindow(GLFWwindow *window, const char *title) noexcept;
+    static GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title) noexcept;
     static GLFWwindow *window;
 
     GLFWwindow *getWindow() noexcept {return window;}
@@ -51,7 +51,7 @@ namespace Window
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         {
             static constinit bool wireFrameMode = true;
-            if ((wireFrameMode = !wireFrameMode))
+            if ((wireFrameMode = !wireFrameMode)) // cppcheck-suppress knownConditionTrueFalse
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             else
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
