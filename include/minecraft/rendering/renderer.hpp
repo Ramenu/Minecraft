@@ -36,7 +36,6 @@ class Renderer
         void updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunk,
                                   const glm::u64vec3 &key) noexcept;
         void updateActiveChunks() noexcept;
-        size_t activeChunkIndex {};
         std::unordered_map<glm::u64vec3, Chunk> allChunks;
         bool needsUpdate {true};
 };
