@@ -62,7 +62,7 @@ void Chunk::drawChunk() const noexcept
  */
 void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept 
 {
-    const int8_t x {index.x}, y {index.y}, z {index.z};
+    const std::int32_t x {index.x}, y {index.y}, z {index.z};
     chunk[x][y][z] = block;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     if (block.name != Air_Block)
@@ -82,22 +82,29 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
  * which have been destroyed, or placed, etc).
  * It is recommended that this method be used
  * for the active chunk only for performance.
+ * 
+ * Returns true if the state of the chunk changed.
+ * For the state of the chunk to be considered
+ * change, either:
+ * -> A block was placed
+ * -> A block was destroyed
  */
-void Chunk::updateChunk(bool &updateNeeded) noexcept 
+bool Chunk::updateChunk() noexcept 
 {
+    bool updateNeeded {};
     static constexpr float highlightedAmbientLevel {1.9f};
-    for (int8_t x {}; x < chunkWidth; ++x)
+    for (std::int32_t x {}; x < chunkWidth; ++x)
     {
-        for (int8_t y {}; y < chunkHeight; ++y)
+        for (std::int32_t y {}; y < chunkHeight; ++y)
         {
-            for (int8_t z {}; z < chunkLength; ++z)
+            for (std::int32_t z {}; z < chunkLength; ++z)
             {
                 // Not necessary to check if the player is looking at an air block
                 if (blockStates[x][y][z] != None)
                 {
-                    const bool rayLookingAtBlock {static_cast<int8_t>(Camera::ray.getRay().x) == x && 
-                                                static_cast<int8_t>(Camera::ray.getRay().y) == y && 
-                                                static_cast<int8_t>(Camera::ray.getRay().z) == z};
+                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::ray.getRay().x) == x && 
+                                                  static_cast<std::int32_t>(Camera::ray.getRay().y) == y && 
+                                                  static_cast<std::int32_t>(Camera::ray.getRay().z) == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
                     static constexpr BlockState highlightedAndVisible {Highlighted|Visible};
@@ -127,9 +134,9 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
 
                             // this cast seems weird and unsafe, though the chunk boundaries have already been checked for overflow
                             // so it is fine to do this (but perhaps there is a better way to do this more neatly).
-                            const glm::i8vec3 blockPosition {static_cast<int8_t>(x + static_cast<int8_t>(blockDirection.x)), 
-                                                            static_cast<int8_t>(y + static_cast<int8_t>(blockDirection.y)), 
-                                                            static_cast<int8_t>(z + static_cast<int8_t>(blockDirection.z))};
+                            const glm::i8vec3 blockPosition {static_cast<std::int8_t>(x + static_cast<std::int8_t>(blockDirection.x)), 
+                                                             static_cast<std::int8_t>(y + static_cast<std::int8_t>(blockDirection.y)), 
+                                                             static_cast<std::int8_t>(z + static_cast<std::int8_t>(blockDirection.z))};
 
                             // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
                             // placed on an air block
@@ -157,6 +164,7 @@ void Chunk::updateChunk(bool &updateNeeded) noexcept
             }
         }
     }
+    return updateNeeded;
 }
 
 /**
@@ -193,9 +201,9 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
         if (blockCoords) // Make sure it is a valid coordinate
         {
             const size_t bufferIndex {getBlockIndex(blockCoords.value())};
-            const int8_t x {blockCoords.value().x},
-                         y {blockCoords.value().y},
-                         z {blockCoords.value().z};
+            const std::int32_t x {blockCoords.value().x},
+                               y {blockCoords.value().y},
+                               z {blockCoords.value().z};
             if (blockIsVisibleToPlayer(blockCoords.value()) && chunk[x][y][z].name != Air_Block)
             {
                 const auto visibleFaces {getVisibleFaces(blockCoords.value())};
@@ -277,13 +285,13 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
                                             Face face) const noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    int8_t begin {0}, end {chunkHeight - 1};
+    std::int32_t begin {0}, end {chunkHeight - 1};
     static constexpr float completelyVisible {1.0f};
     if (face == FrontFace || face == RightFace || face == TopFace)
         std::swap(begin, end);
-    for (int8_t a {}; a < chunkWidth; ++a)
+    for (std::int32_t a {}; a < chunkWidth; ++a)
     {
-        for (int8_t v {}; v < chunkHeight; ++v)
+        for (std::int32_t v {}; v < chunkHeight; ++v)
         {
             glm::i8vec3 index;
             float visibleLevel {};
@@ -356,32 +364,32 @@ Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept
 
     // Back face
     // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
-    if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z - 1)}) || 
+    if (isOutOfChunk({index.x , index.y, index.z - 1}) || 
         chunk[index.x][index.y][index.z - 1].name == Air_Block)
             visibleFaces[Face::BackFace] = completelyVisible;
 
     // Front face
-    if (isOutOfChunk({index.x , index.y, static_cast<int8_t>(index.z + 1)}) ||
+    if (isOutOfChunk({index.x , index.y, index.z + 1}) ||
         chunk[index.x][index.y][index.z + 1].name == Air_Block)
             visibleFaces[Face::FrontFace] = completelyVisible;
 
     // Right face
-    if (isOutOfChunk({static_cast<int8_t>(index.x + 1), index.y, index.z}) ||
+    if (isOutOfChunk({index.x + 1, index.y, index.z}) ||
         chunk[index.x + 1][index.y][index.z].name == Air_Block)
             visibleFaces[Face::RightFace] = completelyVisible;
     
     // Left face
-    if (isOutOfChunk({static_cast<int8_t>(index.x - 1), index.y, index.z}) || 
+    if (isOutOfChunk({index.x - 1, index.y, index.z}) || 
         chunk[index.x - 1][index.y][index.z].name == Air_Block)
             visibleFaces[Face::LeftFace] = completelyVisible;
     
     // Top face
-    if (isOutOfChunk({index.x , static_cast<int8_t>(index.y + 1), index.z}) ||
+    if (isOutOfChunk({index.x , index.y + 1, index.z}) ||
         chunk[index.x][index.y + 1][index.z].name == Air_Block)
             visibleFaces[Face::TopFace] = completelyVisible;
 
     // Bottom face
-    if (isOutOfChunk({index.x , static_cast<int8_t>(index.y - 1), index.z}) || 
+    if (isOutOfChunk({index.x , index.y - 1, index.z}) || 
         chunk[index.x][index.y - 1][index.z].name == Air_Block)
             visibleFaces[Face::BottomFace] = completelyVisible;
     
@@ -399,11 +407,11 @@ void Chunk::updateChunkVisibility() noexcept
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
     std::vector<float> visibleAttributes {}; 
-    for (int8_t x {}; x < chunkWidth; ++x)
+    for (std::int32_t x {}; x < chunkWidth; ++x)
     {
-        for (int8_t y {}; y < chunkHeight; ++y)
+        for (std::int32_t y {}; y < chunkHeight; ++y)
         {
-            for (int8_t z {}; z < chunkLength; ++z)
+            for (std::int32_t z {}; z < chunkLength; ++z)
             {
                 const glm::i8vec3 index {x, y, z};
                 if (blockIsVisibleToPlayer(index) && chunk[x][y][z].name != Air_Block)

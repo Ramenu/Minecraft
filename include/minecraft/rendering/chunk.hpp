@@ -9,8 +9,8 @@
 #include <span>
 #include <optional>
 
-static constexpr uint8_t chunkWidth {16}, chunkHeight {chunkWidth}, chunkLength {chunkWidth};
-static constexpr uint32_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
+static constexpr std::int32_t chunkWidth {16}, chunkHeight {chunkWidth}, chunkLength {chunkWidth};
+static constexpr std::size_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
 static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
 
 
@@ -49,7 +49,7 @@ class Chunk
             glDeleteVertexArrays(1, &vertexArray);
         }
 
-        void updateChunk(bool &updateNeeded) noexcept;
+        bool updateChunk() noexcept;
 
         bool blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept;
         

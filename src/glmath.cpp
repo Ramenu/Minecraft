@@ -12,13 +12,14 @@ namespace GLMath
      */
     Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept
     {
+        static constexpr std::uint8_t noOfDirections3D {6};
         const glm::vec3 normVec {glm::normalize(vec)};
         
         Direction nearestDirection {};
         float dotOfClosest {glm::dot(directions[0], normVec)};
 
         // Iterate over all the directions and check which direction is the closest
-        for (uint8_t i {1}; i < 6; ++i)
+        for (std::uint32_t i {1}; i < noOfDirections3D; ++i)
         {
             const float dot {glm::dot(directions[i], normVec)};
             if (dot > dotOfClosest)
