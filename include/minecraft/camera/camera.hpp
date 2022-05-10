@@ -28,7 +28,7 @@ namespace Camera
 	};
 
 	extern glm::mat4 getView() noexcept;
-	extern void updateCameraPos(double cursorX, double cursorY) noexcept;
+	extern void updateCameraPos() noexcept;
 	inline CameraSettings settings {.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f};
 	inline CameraDirections direction;
 	inline glm::vec3 cameraPos {0.0f, chunkHeight * 2, 3.0f};

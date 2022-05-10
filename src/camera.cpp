@@ -11,7 +11,7 @@ namespace Camera
      * Parameters take the position of the mouse's 
      * x-position and y-position.
      */
-    void updateCameraPos(const double cursorX, const double cursorY) noexcept
+    void updateCameraPos() noexcept
     {
         const float yawRadians {glm::radians(settings.yaw)}, pitchRadians {glm::radians(settings.pitch)};
         const float cosPitch {std::cos(pitchRadians)};
@@ -27,14 +27,16 @@ namespace Camera
         direction.right = glm::normalize(glm::cross(direction.front, up));
         direction.front = glm::normalize(updatedDirection);
 
-        static double lastX {cursorX}, lastY {cursorY};
+        double mouseX, mouseY;
+        glfwGetCursorPos(Window::getWindow(), &mouseX, &mouseY);
+        static double lastX {mouseX}, lastY {mouseY};
 
-        const float xOffset {static_cast<float>((cursorX - lastX)) * settings.sensitivity};
-        const float yOffset {static_cast<float>((lastY - cursorY)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
+        const float xOffset {static_cast<float>((mouseX - lastX)) * settings.sensitivity};
+        const float yOffset {static_cast<float>((lastY - mouseY)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
 
         // Update the last mouse positions to the current position
-        lastX = cursorX;
-        lastY = cursorY;
+        lastX = mouseX;
+        lastY = mouseY;
 
         settings.yaw += xOffset;
         settings.pitch += yOffset;
