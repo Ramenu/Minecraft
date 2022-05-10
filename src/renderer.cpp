@@ -4,7 +4,6 @@
 #include <cstdio>
 
 
-static constexpr float highlightedAmbient {1.9f};
 static constexpr float noOfChunksOnStart {4.0f};
 
 /**
@@ -13,7 +12,7 @@ static constexpr float noOfChunksOnStart {4.0f};
  */
 Renderer::Renderer() noexcept : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
-lightSource {[this]() noexcept {
+lightSource {[]() noexcept {
     static constexpr LightComponents components {.ambient = {0.25f, 0.25f, 0.25f}, 
                                                  .specular = {1.0f, 1.0f, 1.0f}, 
                                                  .diffuse = {0.7f, 0.7f, 0.7f}};
