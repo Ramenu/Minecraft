@@ -17,10 +17,10 @@ enum Attribute
 };
 
 static constexpr std::array attributes {
-    3, // Position 
-    2, // Texture
-    1, // Visibility
-    1
+    3ull, // Position 
+    2ull, // Texture
+    1ull, // Visibility
+    1ull
 };
 
 static constexpr std::array<size_t, attributes.size()> verticesSizes {[](){
