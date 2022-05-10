@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdio>
 #include <numeric>
+#include <algorithm>
 
 static constexpr auto invisibleVertices {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
 static constexpr float defaultAmbientLevel {1.5f};
