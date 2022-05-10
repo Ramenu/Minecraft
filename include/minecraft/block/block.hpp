@@ -7,7 +7,7 @@
 #include <array>
 
 
-static constexpr std::array<float, noBlocks> textureCoords {[](){
+static constexpr std::array textureCoords {[](){
     std::array<float, noBlocks> coords;
     for (uint8_t i {}; i < noBlocks; i++)
         coords[i] = static_cast<float>(i) / atlasHeight;
