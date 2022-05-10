@@ -50,7 +50,7 @@ namespace Window
         // constant switches
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-            static constinit bool wireFrameMode = true;
+            static constinit bool wireFrameMode {true};
             if ((wireFrameMode = !wireFrameMode)) // cppcheck-suppress knownConditionTrueFalse
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             else
