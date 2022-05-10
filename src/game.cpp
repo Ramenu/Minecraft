@@ -71,7 +71,7 @@ static inline void updateCamera(const Renderer &renderer) noexcept
 {
     double mouseXPos, mouseYPos;
     glfwGetCursorPos(Window::getWindow(), &mouseXPos, &mouseYPos);
-    Camera::updateCameraPos(mouseXPos, mouseYPos);
+    Camera::updateCameraPos();
     renderer.cubeShader.setMat4("view", Camera::getView());
     renderer.cubeShader.setVec3("viewPos", Camera::cameraPos);
 }
@@ -83,7 +83,7 @@ static inline void updateCamera(const Renderer &renderer) noexcept
  */  
 void runGame() noexcept
 {
-    float deltaTime {0.0f}; // Time between current frame and last frame
+    [[maybe_unused]] float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
     Texture textureAtlas {"./textures/textureatlas.jpg"};
@@ -103,7 +103,7 @@ void runGame() noexcept
         #ifdef GAME_BENCHMARK
             time.start();
         #endif
-        const float currentTime = static_cast<float>(glfwGetTime());
+        const float currentTime {static_cast<float>(glfwGetTime())};
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -116,7 +116,7 @@ void runGame() noexcept
         
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
-        //renderer.update();
+        renderer.update();
         Window::processMovement(deltaTime);
         #ifdef GAME_BENCHMARK
             time.end();
