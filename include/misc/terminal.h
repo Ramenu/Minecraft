@@ -2,7 +2,7 @@
 #define TERMINAL_H
 
     /* Only compile if on Windows */
-    #if defined(__MINGW32__) || defined(__WIN32__) || defined(WIN32)
+    #if defined(__MINGW32__) || defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
 
         #include <windows.h>
         #include <stdbool.h>
