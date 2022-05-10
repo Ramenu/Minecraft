@@ -94,7 +94,8 @@ void runGame() noexcept
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    static constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; // RGB constants for the game's background colors (including alpha)
+    // RGB constants for the game's background colors (including alpha)
+    static constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; 
     glClearColor(red, green, blue, alpha);
     
     // Main game loop
