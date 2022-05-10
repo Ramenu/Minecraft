@@ -9,8 +9,17 @@
     #pragma GCC diagnostic ignored "-Wuseless-cast"
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
     #pragma GCC diagnostic ignored "-Wconversion"
+    #pragma GCC diagnostic ignored "-Wold-style-cast"
     #include "stb-master/stb_image.h"
-#pragma GCC diagnostic pop
+    #pragma GCC diagnostic pop
+#elif defined(__clang__)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wold-style-cast"
+    #pragma clang diagnostic ignored "-Wcast-align"
+    #pragma clang diagnostic ignored "-Wcast-qual"
+    #pragma clang diagnostic ignored "-Wdouble-promotion"
+    #include "stb-master/stb_image.h"
+    #pragma clang diagnostic pop
 #else
     #include "stb-master/stb_image.h"
 #endif
