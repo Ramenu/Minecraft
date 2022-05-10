@@ -109,10 +109,9 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
  */
 void Renderer::update() noexcept
 {
-    bool updateNearChunks {};
-    const glm::u64vec3 activeChunkKey {0, 0, 0};
+    static constexpr glm::u64vec3 activeChunkKey {0, 0, 0};
     Chunk *activeChunk {&allChunks[activeChunkKey]};
-    activeChunk->updateChunk(updateNearChunks);
+    const bool updateNearChunks {activeChunk->updateChunk()};
 
     if (updateNearChunks)
         updateAdjacentChunks(activeChunk->getChunk(), activeChunkKey);
