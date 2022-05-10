@@ -59,7 +59,7 @@ Shader::Shader(const std::string &vertexShaderSource, const std::string &fragmen
  * the program will print an error message to stderr before
  * terminating the program.
  */
-void Shader::checkShaderCompilationErrors(const GLuint& shader, const std::string &shaderPath) const noexcept
+void Shader::checkShaderCompilationErrors(GLuint shader, const std::string &shaderPath) const noexcept
 {
     int success {};
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);

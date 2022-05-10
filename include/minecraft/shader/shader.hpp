@@ -10,7 +10,7 @@ class Shader
 {
     private:
         GLuint shaderProgram;
-        void checkShaderCompilationErrors(const GLuint &shader, const std::string &shaderPath) const noexcept;
+        void checkShaderCompilationErrors(GLuint shader, const std::string &shaderPath) const noexcept;
         void checkLinkageErrors() const noexcept;
     public:
         Shader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) noexcept;
