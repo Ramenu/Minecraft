@@ -23,7 +23,7 @@ lightSource {[]() noexcept {
 {
     for (float x {}; x < noOfChunksOnStart; x += 1.0f)
         for (float z {}; z < noOfChunksOnStart; z += 1.0f)
-            allChunks[{static_cast<size_t>(x), 0, static_cast<size_t>(z)}].initChunk({x, 0, z});
+            allChunks[{static_cast<std::size_t>(x), 0, static_cast<std::size_t>(z)}].initChunk({x, 0, z});
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 

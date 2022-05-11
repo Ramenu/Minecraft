@@ -12,19 +12,19 @@
 static constexpr auto invisibleVertices {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
 static constexpr float defaultAmbientLevel {1.5f};
 
-static constexpr std::array<size_t, attributes.size()> sizeOfChunkVertices {[](){
-    std::array<size_t, attributes.size()> vertices {};
+static constexpr std::array<std::size_t, attributes.size()> sizeOfChunkVertices {[](){
+    std::array<std::size_t, attributes.size()> vertices {};
 
-    for (size_t i {}; i < vertices.size(); ++i)
+    for (std::size_t i {}; i < vertices.size(); ++i)
         vertices[i] = verticesSizes[i] * chunkVolume * sizeof(float);  
 
     return vertices;
 }()};
 
-static constexpr std::array<size_t, attributes.size()> offsets {[](){
-    std::array<size_t, attributes.size()> attributeOffsets {};
-    size_t offset {};
-    for (size_t i {}; i < sizeOfChunkVertices.size(); ++i)
+static constexpr std::array<std::size_t, attributes.size()> offsets {[](){
+    std::array<std::size_t, attributes.size()> attributeOffsets {};
+    std::size_t offset {};
+    for (std::size_t i {}; i < sizeOfChunkVertices.size(); ++i)
     {
         attributeOffsets[i] = offset;
         offset += sizeOfChunkVertices[i];
@@ -32,20 +32,20 @@ static constexpr std::array<size_t, attributes.size()> offsets {[](){
     return attributeOffsets;
 }()};
 
-static constexpr size_t totalBytes {std::accumulate(sizeOfChunkVertices.begin(), sizeOfChunkVertices.end(), 0)};
+static constexpr std::size_t totalBytes {std::accumulate(sizeOfChunkVertices.begin(), sizeOfChunkVertices.end(), 0)};
 
 /**
  * Returns a single index (from 0 to 'CHUNKVOLUME') 
  * based on a three dimensional
  * array index.
  */
-static inline constexpr size_t getBlockIndex(glm::i8vec3 index) noexcept {
+static inline constexpr std::size_t getBlockIndex(glm::i8vec3 index) noexcept {
     return ((index.y * chunkHeight + index.z) + index.x * chunkLength * chunkHeight);
 }
 
 void Chunk::drawChunk() const noexcept
 {
-    static constexpr size_t first {0}, count {attributesToFormCube * chunkVolume};
+    static constexpr std::size_t first {0}, count {attributesToFormCube * chunkVolume};
     glBindVertexArray(vertexArray);
     glDrawArrays(GL_TRIANGLES, first, count - first);
 }
@@ -68,7 +68,7 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     if (block.name != Air_Block)
     {
-        const size_t bufferOffset {getBlockIndex(index)};
+        const std::size_t bufferOffset {getBlockIndex(index)};
         const auto defaultTexCoordVertices {getTextureVertices(block.getTexture())};
         updateBuffer(bufferOffset, Attribute::TexCoord, defaultTexCoordVertices);
     }
@@ -174,7 +174,7 @@ bool Chunk::updateChunk() noexcept
  */
 void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept 
 {
-    const size_t bufferIndex {getBlockIndex(index)};
+    const std::size_t bufferIndex {getBlockIndex(index)};
     const auto vertices {getAmbientVertices(ambient)}; 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     updateBuffer(bufferIndex, Attribute::Ambient, vertices);
@@ -201,7 +201,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
     {
         if (blockCoords) // Make sure it is a valid coordinate
         {
-            const size_t bufferIndex {getBlockIndex(blockCoords.value())};
+            const std::size_t bufferIndex {getBlockIndex(blockCoords.value())};
             const std::int32_t x {blockCoords.value().x},
                                y {blockCoords.value().y},
                                z {blockCoords.value().z};
@@ -276,7 +276,7 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
         std::nullopt, std::nullopt, std::nullopt
     };
 
-    for (size_t i {}; i < surroundingBlocks.size(); ++i)
+    for (std::size_t i {}; i < surroundingBlocks.size(); ++i)
         if (!isOutOfChunk(adjacentBlocks[i]))
             surroundingBlocks[i] = adjacentBlocks[i];
     return surroundingBlocks;
@@ -315,7 +315,7 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
                     visibleLevel = completelyVisible;
             }
 
-            const size_t blockOffset {getBlockIndex(index)};
+            const std::size_t blockOffset {getBlockIndex(index)};
             const float visibleFaces[] {visibleLevel, visibleLevel, visibleLevel, visibleLevel, visibleLevel, visibleLevel};
             updateBuffer(blockOffset, Attribute::Visibility, visibleFaces, face);
         }
@@ -329,11 +329,11 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
  * the attribute index. Requires that the
  * vertex buffer be binded before this is called!
  */
-void Chunk::updateBuffer(size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) noexcept
+void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) noexcept
 {
-    const size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + offsets[attributeIndex])
+    const std::size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + offsets[attributeIndex])
                                 + face * noOfSquaresInCube * sizeof(float)};
-    const size_t offsetEnd {vertices.size() * sizeof(float)};;
+    const std::size_t offsetEnd {vertices.size() * sizeof(float)};;
 
     glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, offsetEnd, vertices.data());
 }
@@ -514,13 +514,13 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_STATIC_DRAW);
 
     // Now fill in the buffer's data
-    for (size_t i {}; i < attributes.size(); ++i)
+    for (std::size_t i {}; i < attributes.size(); ++i)
         glBufferSubData(GL_ARRAY_BUFFER, offsets[i], sizeOfChunkVertices[i], &chunkVertices.attributes[i][0]);
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
     static constexpr int normalizedAttributes[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
-    for (size_t i {}; i < attributes.size(); ++i)
+    for (std::size_t i {}; i < attributes.size(); ++i)
     {
         glEnableVertexArrayAttrib(vertexBuffer, i);
         glVertexAttribPointer(i,

@@ -59,7 +59,7 @@ void initGame(const char *windowTitle) noexcept
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
 
     // Fill in the buffer's data
-    static constexpr size_t bindingPoint {0}, offset {0};
+    static constexpr std::size_t bindingPoint {0}, offset {0};
     glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer, offset, sizeof(glm::mat4) + sizeof(glm::mat3));
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);

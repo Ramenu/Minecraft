@@ -15,7 +15,7 @@ class Lighting
     private:
         LightComponents components;
         glm::vec3 directionVec;
-        static uint32_t lightVao;
+        static std::uint32_t lightVao;
     public:
         static void initLightVAO() noexcept;
         static void bindLightVAO() noexcept;

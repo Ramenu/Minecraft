@@ -4,8 +4,8 @@
 #include "minecraft/gfx/texture.hpp"
 #include <array>
 
-static constexpr size_t attributesToFormCube {36};
-static constexpr size_t noOfSquaresInCube {6};
+static constexpr std::size_t attributesToFormCube {36};
+static constexpr std::size_t noOfSquaresInCube {6};
 static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
 
 enum Attribute
@@ -23,15 +23,15 @@ static constexpr std::array attributes {
     1ull
 };
 
-static constexpr std::array<size_t, attributes.size()> verticesSizes {[](){
-    std::array<size_t, attributes.size()> ver {};
-    for (size_t i {}; i < ver.size(); i++)
+static constexpr std::array<std::size_t, attributes.size()> verticesSizes {[](){
+    std::array<std::size_t, attributes.size()> ver {};
+    for (std::size_t i {}; i < ver.size(); i++)
         ver[i] = attributes[i] * noOfSquaresInCube * noOfSquaresInCube;
     return ver;
 }()};
 
-static constexpr size_t noOfVertices {[](){
-    size_t sum {};
+static constexpr std::size_t noOfVertices {[](){
+    std::size_t sum {};
     for (const auto&i: verticesSizes)
         sum += i;
     return sum;
