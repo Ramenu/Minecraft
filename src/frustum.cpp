@@ -1,5 +1,9 @@
 #include "minecraft/math/frustum.hpp"
 #include "minecraft/math/glmath.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#include "gcem/gcem.hpp"
+#pragma GCC diagnostic pop
 
 
 Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir, const FrustumView &view) noexcept
@@ -21,11 +25,10 @@ Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir,
     
 }
 
+static constexpr float adjacent {Camera::far};
+static constexpr float hypotenuse {adjacent * gcem::tan(Camera::fov.value() * 0.5f)};
 Frustum Frustum::getCameraFrustum() noexcept
 {
-    static constexpr float fovTan {1.0f * 0.5f}; // C++ has no constexpr math functions ;(
-    static constexpr float adjacent {Camera::far};
-    static constexpr float hypotenuse {adjacent * fovTan};
     static constexpr float opposite {hypotenuse * Window::aspectRatio};
     const glm::vec3 farFront {Camera::far * Camera::direction.front};
     const glm::vec3 rightDirection {opposite * Camera::direction.right};
