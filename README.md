@@ -14,15 +14,17 @@ limitations under the License.-->
 
 
 
-CLASSIC V2.61
+CLASSIC V2.62
 ------------
-- Build now uses relative path names rather than the absolute path (my directories) so it is now possible to build them yourself, however you still have to build the third-party libraries yourself
-
+- Added gcem math library (for compile-time math functions)
+- Still working on frustum-culling
 
 Some links to the libraries I use, they are really great, go check them out:<br>
 https://www.glfw.org/ (Window and event handling library)<br>
 https://github.com/Dav1dde/glad (Provides OpenGL loader generator, and more.)<br>
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff.)
+https://github.com/kthohr/gcem (Compile-time math library)
+https://github.com/nothings/stb (For image processing)
 
 I'm also using other tools to help make the code look cleaner, and hopefully 'safer'. Hope you find them interesting:
 https://github.com/danmar/cppcheck<br>
