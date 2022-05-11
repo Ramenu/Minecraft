@@ -25,10 +25,10 @@ Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir,
     
 }
 
-static constexpr float adjacent {Camera::far};
-static constexpr float hypotenuse {adjacent * gcem::tan(Camera::fov.value() * 0.5f)};
 Frustum Frustum::getCameraFrustum() noexcept
 {
+    static constexpr float adjacent {Camera::far};
+    static constexpr float hypotenuse {adjacent * gcem::tan(Camera::fov.value() * 0.5f)};
     static constexpr float opposite {hypotenuse * Window::aspectRatio};
     const glm::vec3 farFront {Camera::far * Camera::direction.front};
     const glm::vec3 rightDirection {opposite * Camera::direction.right};
