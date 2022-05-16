@@ -1,11 +1,11 @@
 #include "minecraft/game/game.hpp"
-#include <cstdint>
 #include "minecraft/glerror/glerror.hpp"
 #include "misc/terminal.h"
+#include "GLFW/glfw3.h"
 
 int main()
 {
-    static_assert(sizeof(size_t) >= 4, "Go buy a real computer");
+    static_assert(sizeof(std::size_t) >= 4, "Go buy a real computer");
     #if defined(__MINGW32__) || defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
         if (enable_virtual_terminal_processing()) 
         {
@@ -18,6 +18,6 @@ int main()
         initGame("Minecraft");
         runGame();
     #endif
-
+    glfwTerminate();
     return 0;
 }
