@@ -12,16 +12,18 @@
 
 static GLuint uniformBuffer;
 
-/**
- * Returns true if the debug output context
- * was successfully initialized.
- */
-static bool initializedDebugContext() noexcept
-{
-    int flag;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flag);
-    return (flag & GL_CONTEXT_FLAG_DEBUG_BIT);
-}
+#ifdef MC_DEBUG_BUILD
+    /**
+     * Returns true if the debug output context
+     * was successfully initialized.
+     */
+    static bool initializedDebugContext() noexcept
+    {
+        int flag;
+        glGetIntegerv(GL_CONTEXT_FLAGS, &flag);
+        return (flag & GL_CONTEXT_FLAG_DEBUG_BIT);
+    }
+#endif
 
 
 /**
@@ -126,7 +128,7 @@ void runGame() noexcept
 
     // Free up remaining resources used by the game
     glDeleteBuffers(1, &uniformBuffer);
-    glfwTerminate();
+    Lighting::removeAllLights();
     #ifdef GAME_BENCHMARK
         time.detailedDisplay();
     #endif
