@@ -16,8 +16,6 @@ project(Minecraft)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Directories to search for libraries
-link_directories("./lib")
 
 add_executable(main
 ./src/camera.cpp
@@ -93,8 +91,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_link_libraries(main PUBLIC gcov)
     endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
-    # Linker flags
-    target_link_options(main PUBLIC ../icons/icon.res -Wl,--gc-sections)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(main PRIVATE
@@ -157,13 +153,26 @@ set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time"
 target_include_directories(main PUBLIC "./include")
 
 # Link libraries
-target_link_libraries(main PUBLIC 
-glad
-glfw3
-sfml-system-3
-sfml-audio-3
-timer)
+if (WIN32)
+    # Directories to search for libraries
+    link_directories("./lib")
 
+    # Linker flags
+    target_link_options(main PUBLIC ../icons/icon.res -Wl,--gc-sections)
 
-
+    target_link_libraries(main PUBLIC 
+    glfw3
+    sfml-system-3
+    sfml-audio-3
+    timer)
+elseif(UNIX)
+    target_link_directories(main PUBLIC ./lib)
+    target_link_libraries(main PUBLIC
+    glad
+    glfw
+    sfml-system
+    sfml-audio
+    timer
+    )
+endif()
 
