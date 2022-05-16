@@ -11,6 +11,7 @@
 
 static constexpr auto invisibleVertices {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
 static constexpr float defaultAmbientLevel {1.5f};
+static constexpr float completelyVisible {1.0f};
 
 static constexpr std::array<std::size_t, attributes.size()> sizeOfChunkVertices {[](){
     std::array<std::size_t, attributes.size()> vertices {};
@@ -86,9 +87,9 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
  * 
  * Returns true if the state of the chunk changed.
  * For the state of the chunk to be considered
- * change, either:
- * -> A block was placed
- * -> A block was destroyed
+ * changed, either:
+ * -> A block must have been placed
+ * -> A block must have been destroyed
  */
 bool Chunk::updateChunk() noexcept 
 {
@@ -287,7 +288,6 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     std::int32_t begin {0}, end {chunkHeight - 1};
-    static constexpr float completelyVisible {1.0f};
     if (face == FrontFace || face == RightFace || face == TopFace)
         std::swap(begin, end);
     for (std::int32_t a {}; a < chunkWidth; ++a)
@@ -342,10 +342,9 @@ void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std:
  * Returns true if any of the
  * faces are visible.
  */
-bool Chunk::anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
+constexpr bool Chunk::anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
 {
     return (std::any_of(faces.begin(), faces.end(), [](const auto &face) {
-        static constexpr float completelyVisible {1.0f};
         return face >= completelyVisible;
     }));
 }
@@ -360,7 +359,6 @@ bool Chunk::anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces
 std::array<float, noOfSquaresInCube> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
-    static constexpr float completelyVisible {1.0f};
     std::array<float, noOfSquaresInCube> visibleFaces {};
 
     // Back face
@@ -492,13 +490,13 @@ void Chunk::initChunk(glm::vec3 position) noexcept
                 chunk[u8_x][u8_y][u8_z] = block;
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
                 const auto texture {getTextureVertices(block.getTexture())};
-                chunkVertices.attributes[Attribute::Position].insert(chunkVertices.attributes[Attribute::Position].end(), 
+                chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                      pos.begin(), 
                                                                      pos.end());
-                chunkVertices.attributes[Attribute::TexCoord].insert(chunkVertices.attributes[Attribute::TexCoord].end(),
+                chunkVertices.meshAttributes[Attribute::TexCoord].insert(chunkVertices.meshAttributes[Attribute::TexCoord].end(),
                                                                      texture.begin(),
                                                                      texture.end());
-                chunkVertices.attributes[Attribute::Ambient].insert(chunkVertices.attributes[Attribute::Ambient].end(),
+                chunkVertices.meshAttributes[Attribute::Ambient].insert(chunkVertices.meshAttributes[Attribute::Ambient].end(),
                                                                     blockAmbientLevel.begin(),
                                                                     blockAmbientLevel.end());
             }
@@ -511,11 +509,11 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 
     glBindVertexArray(vertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
     for (std::size_t i {}; i < attributes.size(); ++i)
-        glBufferSubData(GL_ARRAY_BUFFER, offsets[i], sizeOfChunkVertices[i], &chunkVertices.attributes[i][0]);
+        glBufferSubData(GL_ARRAY_BUFFER, offsets[i], sizeOfChunkVertices[i], &chunkVertices.meshAttributes[i][0]);
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
