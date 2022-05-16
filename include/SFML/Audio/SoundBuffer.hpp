@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,10 +31,9 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
-#include <filesystem>
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <set>
 
 
 namespace sf
@@ -84,7 +83,7 @@ public:
     /// \see loadFromMemory, loadFromStream, loadFromSamples, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
+    bool loadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
@@ -100,7 +99,7 @@ public:
     /// \see loadFromFile, loadFromStream, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    bool loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
@@ -115,7 +114,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream);
+    bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
@@ -133,7 +132,7 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -148,7 +147,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool saveToFile(const std::filesystem::path& filename) const;
+    bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
@@ -236,7 +235,7 @@ private:
     /// \return True on successful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool initialize(InputSoundFile& file);
+    bool initialize(InputSoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
@@ -247,7 +246,7 @@ private:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(unsigned int channelCount, unsigned int sampleRate);
+    bool update(unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a sound to the list of sounds that use this buffer
@@ -268,15 +267,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using SoundList = std::unordered_set<Sound *>; //!< Set of unique sound instances
+    typedef std::set<Sound*> SoundList; ///< Set of unique sound instances
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       m_buffer;   //!< OpenAL buffer identifier
-    std::vector<Int16> m_samples;  //!< Samples buffer
-    Time               m_duration; //!< Sound duration
-    mutable SoundList  m_sounds;   //!< List of sounds that are using this buffer
+    unsigned int       m_buffer;   ///< OpenAL buffer identifier
+    std::vector<Int16> m_samples;  ///< Samples buffer
+    Time               m_duration; ///< Sound duration
+    mutable SoundList  m_sounds;   ///< List of sounds that are using this buffer
 };
 
 } // namespace sf

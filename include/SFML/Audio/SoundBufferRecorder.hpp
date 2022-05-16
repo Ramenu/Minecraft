@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,7 +49,7 @@ public:
     /// \brief destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SoundBufferRecorder() override;
+    ~SoundBufferRecorder();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sound buffer containing the captured audio data
@@ -72,7 +72,7 @@ protected:
     /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool onStart() override;
+    virtual bool onStart();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
@@ -83,21 +83,21 @@ protected:
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
+    virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
     ///
     ////////////////////////////////////////////////////////////
-    void onStop() override;
+    virtual void onStop();
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Int16> m_samples; //!< Temporary sample buffer to hold the recorded data
-    SoundBuffer        m_buffer;  //!< Sound buffer that will contain the recorded data
+    std::vector<Int16> m_samples; ///< Temporary sample buffer to hold the recorded data
+    SoundBuffer        m_buffer;  ///< Sound buffer that will contain the recorded data
 };
 
 } // namespace sf
@@ -127,10 +127,7 @@ private:
 /// {
 ///     // Record some audio data
 ///     sf::SoundBufferRecorder recorder;
-///     if (!recorder.start())
-///     {
-///         // Handle error...
-///     }
+///     recorder.start();
 ///     ...
 ///     recorder.stop();
 ///
@@ -138,10 +135,7 @@ private:
 ///     const sf::SoundBuffer& buffer = recorder.getBuffer();
 ///
 ///     // Save it to a file (for example...)
-///     if (!buffer.saveToFile("my_record.ogg"))
-///     {
-///         // Handle error...
-///     }
+///     buffer.saveToFile("my_record.ogg");
 /// }
 /// \endcode
 ///

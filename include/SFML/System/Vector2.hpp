@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,7 +44,7 @@ public:
     /// Creates a Vector2(0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2();
+    Vector2();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
@@ -53,7 +53,7 @@ public:
     /// \param Y Y coordinate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2(T X, T Y);
+    Vector2(T X, T Y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -67,13 +67,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Vector2(const Vector2<U>& vector);
+    explicit Vector2(const Vector2<U>& vector);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T x; //!< X coordinate of the vector
-    T y; //!< Y coordinate of the vector
+    T x; ///< X coordinate of the vector
+    T y; ///< Y coordinate of the vector
 };
 
 ////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& right);
+Vector2<T> operator -(const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -102,7 +102,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
+Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -118,7 +118,7 @@ constexpr Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
+Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -131,7 +131,7 @@ constexpr Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
+Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -144,7 +144,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
+Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -157,7 +157,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator *(const Vector2<T>& left, T right);
+Vector2<T> operator *(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -170,7 +170,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator *(T left, const Vector2<T>& right);
+Vector2<T> operator *(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -186,7 +186,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator *=(Vector2<T>& left, T right);
+Vector2<T>& operator *=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -199,7 +199,7 @@ constexpr Vector2<T>& operator *=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator /(const Vector2<T>& left, T right);
+Vector2<T> operator /(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -215,7 +215,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator /=(Vector2<T>& left, T right);
+Vector2<T>& operator /=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -230,7 +230,7 @@ constexpr Vector2<T>& operator /=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
+bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -245,14 +245,14 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
+bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
 
 // Define the most common types
-using Vector2i = Vector2<int>;
-using Vector2u = Vector2<unsigned int>;
-using Vector2f = Vector2<float>;
+typedef Vector2<int>          Vector2i;
+typedef Vector2<unsigned int> Vector2u;
+typedef Vector2<float>        Vector2f;
 
 } // namespace sf
 
@@ -274,7 +274,7 @@ using Vector2f = Vector2<float>;
 /// and comparisons (==, !=), for example int or float.
 ///
 /// You generally don't have to care about the templated form (sf::Vector2<T>),
-/// the most common specializations have special type aliases:
+/// the most common specializations have special typedefs:
 /// \li sf::Vector2<float> is sf::Vector2f
 /// \li sf::Vector2<int> is sf::Vector2i
 /// \li sf::Vector2<unsigned int> is sf::Vector2u

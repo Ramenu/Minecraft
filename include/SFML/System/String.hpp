@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,13 +49,13 @@ public:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using Iterator = std::basic_string<Uint32>::iterator;      //!< Iterator type
-    using ConstIterator = std::basic_string<Uint32>::const_iterator; //!< Read-only iterator type
+    typedef std::basic_string<Uint32>::iterator       Iterator;      ///< Iterator type
+    typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const std::size_t InvalidPos; //!< Represents an invalid position in the string
+    static const std::size_t InvalidPos; ///< Represents an invalid position in the string
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -158,18 +158,6 @@ public:
     String(const String& copy);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Move constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    String(String&&) noexcept;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    String& operator=(String&&) noexcept;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Create a new sf::String from a UTF-8 encoded string
     ///
     /// \param begin Forward iterator to the beginning of the UTF-8 sequence
@@ -262,7 +250,7 @@ public:
     /// \see toWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::string toAnsiString(const std::locale& locale = std::locale()) const;
+    std::string toAnsiString(const std::locale& locale = std::locale()) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a wide string
@@ -275,7 +263,7 @@ public:
     /// \see toAnsiString, operator std::wstring
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::wstring toWideString() const;
+    std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-8 string
@@ -422,7 +410,7 @@ public:
     /// \return Position of \a str in the string, or String::InvalidPos if not found
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::size_t find(const String& str, std::size_t start = 0) const;
+    std::size_t find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Replace a substring with another string
@@ -465,7 +453,7 @@ public:
     /// \return String object containing a substring of this object
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] String substring(std::size_t position, std::size_t length = InvalidPos) const;
+    String substring(std::size_t position, std::size_t length = InvalidPos) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
@@ -536,7 +524,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint32> m_string; //!< Internal string of UTF-32 characters
+    std::basic_string<Uint32> m_string; ///< Internal string of UTF-32 characters
 };
 
 ////////////////////////////////////////////////////////////

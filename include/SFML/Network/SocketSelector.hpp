@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
-#include <memory>
 
 
 namespace sf
@@ -52,18 +51,18 @@ public:
     SocketSelector();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~SocketSelector();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
     /// \param copy Instance to copy
     ///
     ////////////////////////////////////////////////////////////
     SocketSelector(const SocketSelector& copy);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~SocketSelector();
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a new socket to the selector
@@ -121,7 +120,7 @@ public:
     /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool wait(Time timeout = Time::Zero);
+    bool wait(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Test a socket to know if it is ready to receive data
@@ -159,7 +158,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::unique_ptr<SocketSelectorImpl> m_impl; //!< Opaque pointer to the implementation (which requires OS-specific types)
+    SocketSelectorImpl* m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
 };
 
 } // namespace sf
@@ -204,7 +203,7 @@ private:
 /// listener.listen(55001);
 ///
 /// // Create a list to store the future clients
-/// std::list<std::unique_ptr<sf::TcpSocket>> clients;
+/// std::list<sf::TcpSocket*> clients;
 ///
 /// // Create a selector
 /// sf::SocketSelector selector;
@@ -222,27 +221,28 @@ private:
 ///         if (selector.isReady(listener))
 ///         {
 ///             // The listener is ready: there is a pending connection
-///             auto client = std::make_unique<sf::TcpSocket>();
+///             sf::TcpSocket* client = new sf::TcpSocket;
 ///             if (listener.accept(*client) == sf::Socket::Done)
 ///             {
+///                 // Add the new client to the clients list
+///                 clients.push_back(client);
+///
 ///                 // Add the new client to the selector so that we will
 ///                 // be notified when he sends something
 ///                 selector.add(*client);
-///
-///                 // Add the new client to the clients list
-///                 clients.push_back(std::move(client));
 ///             }
 ///             else
 ///             {
 ///                 // Error, we won't get a new connection, delete the socket
-///                 client.reset();
+///                 delete client;
 ///             }
 ///         }
 ///         else
 ///         {
 ///             // The listener socket is not ready, test all other sockets (the clients)
-///             for (sf::TcpSocket& client : clients)
+///             for (std::list<sf::TcpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it)
 ///             {
+///                 sf::TcpSocket& client = **it;
 ///                 if (selector.isReady(client))
 ///                 {
 ///                     // The client has sent some data, we can receive it

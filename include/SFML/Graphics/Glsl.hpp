@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,7 +32,6 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <cstddef>
 
 
 namespace sf
@@ -62,37 +61,37 @@ namespace Glsl
     /// \brief 2D float vector (\p vec2 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Vec2 = Vector2<float>;
+    typedef Vector2<float> Vec2;
 
     ////////////////////////////////////////////////////////////
     /// \brief 2D int vector (\p ivec2 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Ivec2 = Vector2<int>;
+    typedef Vector2<int> Ivec2;
 
     ////////////////////////////////////////////////////////////
     /// \brief 2D bool vector (\p bvec2 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Bvec2 = Vector2<bool>;
+    typedef Vector2<bool> Bvec2;
 
     ////////////////////////////////////////////////////////////
     /// \brief 3D float vector (\p vec3 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Vec3 = Vector3<float>;
+    typedef Vector3<float> Vec3;
 
     ////////////////////////////////////////////////////////////
     /// \brief 3D int vector (\p ivec3 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Ivec3 = Vector3<int>;
+    typedef Vector3<int> Ivec3;
 
     ////////////////////////////////////////////////////////////
     /// \brief 3D bool vector (\p bvec3 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Bvec3 = Vector3<bool>;
+    typedef Vector3<bool> Bvec3;
 
 #ifdef SFML_DOXYGEN
 
@@ -108,7 +107,7 @@ namespace Glsl
     /// sf::Glsl::Vec4 color = sf::Color::Cyan;
     /// \endcode
     ////////////////////////////////////////////////////////////
-    using Vec4 = implementation-defined;
+    typedef implementation-defined Vec4;
 
     ////////////////////////////////////////////////////////////
     /// \brief 4D int vector (\p ivec4 in GLSL)
@@ -122,13 +121,13 @@ namespace Glsl
     /// sf::Glsl::Ivec4 color = sf::Color::Cyan;
     /// \endcode
     ////////////////////////////////////////////////////////////
-    using Ivec4 = implementation-defined;
+    typedef implementation-defined Ivec4;
 
     ////////////////////////////////////////////////////////////
     /// \brief 4D bool vector (\p bvec4 in GLSL)
     ///
     ////////////////////////////////////////////////////////////
-    using Bvec4 = implementation-defined;
+    typedef implementation-defined Bvec4;
 
     ////////////////////////////////////////////////////////////
     /// \brief 3x3 float matrix (\p mat3 in GLSL)
@@ -153,7 +152,7 @@ namespace Glsl
     /// sf::Glsl::Mat3 matrix = transform;
     /// \endcode
     ////////////////////////////////////////////////////////////
-    using Mat3 = implementation-defined;
+    typedef implementation-defined Mat3;
 
     ////////////////////////////////////////////////////////////
     /// \brief 4x4 float matrix (\p mat4 in GLSL)
@@ -179,15 +178,15 @@ namespace Glsl
     /// sf::Glsl::Mat4 matrix = transform;
     /// \endcode
     ////////////////////////////////////////////////////////////
-    using Mat4 = implementation-defined;
+    typedef implementation-defined Mat4;
 
 #else // SFML_DOXYGEN
 
-    using Vec4 = priv::Vector4<float>;
-    using Ivec4 = priv::Vector4<int>;
-    using Bvec4 = priv::Vector4<bool>;
-    using Mat3 = priv::Matrix<3, 3>;
-    using Mat4 = priv::Matrix<4, 4>;
+    typedef priv::Vector4<float> Vec4;
+    typedef priv::Vector4<int> Ivec4;
+    typedef priv::Vector4<bool> Bvec4;
+    typedef priv::Matrix<3, 3> Mat3;
+    typedef priv::Matrix<4, 4> Mat4;
 
 #endif // SFML_DOXYGEN
 
@@ -206,7 +205,7 @@ namespace Glsl
 /// These types are exclusively used by the sf::Shader class.
 ///
 /// Types that already exist in SFML, such as \ref sf::Vector2<T>
-/// and \ref sf::Vector3<T>, are reused as type aliases, so you can use
+/// and \ref sf::Vector3<T>, are reused as typedefs, so you can use
 /// the types in this namespace as well as the original ones.
 /// Others are newly defined, such as Glsl::Vec4 or Glsl::Mat3. Their
 /// actual type is an implementation detail and should not be used.

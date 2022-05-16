@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -144,6 +144,7 @@ public:
     /// \li As points
     /// \li As lines
     /// \li As triangles
+    /// \li As quads
     /// The default primitive type is sf::Points.
     ///
     /// \param type Type of primitive
@@ -179,15 +180,15 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void draw(RenderTarget& target, const RenderStates& states) const override;
+    virtual void draw(RenderTarget& target, RenderStates states) const;
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Vertex> m_vertices;      //!< Vertices contained in the array
-    PrimitiveType       m_primitiveType; //!< Type of primitives to draw
+    std::vector<Vertex> m_vertices;      ///< Vertices contained in the array
+    PrimitiveType       m_primitiveType; ///< Type of primitives to draw
 };
 
 } // namespace sf

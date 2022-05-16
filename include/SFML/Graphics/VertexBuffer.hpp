@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,7 +32,6 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <cstddef>
 
 
 namespace sf
@@ -60,9 +59,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum Usage
     {
-        Stream,  //!< Constantly changing data
-        Dynamic, //!< Occasionally changing data
-        Static   //!< Rarely changing data
+        Stream,  ///< Constantly changing data
+        Dynamic, ///< Occasionally changing data
+        Static   ///< Rarely changing data
     };
 
     ////////////////////////////////////////////////////////////
@@ -117,7 +116,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~VertexBuffer() override;
+    ~VertexBuffer();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the vertex buffer
@@ -135,7 +134,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool create(std::size_t vertexCount);
+    bool create(std::size_t vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertex count
@@ -163,7 +162,7 @@ public:
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(const Vertex* vertices);
+    bool update(const Vertex* vertices);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the buffer from an array of vertices
@@ -196,7 +195,7 @@ public:
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset);
+    bool update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the contents of another buffer into this buffer
@@ -206,7 +205,7 @@ public:
     /// \return True if the copy was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(const VertexBuffer& vertexBuffer);
+    bool update(const VertexBuffer& vertexBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -298,7 +297,7 @@ public:
     /// // draw OpenGL stuff that use vb1...
     /// sf::VertexBuffer::bind(&vb2);
     /// // draw OpenGL stuff that use vb2...
-    /// sf::VertexBuffer::bind(nullptr);
+    /// sf::VertexBuffer::bind(NULL);
     /// // draw OpenGL stuff that use no vertex buffer...
     /// \endcode
     ///
@@ -328,17 +327,17 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void draw(RenderTarget& target, const RenderStates& states) const override;
+    virtual void draw(RenderTarget& target, RenderStates states) const;
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_buffer;        //!< Internal buffer identifier
-    std::size_t   m_size;          //!< Size in Vertexes of the currently allocated buffer
-    PrimitiveType m_primitiveType; //!< Type of primitives to draw
-    Usage         m_usage;         //!< How this vertex buffer is to be used
+    unsigned int  m_buffer;        ///< Internal buffer identifier
+    std::size_t   m_size;          ///< Size in Vertexes of the currently allocated buffer
+    PrimitiveType m_primitiveType; ///< Type of primitives to draw
+    Usage         m_usage;         ///< How this vertex buffer is to be used
 };
 
 } // namespace sf

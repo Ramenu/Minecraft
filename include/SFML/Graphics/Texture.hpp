@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,10 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <filesystem>
-#include <string>
 
 
 namespace sf
@@ -42,7 +40,6 @@ class RenderTarget;
 class RenderTexture;
 class Text;
 class Window;
-class Image;
 
 ////////////////////////////////////////////////////////////
 /// \brief Image living on the graphics card that can be used for drawing
@@ -58,8 +55,8 @@ public:
     ////////////////////////////////////////////////////////////
     enum CoordinateType
     {
-        Normalized, //!< Texture coordinates in range [0 .. 1]
-        Pixels      //!< Texture coordinates in range [0 .. size]
+        Normalized, ///< Texture coordinates in range [0 .. 1]
+        Pixels      ///< Texture coordinates in range [0 .. size]
     };
 
 public:
@@ -97,7 +94,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool create(unsigned int width, unsigned int height);
+    bool create(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -128,7 +125,7 @@ public:
     /// \see loadFromMemory, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, const IntRect& area = IntRect());
+    bool loadFromFile(const std::string& filename, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -160,7 +157,7 @@ public:
     /// \see loadFromFile, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
+    bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
@@ -191,7 +188,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
+    bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -215,7 +212,7 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromImage(const Image& image, const IntRect& area = IntRect());
+    bool loadFromImage(const Image& image, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the texture
@@ -509,7 +506,7 @@ public:
     /// \return True if mipmap generation was successful, false if unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool generateMipmap();
+    bool generateMipmap();
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -555,7 +552,7 @@ public:
     /// // draw OpenGL stuff that use t1...
     /// sf::Texture::bind(&t2);
     /// // draw OpenGL stuff that use t2...
-    /// sf::Texture::bind(nullptr);
+    /// sf::Texture::bind(NULL);
     /// // draw OpenGL stuff that use no texture...
     /// \endcode
     ///
@@ -619,16 +616,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2u     m_size;          //!< Public texture size
-    Vector2u     m_actualSize;    //!< Actual texture size (can be greater than public size because of padding)
-    unsigned int m_texture;       //!< Internal texture identifier
-    bool         m_isSmooth;      //!< Status of the smooth filter
-    bool         m_sRgb;          //!< Should the texture source be converted from sRGB?
-    bool         m_isRepeated;    //!< Is the texture in repeat mode?
-    mutable bool m_pixelsFlipped; //!< To work around the inconsistency in Y orientation
-    bool         m_fboAttachment; //!< Is this texture owned by a framebuffer object?
-    bool         m_hasMipmap;     //!< Has the mipmap been generated?
-    Uint64       m_cacheId;       //!< Unique number that identifies the texture to the render target's cache
+    Vector2u     m_size;          ///< Public texture size
+    Vector2u     m_actualSize;    ///< Actual texture size (can be greater than public size because of padding)
+    unsigned int m_texture;       ///< Internal texture identifier
+    bool         m_isSmooth;      ///< Status of the smooth filter
+    bool         m_sRgb;          ///< Should the texture source be converted from sRGB?
+    bool         m_isRepeated;    ///< Is the texture in repeat mode?
+    mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation
+    bool         m_fboAttachment; ///< Is this texture owned by a framebuffer object?
+    bool         m_hasMipmap;     ///< Has the mipmap been generated?
+    Uint64       m_cacheId;       ///< Unique number that identifies the texture to the render target's cache
 };
 
 } // namespace sf
@@ -728,7 +725,7 @@ private:
 /// \code
 /// sf::Texture::bind(&texture);
 /// ... render OpenGL geometry ...
-/// sf::Texture::bind(nullptr);
+/// sf::Texture::bind(NULL);
 /// \endcode
 ///
 /// \see sf::Sprite, sf::Image, sf::RenderTexture
