@@ -21,9 +21,13 @@ lightSource {[]() noexcept {
     return Lighting{components, direction, position};
 }()}
 {
+    #if 1
     for (float x {}; x < noOfChunksOnStart; x += 1.0f)
         for (float z {}; z < noOfChunksOnStart; z += 1.0f)
             allChunks[{static_cast<std::size_t>(x), 0, static_cast<std::size_t>(z)}].initChunk({x, 0, z});
+    #else
+        allChunks[{0, 0, 0}].initChunk({0, 0, 0});
+    #endif
     cubeShader.useShader(); 
     lightSource.shaderProgramLightSource(cubeShader);
 
@@ -38,39 +42,31 @@ lightSource {[]() noexcept {
     #endif
 }
 
-/**
- * Eliminates the positional light source.
- */
-Renderer::~Renderer() noexcept
-{
-    lightSource.removeAllLights();
-}
-
 
 /**
  * Updates all of the active chunks.
  * Should be called only if an update
  * is required. 
  */
-void Renderer::updateActiveChunks() noexcept
+void Renderer::updateActiveChunks() const noexcept
 {
     for (const auto&[chunkPos, chunk]: allChunks)
     {
         if (chunkPos.x > 0)
         {
-            const Chunk* const chunkX {&allChunks[{chunkPos.x - 1, chunkPos.y, chunkPos.z}]};
+            const Chunk* const chunkX {&allChunks.at({chunkPos.x - 1, chunkPos.y, chunkPos.z})};
             chunk.updateChunkVisibilityToNeighbor(chunkX->getChunk(), LeftFace);
             chunkX->updateChunkVisibilityToNeighbor(chunk.getChunk(), RightFace);
         } 
         if (chunkPos.y > 0)
         {
-            const Chunk* const chunkY {&allChunks[{chunkPos.x, chunkPos.y - 1, chunkPos.z}]};
+            const Chunk* const chunkY {&allChunks.at({chunkPos.x, chunkPos.y - 1, chunkPos.z})};
             chunk.updateChunkVisibilityToNeighbor(chunkY->getChunk(), BottomFace);
             chunkY->updateChunkVisibilityToNeighbor(chunk.getChunk(), TopFace);
         }
         if (chunkPos.z > 0)
         {
-            const Chunk* const chunkZ {&allChunks[{chunkPos.x, chunkPos.y, chunkPos.z - 1}]};
+            const Chunk* const chunkZ {&allChunks.at({chunkPos.x, chunkPos.y, chunkPos.z - 1})};
             chunk.updateChunkVisibilityToNeighbor(chunkZ->getChunk(), BackFace);
             chunkZ->updateChunkVisibilityToNeighbor(chunk.getChunk(), FrontFace);
         } 
@@ -82,25 +78,25 @@ void Renderer::updateActiveChunks() noexcept
  * the one located at the key given.
  */
 void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chosenChunk,
-                                    const glm::u64vec3 &key) noexcept
+                                    const glm::u64vec3 &key) const noexcept
 {
     if (key.x > 0)
-        allChunks[{key.x - 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, RightFace);
+        allChunks.at({key.x - 1, key.y, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, RightFace);
 
     if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
-        allChunks[{key.x + 1, key.y, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, LeftFace);
+        allChunks.at({key.x + 1, key.y, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, LeftFace);
 
     if (key.y > 0)
-        allChunks[{key.x, key.y - 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, TopFace);
+        allChunks.at({key.x, key.y - 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, TopFace);
 
     if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
-        allChunks[{key.x, key.y + 1, key.z}].updateChunkVisibilityToNeighbor(chosenChunk, BottomFace);
+        allChunks.at({key.x, key.y + 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, BottomFace);
 
     if (key.z > 0)
-        allChunks[{key.x, key.y, key.z - 1}].updateChunkVisibilityToNeighbor(chosenChunk, FrontFace);
+        allChunks.at({key.x, key.y, key.z - 1}).updateChunkVisibilityToNeighbor(chosenChunk, FrontFace);
 
     if (allChunks.find({key.x, key.y, key.z + 1}) != allChunks.end())
-        allChunks[{key.x, key.y, key.z + 1}].updateChunkVisibilityToNeighbor(chosenChunk, BackFace);
+        allChunks.at({key.x, key.y, key.z + 1}).updateChunkVisibilityToNeighbor(chosenChunk, BackFace);
 }
 
 /**
@@ -109,7 +105,7 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
 void Renderer::update() noexcept
 {
     static constexpr glm::u64vec3 activeChunkKey {0, 0, 0};
-    Chunk *activeChunk {&allChunks[activeChunkKey]};
+    Chunk *activeChunk {&allChunks.at(activeChunkKey)};
     const bool updateNearChunks {activeChunk->updateChunk()};
 
     if (updateNearChunks)
@@ -132,4 +128,3 @@ void Renderer::draw() const noexcept
     for (const auto&[chunkPos, chunk]: allChunks)
         chunk.drawChunk();
 }
-
