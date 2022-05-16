@@ -15,7 +15,7 @@
 #endif
 #include <unordered_map>
 
-static constexpr uint8_t noOfInactiveChunks {5};
+static constexpr std::uint8_t noOfInactiveChunks {5};
 
 static const glm::mat4 projection {glm::perspective(Camera::fov.value(), Window::aspectRatio, Camera::near, Camera::far)};
 
@@ -24,7 +24,6 @@ class Renderer
 {
     public:
         Renderer() noexcept;
-        ~Renderer() noexcept;
         void draw() const noexcept;
         void update() noexcept;
         Shader cubeShader;
@@ -34,8 +33,8 @@ class Renderer
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
         void updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunk,
-                                  const glm::u64vec3 &key) noexcept;
-        void updateActiveChunks() noexcept;
+                                  const glm::u64vec3 &key) const noexcept;
+        void updateActiveChunks() const noexcept;
         std::unordered_map<glm::u64vec3, Chunk> allChunks;
         bool needsUpdate {true};
 };
