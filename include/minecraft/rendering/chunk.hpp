@@ -26,7 +26,7 @@ class Chunk
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
-        static bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
+        static constexpr bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
         std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
     public:
 
@@ -39,15 +39,16 @@ class Chunk
 
         void initChunk(glm::vec3 position) noexcept;
 
+        inline ~Chunk() noexcept {
+            glDeleteBuffers(1, &vertexBuffer);
+            glDeleteVertexArrays(1, &vertexArray);
+        }
+
         void modifyChunk(glm::i8vec3 blockIndex, Block block) noexcept;
 
         void drawChunk() const noexcept;
 
-        inline ~Chunk() noexcept
-        {
-            glDeleteBuffers(1, &vertexBuffer);
-            glDeleteVertexArrays(1, &vertexArray);
-        }
+        void deleteChunk() noexcept;
 
         bool updateChunk() noexcept;
 
