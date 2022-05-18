@@ -2,9 +2,9 @@
 #define CAMERA_HPP
 
 #include "minecraft/rendering/chunk.hpp"
-#include "minecraft/physics/ray.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "minecraft/math/radians.hpp"
+#include "minecraft/ray.hpp"
 
 
 namespace Camera
@@ -27,12 +27,14 @@ namespace Camera
 		glm::vec3 right {glm::normalize(glm::cross(front, Camera::up)) * Camera::speed};
 	};
 
+	inline Ray ray;
+	extern void initCameraRay(const glm::vec3 &origin, const glm::vec3 &dir, const glm::vec3 &length);
+	extern Ray getRay() noexcept;
 	extern glm::mat4 getView() noexcept;
 	extern void updateCameraPos() noexcept;
 	inline CameraSettings settings {.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f};
 	inline CameraDirections direction;
 	inline glm::vec3 cameraPos {0.0f, chunkHeight * 2, 3.0f};
-	inline Ray ray {cameraPos, direction.front};
 
 }
 

@@ -74,6 +74,9 @@ static inline void updateCamera(const Renderer &renderer) noexcept
     double mouseXPos, mouseYPos;
     glfwGetCursorPos(Window::getWindow(), &mouseXPos, &mouseYPos);
     Camera::updateCameraPos();
+    glUseProgram(lightProgram);
+    glUniformMatrix4fv(glGetUniformLocation(lightProgram, "view"), 1, GL_FALSE, &Camera::getView()[0][0]);
+    renderer.cubeShader.useShader();
     renderer.cubeShader.setMat4("view", Camera::getView());
     renderer.cubeShader.setVec3("viewPos", Camera::cameraPos);
 }
@@ -93,6 +96,9 @@ void runGame() noexcept
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
     #endif
+
+    Camera::initCameraRay(Camera::cameraPos, Camera::direction.front, glm::vec3{0.0f, 0.0f, 2.0f});
+    glUniformMatrix4fv(glGetUniformLocation(lightProgram, "anotherProjection"), 1, GL_FALSE, &projection[0][0]);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -129,6 +135,7 @@ void runGame() noexcept
     // Free up remaining resources used by the game
     glDeleteBuffers(1, &uniformBuffer);
     Lighting::removeAllLights();
+    Window::deleteWindow();
     #ifdef GAME_BENCHMARK
         time.detailedDisplay();
     #endif

@@ -4,6 +4,8 @@
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/rendering/renderer.hpp"
+#include "minecraft/window/window.hpp"
+#include "GLFW/glfw3.h"
 #include <cmath>
 #include <cstdio>
 #include <numeric>

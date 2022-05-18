@@ -1,10 +1,17 @@
 #include "minecraft/camera/camera.hpp"
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/window/window.hpp"
 
 namespace Camera
 {
     static glm::mat4 view;
     glm::mat4 getView() noexcept {return view;}
+    Ray getRay() noexcept {return ray;}
+
+    void initCameraRay(const glm::vec3 &origin, const glm::vec3 &dir, const glm::vec3 &length)
+    {
+        ray.initRay(origin, dir, length);
+    }
 
     /** 
      * Updates the position of where the camera is looking.
@@ -31,8 +38,8 @@ namespace Camera
         glfwGetCursorPos(Window::getWindow(), &mouseX, &mouseY);
         static double lastX {mouseX}, lastY {mouseY};
 
-        const float xOffset {static_cast<float>((mouseX - lastX)) * settings.sensitivity};
-        const float yOffset {static_cast<float>((lastY - mouseY)) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
+        const float xOffset {static_cast<float>(mouseX - lastX) * settings.sensitivity};
+        const float yOffset {static_cast<float>(lastY - mouseY) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
 
         // Update the last mouse positions to the current position
         lastX = mouseX;
@@ -52,24 +59,13 @@ namespace Camera
             settings.pitch = -upDownTurnAngle;
         
         // Reset the yaw so the player can spin their camera around 
-        if (settings.yaw > sideTurnAngle)
-            settings.yaw = 0.0f;
-        if (settings.yaw < -sideTurnAngle)
+        if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
             settings.yaw = 0.0f;
 
-        #if 1
-            //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
-            const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
-            switch (nearestDirectionToPlayer)
-            {
-                default: ray.updateRay({cameraPos.x, cameraPos.y, cameraPos.z}, direction.front); break; // Up
-                case West: ray.updateRay({cameraPos.x - 1, cameraPos.y, cameraPos.z}, direction.front); break;
-                case East: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
-                case North: ray.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1}, direction.front); break;
-                case South: ray.updateRay({cameraPos.x, cameraPos.y, cameraPos.z - 1}, direction.front); break;
-                case Down: ray.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
-            }
-        #endif
+        ray.origin = cameraPos;
+        ray.direction = direction.front;
+        ray.updateRay();
+        glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
 
     }
 }

@@ -58,6 +58,12 @@ namespace Window
         }
     }
 
+    void deleteWindow() noexcept
+    {
+        if (window)
+            glfwDestroyWindow(window);
+    }
+
 
     //Method that loads the window and automatically does the tedious work, the window as 1st parameter and the name of it as the second
     static GLFWwindow *loadWindow(GLFWwindow *glWindow, const char *title) noexcept

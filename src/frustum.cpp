@@ -1,5 +1,6 @@
 #include "minecraft/math/frustum.hpp"
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/window/window.hpp"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #include "gcem/gcem.hpp"

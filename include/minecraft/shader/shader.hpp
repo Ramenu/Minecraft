@@ -5,7 +5,6 @@
 #include "glad/glad.h"
 #include <string>
 
-
 class Shader
 {
     private:
@@ -13,11 +12,12 @@ class Shader
         void checkShaderCompilationErrors(GLuint shader, const std::string &shaderPath) const noexcept;
         void checkLinkageErrors() const noexcept;
     public:
+        Shader() = default;
         Shader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) noexcept;
-        ~Shader() noexcept {
+        inline ~Shader() noexcept {
             glDeleteProgram(shaderProgram);
         }
-        inline void useShader() const noexcept {glUseProgram(shaderProgram);}
+        inline void useShader() const noexcept {glUseProgram(getShader());}
         inline void setMat4(const char *name, const glm::mat4 &matrix) const noexcept {
             glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &matrix[0][0]);
         }
@@ -36,7 +36,7 @@ class Shader
         inline void setFloat(const char *name, float value) const noexcept {
             glUniform1f(glGetUniformLocation(shaderProgram, name), value);
         }
-        inline GLuint getShader() const noexcept {return shaderProgram;}
+        inline GLuint getShader() const noexcept { return shaderProgram; }
 };
 
 

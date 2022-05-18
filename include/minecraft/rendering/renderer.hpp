@@ -5,6 +5,7 @@
 
 #include "minecraft/lighting/lighting.hpp"
 #include "minecraft/camera/camera.hpp"
+#include "minecraft/window/window.hpp"
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
