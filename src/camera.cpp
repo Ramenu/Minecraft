@@ -8,9 +8,10 @@ namespace Camera
     glm::mat4 getView() noexcept {return view;}
     Ray getRay() noexcept {return ray;}
 
-    void initCameraRay(const glm::vec3 &origin, const glm::vec3 &dir, const glm::vec3 &length)
+    void initCameraRay(const glm::vec3 &, const glm::vec3 &, const glm::vec3 &)
     {
-        ray.initRay(origin, dir, length);
+        //NOTE: GREEN IS YOU!
+        ray.initRay({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 3.0f});
     }
 
     /** 
@@ -62,9 +63,8 @@ namespace Camera
         if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
             settings.yaw = 0.0f;
 
-        ray.origin = cameraPos;
-        ray.direction = direction.front;
-        ray.updateRay();
+        ray.ray = cameraPos;
+        ray.updateRay(direction.front.x, direction.front.y, updatedDirection.z);
         glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
 
     }

@@ -19,6 +19,7 @@
 static constexpr std::uint8_t noOfInactiveChunks {5};
 
 static const glm::mat4 projection {glm::perspective(Camera::fov.value(), Window::aspectRatio, Camera::near, Camera::far)};
+[[maybe_unused]] static const glm::mat4 inverseProjection {glm::inverse(projection)};
 
 
 class Renderer

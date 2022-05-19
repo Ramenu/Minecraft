@@ -2,7 +2,9 @@
 
 out vec4 lineFragColor;
 
+in vec3 lineColors;
+
 void main()
 {
-    lineFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    lineFragColor = vec4(lineColors, 1.0);
 }
