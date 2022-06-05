@@ -17,11 +17,13 @@ namespace Sound
      */
     static uint8_t getSoundID(BlockName name) noexcept
     {
+        static constexpr int grassBlockSoundID {0},
+                             stoneBlockSoundID {1};
         switch (name)
         {
-            default: return 0;
-            case Cobblestone_Block: return 1;
-            case Stone_Block: return 1;
+            default: return grassBlockSoundID;
+            case Cobblestone_Block: return stoneBlockSoundID;
+            case Stone_Block: return stoneBlockSoundID;
         }
     }
 
