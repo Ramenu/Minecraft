@@ -51,7 +51,7 @@ namespace Camera
 
         // Angles in degrees
         static constexpr float upDownTurnAngle {88.0f}; 
-        static constexpr float sideTurnAngle {360.0f};
+        //static constexpr float sideTurnAngle {360.0f};
 
         // Prevent the player tilting their head backwards
         if (settings.pitch > upDownTurnAngle)
@@ -60,12 +60,14 @@ namespace Camera
             settings.pitch = -upDownTurnAngle;
         
         // Reset the yaw so the player can spin their camera around 
-        if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
-            settings.yaw = 0.0f;
+        //if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
+        //    settings.yaw = 0.0f;
 
-        ray.ray = cameraPos;
-        ray.updateRay(direction.front.x, direction.front.y, updatedDirection.z);
-        glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
+        const double cosTime {updatedDirection.x * 1.3f};
+        ray.ray = {0.0f, 16.0f, 0.0f};
+        ray.updateRay(cosTime, direction.front.y, 0.0f);
+        //glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
+        glfwSetWindowTitle(Window::getWindow(), std::to_string(cosTime).c_str());
 
     }
 }

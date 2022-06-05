@@ -113,14 +113,15 @@ bool Ray::intersectsWith(const glm::vec3 &b) const noexcept
 /**
  * Updates the position of the ray.
  */
-void Ray::updateRay(float xRotationRadians, [[maybe_unused]] float yRotationRadians, [[maybe_unused]] float zRotationRadians) 
+void Ray::updateRay([[maybe_unused]] float xRotationRadians, [[maybe_unused]] float yRotationRadians, [[maybe_unused]] float zRotationRadians) 
 { 
     glBindVertexArray(vao);
     glUseProgram(lineProgram);
     glm::mat4 model {glm::translate(glm::mat4{1.0f}, glm::vec3{ray.x, ray.y - 0.1f, ray.z})};
-    glm::mat4 rotationModelX {glm::rotate(model, xRotationRadians ,glm::vec3{0.0f, 1.0f, 0.0f})};
-    glm::mat4 rotationModelY {glm::rotate(rotationModelX, yRotationRadians ,glm::vec3{-1.0f, 0.0f, 0.0f})};
-    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "model"), 1, GL_FALSE, &rotationModelY[0][0]);
+    model = glm::rotate(model, xRotationRadians, glm::vec3{0.0f, 1.0f, 0.0f});
+    //glm::mat4 rotationModelY {glm::rotate(rotationModelX, yRotationRadians, glm::vec3{-1.0f, 0.0f, 0.0f})};
+    //glm::mat4 rotationModelZ {glm::rotate(model, zRotationRadians, glm::vec3(0.0f, 0.0f, -1.0f))};
+    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "model"), 1, GL_FALSE, &model[0][0]);
     glDrawArrays(GL_LINES, 0, 2);
 
 }
