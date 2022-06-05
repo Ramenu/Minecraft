@@ -45,8 +45,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     -Wextra
     -ffunction-sections
     -fdata-sections
+    #-fsanitize=address
     -fstrict-enums
-    -fsanitize=leak
     -Wctor-dtor-privacy
     -Wnon-virtual-dtor
     -Wmismatched-tags
@@ -146,9 +146,6 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wvector-conversion
     )
 endif()
-
-set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
-set_property(TARGET main PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
 # Include directories
 target_include_directories(main PUBLIC "./include")
