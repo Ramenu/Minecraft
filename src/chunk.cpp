@@ -344,9 +344,9 @@ void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std:
  * Returns true if any of the
  * faces are visible.
  */
-constexpr bool Chunk::anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
+static inline constexpr bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
 {
-    return (std::any_of(faces.begin(), faces.end(), [](const auto &face) {
+    return (std::any_of(faces.begin(), faces.end(), [](auto face) {
         return face >= completelyVisible;
     }));
 }
@@ -365,33 +365,27 @@ Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept
 
     // Back face
     // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
-    if (isOutOfChunk({index.x , index.y, index.z - 1}) || 
-        chunk[index.x][index.y][index.z - 1].name == Air_Block)
+    if (isOutOfChunk({index.x , index.y, index.z - 1}) || chunk[index.x][index.y][index.z - 1].name == Air_Block)
             visibleFaces[Face::BackFace] = completelyVisible;
 
     // Front face
-    if (isOutOfChunk({index.x , index.y, index.z + 1}) ||
-        chunk[index.x][index.y][index.z + 1].name == Air_Block)
+    if (isOutOfChunk({index.x , index.y, index.z + 1}) || chunk[index.x][index.y][index.z + 1].name == Air_Block)
             visibleFaces[Face::FrontFace] = completelyVisible;
 
     // Right face
-    if (isOutOfChunk({index.x + 1, index.y, index.z}) ||
-        chunk[index.x + 1][index.y][index.z].name == Air_Block)
+    if (isOutOfChunk({index.x + 1, index.y, index.z}) || chunk[index.x + 1][index.y][index.z].name == Air_Block)
             visibleFaces[Face::RightFace] = completelyVisible;
     
     // Left face
-    if (isOutOfChunk({index.x - 1, index.y, index.z}) || 
-        chunk[index.x - 1][index.y][index.z].name == Air_Block)
+    if (isOutOfChunk({index.x - 1, index.y, index.z}) || chunk[index.x - 1][index.y][index.z].name == Air_Block)
             visibleFaces[Face::LeftFace] = completelyVisible;
     
     // Top face
-    if (isOutOfChunk({index.x , index.y + 1, index.z}) ||
-        chunk[index.x][index.y + 1][index.z].name == Air_Block)
+    if (isOutOfChunk({index.x , index.y + 1, index.z}) || chunk[index.x][index.y + 1][index.z].name == Air_Block)
             visibleFaces[Face::TopFace] = completelyVisible;
 
     // Bottom face
-    if (isOutOfChunk({index.x , index.y - 1, index.z}) || 
-        chunk[index.x][index.y - 1][index.z].name == Air_Block)
+    if (isOutOfChunk({index.x , index.y - 1, index.z}) || chunk[index.x][index.y - 1][index.z].name == Air_Block)
             visibleFaces[Face::BottomFace] = completelyVisible;
     
     return visibleFaces;
