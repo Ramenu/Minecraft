@@ -1,5 +1,5 @@
-#ifndef CAMERA_HPP
-#define CAMERA_HPP
+#ifndef MC_CAMERA_HPP
+#define MC_CAMERA_HPP
 
 #include "minecraft/rendering/chunk.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -38,4 +38,4 @@ namespace Camera
 
 }
 
-#endif // CAMERA_HPP
+#endif // MC_CAMERA_HPP

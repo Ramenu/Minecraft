@@ -1,10 +1,10 @@
-#ifndef TEXTURE_HPP
-#define TEXTURE_HPP
+#ifndef MC_TEXTURE_HPP
+#define MC_TEXTURE_HPP
 
 #include "minecraft/block/blockenum.hpp"
 #include <string>
 
-static constexpr uint8_t atlasWidth {3}, atlasHeight {noBlocks - 1};
+static constexpr int atlasWidth {3}, atlasHeight {noBlocks - 1};
 static constexpr float xPos {1.0f / atlasWidth}, yPos {1.0f / atlasHeight};
 
 class Texture
@@ -18,4 +18,4 @@ class Texture
 };
 
 
-#endif // TEXTURE_HPP
+#endif // MC_TEXTURE_HPP

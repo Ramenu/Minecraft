@@ -1,5 +1,5 @@
-#ifndef SOUNDDATA_HPP
-#define SOUNDDATA_HPP
+#ifndef MC_SOUNDDATA_HPP
+#define MC_SOUNDDATA_HPP
 
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
     #pragma GCC diagnostic push
@@ -21,4 +21,4 @@ class SoundData
         sf::SoundBuffer buffer;
 };
 
-#endif // SOUNDDATA_HPP
+#endif // MC_SOUNDDATA_HPP

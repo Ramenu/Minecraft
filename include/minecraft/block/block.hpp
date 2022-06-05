@@ -1,5 +1,5 @@
-#ifndef BLOCK_HPP
-#define BLOCK_HPP
+#ifndef MC_BLOCK_HPP
+#define MC_BLOCK_HPP
 
 #include "minecraft/block/blockenum.hpp"
 #include "glm/vec3.hpp"
@@ -25,4 +25,4 @@ class Block
         BlockName name;
 };
 
-#endif // BLOCK_HPP
+#endif // MC_BLOCK_HPP

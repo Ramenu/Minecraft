@@ -1,5 +1,5 @@
-#ifndef LIGHTING_HPP
-#define LIGHTING_HPP
+#ifndef MC_LIGHTING_HPP
+#define MC_LIGHTING_HPP
 
 #include "minecraft/shader/shader.hpp"
 
@@ -28,4 +28,4 @@ class Lighting
 
 };
 
-#endif // LIGHTING_HPP
+#endif // MC_LIGHTING_HPP

@@ -1,5 +1,5 @@
-#ifndef SHADER_HPP
-#define SHADER_HPP
+#ifndef MC_SHADER_HPP
+#define MC_SHADER_HPP
 
 #include "glm/mat4x4.hpp"
 #include "glad/glad.h"
@@ -40,4 +40,4 @@ class Shader
 };
 
 
-#endif // SHADER_HPP
+#endif // MC_SHADER_HPP

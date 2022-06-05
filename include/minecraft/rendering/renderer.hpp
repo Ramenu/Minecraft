@@ -1,5 +1,5 @@
-#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef MC_RENDERER_HPP
+#define MC_RENDERER_HPP
 
 #define GLM_ENABLE_EXPERIMENTAL // For built-in glm hash
 
@@ -41,4 +41,4 @@ class Renderer
         bool needsUpdate {true};
 };
 
-#endif // RENDERER_HPP
+#endif // MC_RENDERER_HPP

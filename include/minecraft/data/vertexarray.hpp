@@ -1,5 +1,5 @@
-#ifndef VERTEXARRAY_HPP
-#define VERTEXARRAY_HPP
+#ifndef MC_VERTEXARRAY_HPP
+#define MC_VERTEXARRAY_HPP
 
 #include "glad/glad.h"
 
@@ -22,4 +22,4 @@ class VertexArray
 
 };
 
-#endif // VERTEXARRAY_HPP
+#endif // MC_VERTEXARRAY_HPP

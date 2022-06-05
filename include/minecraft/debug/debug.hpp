@@ -1,5 +1,5 @@
-#ifndef DEBUG_HPP
-#define DEBUG_HPP
+#ifndef MC_DEBUG_HPP
+#define MC_DEBUG_HPP
 
 #include "glm/vec3.hpp"
 #include "minecraft/window/window.hpp"
@@ -11,4 +11,4 @@ inline void setTitle(const glm::vec3 &vec) noexcept
     glfwSetWindowTitle(Window::getWindow(), s.data());
 }
 
-#endif // DEBUG_HPP
+#endif // MC_DEBUG_HPP

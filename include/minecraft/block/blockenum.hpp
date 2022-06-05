@@ -1,9 +1,9 @@
-#ifndef BLOCKENUM_HPP
-#define BLOCKENUM_HPP
+#ifndef MC_BLOCKENUM_HPP
+#define MC_BLOCKENUM_HPP
 
 #include <cstdint>
 
-enum BlockState : uint8_t
+enum BlockState : std::uint8_t
 {
     None = 1,
     Visible = 2,
@@ -28,7 +28,7 @@ inline constexpr BlockState &operator&=(BlockState &a, BlockState b) noexcept {
     return a;
 }
 
-enum BlockName : uint8_t
+enum BlockName : std::uint8_t
 {
     Air_Block,
     Grass_Block,
@@ -36,6 +36,6 @@ enum BlockName : uint8_t
     Dirt_Block,
     Stone_Block
 };
-static constexpr uint8_t noBlocks {5}; 
+static constexpr int noBlocks {5}; 
 
-#endif // BLOCKENUM_HPP
+#endif // MC_BLOCKENUM_HPP

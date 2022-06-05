@@ -1,5 +1,5 @@
-#ifndef SOUND_HPP
-#define SOUND_HPP
+#ifndef MC_SOUND_HPP
+#define MC_SOUND_HPP
 
 #include "minecraft/block/blockenum.hpp"
 
@@ -9,4 +9,4 @@ namespace Sound
     extern void playBlockBreakSound(BlockName name) noexcept;
 }
 
-#endif // SOUND_HPP
+#endif // MC_SOUND_HPP

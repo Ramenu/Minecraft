@@ -1,5 +1,5 @@
-#ifndef RAY_HPP
-#define RAY_HPP
+#ifndef MC_RAY_HPP
+#define MC_RAY_HPP
 
 #include "glm/vec3.hpp"
 
@@ -24,4 +24,4 @@ class Ray
         glm::vec3 length;
 };
 
-#endif // RAY_HPP
+#endif // MC_RAY_HPP

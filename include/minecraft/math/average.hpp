@@ -1,5 +1,5 @@
-#ifndef AVERAGE_HPP
-#define AVERAGE_HPP
+#ifndef MC_AVERAGE_HPP
+#define MC_AVERAGE_HPP
 
 #include <span>
 
@@ -15,4 +15,4 @@
 	}
 #endif
 
-#endif // AVERAGE_HPP
+#endif // MC_AVERAGE_HPP

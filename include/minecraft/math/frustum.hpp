@@ -1,5 +1,5 @@
-#ifndef FRUSTUM_HPP
-#define FRUSTUM_HPP
+#ifndef MC_FRUSTUM_HPP
+#define MC_FRUSTUM_HPP
 
 #include "minecraft/math/plane.hpp"
 #include "minecraft/camera/camera.hpp"
@@ -37,4 +37,4 @@ class Frustum
         inline Plane getBottomFace() const noexcept {return bottomFace;}
 };
 
-#endif // FRUSTUM_HPP
+#endif // MC_FRUSTUM_HPP

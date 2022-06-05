@@ -1,5 +1,5 @@
-#ifndef DIRECTION_HPP
-#define DIRECTION_HPP
+#ifndef MC_DIRECTION_HPP
+#define MC_DIRECTION_HPP
 
 #include "glm/vec3.hpp"
 
@@ -26,4 +26,4 @@ inline constexpr glm::vec3 getDirectionVector(Direction direction) noexcept {
     return directions[static_cast<uint8_t>(direction)];
 }
 
-#endif // DIRECTION_HPP
+#endif // MC_DIRECTION_HPP

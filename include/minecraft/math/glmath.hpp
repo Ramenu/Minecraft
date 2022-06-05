@@ -1,5 +1,5 @@
-#ifndef GLMATH_HPP
-#define GLMATH_HPP
+#ifndef MC_GLMATH_HPP
+#define MC_GLMATH_HPP
 
 #include "glm/vec3.hpp"
 #include "minecraft/math/direction.hpp"
@@ -8,6 +8,9 @@
 namespace GLMath
 {
     extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
+    inline constexpr double toDegrees(double radians) noexcept {
+        return M_PI / 180.0 * radians;
+    }
 
     #if 0
     /**
@@ -41,4 +44,4 @@ namespace GLMath
     #endif
 }
 
-#endif // GLMATH_HPP
+#endif // MC_GLMATH_HPP

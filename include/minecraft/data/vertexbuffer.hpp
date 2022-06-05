@@ -1,5 +1,5 @@
-#ifndef VERTEXBUFFER_HPP
-#define VERTEXBUFFER_HPP
+#ifndef MC_VERTEXBUFFER_HPP
+#define MC_VERTEXBUFFER_HPP
 
 #include "glad/glad.h"
 
@@ -27,4 +27,4 @@ class VertexBuffer
 
 };
 
-#endif // VERTEXBUFFER_HPP
+#endif // MC_VERTEXBUFFER_HPP

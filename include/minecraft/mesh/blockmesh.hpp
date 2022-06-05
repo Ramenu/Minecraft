@@ -1,5 +1,5 @@
-#ifndef BLOCKMESH_HPP
-#define BLOCKMESH_HPP
+#ifndef MC_BLOCKMESH_HPP
+#define MC_BLOCKMESH_HPP
 
 #include "minecraft/gfx/texture.hpp"
 #include <array>
@@ -8,7 +8,7 @@ static constexpr std::size_t attributesToFormCube {36};
 static constexpr std::size_t noOfSquaresInCube {6};
 static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
 
-enum Attribute
+enum Attribute : std::uint8_t
 {
     Position,
     TexCoord,
@@ -233,4 +233,4 @@ getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible) noe
 
 }
 
-#endif // BLOCKMESH_HPP
+#endif // MC_BLOCKMESH_HPP

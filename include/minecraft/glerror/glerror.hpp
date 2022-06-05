@@ -1,5 +1,5 @@
-#ifndef GLERROR_HPP
-#define GLERROR_HPP
+#ifndef MC_GLERROR_HPP
+#define MC_GLERROR_HPP
 
 #include "minecraft/debug/debugmacro.h"
 #include <string_view>
@@ -12,4 +12,4 @@ namespace GLError
     #endif
 }
 
-#endif // GLERROR_HPP
+#endif // MC_GLERROR_HPP

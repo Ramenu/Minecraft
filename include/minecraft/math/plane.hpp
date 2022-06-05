@@ -1,5 +1,5 @@
-#ifndef PLANE_HPP
-#define PLANE_HPP
+#ifndef MC_PLANE_HPP
+#define MC_PLANE_HPP
 
 #include "misc/boilerplate/glm_noerr.hpp"
 
@@ -14,4 +14,4 @@ class Plane
         float distance {0.0f};
 };
 
-#endif // PLANE_HPP
+#endif // MC_PLANE_HPP

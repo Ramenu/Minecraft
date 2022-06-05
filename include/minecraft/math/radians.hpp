@@ -1,5 +1,5 @@
-#ifndef RADIANS_HPP
-#define RADIANS_HPP
+#ifndef MC_RADIANS_HPP
+#define MC_RADIANS_HPP
 
 #include <compare>
 #include "misc/boilerplate/glm_noerr.hpp"
@@ -15,4 +15,4 @@ class Radians
         auto operator<=>(const Radians &r) const = default;
 };
 
-#endif // RADIANS_HPP
+#endif // MC_RADIANS_HPP

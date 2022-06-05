@@ -1,5 +1,5 @@
-#ifndef CHUNKMESH_HPP
-#define CHUNKMESH_HPP
+#ifndef MC_CHUNKMESH_HPP
+#define MC_CHUNKMESH_HPP
 
 #include "minecraft/mesh/blockmesh.hpp"
 #include <vector>
@@ -10,4 +10,4 @@ struct ChunkMesh
 };
 
 
-#endif // CHUNKMESH_HPP
+#endif // MC_CHUNKMESH_HPP

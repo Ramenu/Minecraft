@@ -1,5 +1,5 @@
-#ifndef LINE_HPP
-#define LINE_HPP
+#ifndef MC_LINE_HPP
+#define MC_LINE_HPP
 
 #if 0
     /* Returns the slope between the two points of the line. */
@@ -9,4 +9,4 @@
     inline float getYIntercept(float x, float y, float m) {return y - m * x;}
 #endif
 
-#endif // LINE_HPP
+#endif // MC_LINE_HPP

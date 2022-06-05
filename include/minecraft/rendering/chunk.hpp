@@ -1,5 +1,5 @@
-#ifndef CHUNK_HPP
-#define CHUNK_HPP
+#ifndef MC_CHUNK_HPP
+#define MC_CHUNK_HPP
 
 #include "minecraft/data/vertexarray.hpp"
 #include "minecraft/block/block.hpp"
@@ -26,7 +26,6 @@ class Chunk
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
-        static constexpr bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces);
         std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
     public:
 
@@ -67,4 +66,4 @@ class Chunk
 
 };
 
-#endif // CHUNK_HPP
+#endif // MC_CHUNK_HPP

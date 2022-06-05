@@ -1,5 +1,5 @@
-#ifndef FACE_H
-#define FACE_H
+#ifndef MC_FACE_H
+#define MC_FACE_H
 
 #include <stdint.h>
 
@@ -13,4 +13,4 @@ enum Face : uint8_t
     BottomFace = 5
 };
 
-#endif // FACE_H
+#endif // MC_FACE_H
