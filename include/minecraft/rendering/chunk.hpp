@@ -19,7 +19,7 @@ class Chunk
     private:
         GLuint vertexArray;
         GLuint vertexBuffer;
-        std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
+        constexpr std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[chunkWidth][chunkHeight][chunkLength] {};
         void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
         static std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) noexcept;
@@ -58,11 +58,28 @@ class Chunk
          * to access the block. Returns true if any of the indices
          * are out of the chunk's array boundaries.
          */
-        static inline bool isOutOfChunk(glm::i8vec3 index) noexcept {
+        static inline constexpr bool isOutOfChunk(glm::i8vec3 index) noexcept {
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
                    (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
         }
 
+        static inline constexpr bool isOutOfChunk(const glm::i32vec3 &index) noexcept {
+            return ((index.x < 0 || index.y < 0 || index.z < 0) ||
+                   (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
+        }
+
+        /**
+         * The index that should be passed should be the indice of the block
+         * that surround the block's face you want to check. For example, if
+         * you want to check if the bottom face of a block is visible, pass the
+         * indice bottom to the block's chunk index (so y - 1). Returns true if
+         * the face is visible.
+         */
+        inline constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept {
+            if (isOutOfChunk(index))
+                return true;
+            return (chunk[index.x][index.y][index.z].name == Air_Block);
+        }
 
 };
 
