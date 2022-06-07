@@ -135,7 +135,7 @@ constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(flo
 
 constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
 {
-    std::array<float, verticesSizes[Attribute::TexCoord]> textureVertices {
+    return {
         0.0f,   yPos + textureID,
         xPos,   0.0f + textureID,
         xPos,   yPos + textureID,
@@ -179,57 +179,54 @@ constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertic
         xPos_2, 0.0f + textureID
     };
 
-    return textureVertices;
-
 }
 
 constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
 getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible) noexcept
 {
-    std::array<float, verticesSizes[Attribute::Visibility]> visibleVertices {
-        1.0f * visible[0],
-        1.0f * visible[0],
-        1.0f * visible[0],
-        1.0f * visible[0],
-        1.0f * visible[0],
-        1.0f * visible[0],
+    return {
+        visible[0],
+        visible[0],
+        visible[0],
+        visible[0],
+        visible[0],
+        visible[0],
 
-        1.0f * visible[1],
-        1.0f * visible[1],
-        1.0f * visible[1],
-        1.0f * visible[1],
-        1.0f * visible[1],
-        1.0f * visible[1],
+        visible[1],
+        visible[1],
+        visible[1],
+        visible[1],
+        visible[1],
+        visible[1],
 
-        1.0f * visible[2],
-        1.0f * visible[2],
-        1.0f * visible[2],
-        1.0f * visible[2],
-        1.0f * visible[2],
-        1.0f * visible[2],
+        visible[2],
+        visible[2],
+        visible[2],
+        visible[2],
+        visible[2],
+        visible[2],
 
-        1.0f * visible[3],
-        1.0f * visible[3],
-        1.0f * visible[3],
-        1.0f * visible[3],
-        1.0f * visible[3],
-        1.0f * visible[3],
+        visible[3],
+        visible[3],
+        visible[3],
+        visible[3],
+        visible[3],
+        visible[3],
 
-        1.0f * visible[4],
-        1.0f * visible[4],
-        1.0f * visible[4],
-        1.0f * visible[4],
-        1.0f * visible[4],
-        1.0f * visible[4],
+        visible[4],
+        visible[4],
+        visible[4],
+        visible[4],
+        visible[4],
+        visible[4],
 
-        1.0f * visible[5],
-        1.0f * visible[5],
-        1.0f * visible[5],
-        1.0f * visible[5],
-        1.0f * visible[5],
-        1.0f * visible[5]
+        visible[5],
+        visible[5],
+        visible[5],
+        visible[5],
+        visible[5],
+        visible[5]
     };
-    return visibleVertices;
 
 }
 
