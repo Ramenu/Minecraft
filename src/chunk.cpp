@@ -138,9 +138,7 @@ bool Chunk::updateChunk() noexcept
 
                             // this cast seems weird and unsafe, though the chunk boundaries have already been checked for overflow
                             // so it is fine to do this (but perhaps there is a better way to do this more neatly).
-                            const glm::i8vec3 blockPosition {static_cast<std::int8_t>(x + static_cast<std::int8_t>(blockDirection.x)), 
-                                                             static_cast<std::int8_t>(y + static_cast<std::int8_t>(blockDirection.y)), 
-                                                             static_cast<std::int8_t>(z + static_cast<std::int8_t>(blockDirection.z))};
+                            const glm::i32vec3 blockPosition {x + blockDirection.x, y + blockDirection.y, z + blockDirection.z};
 
                             // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
                             // placed on an air block
@@ -358,34 +356,33 @@ static inline constexpr bool anyFacesAreVisible(const std::array<float, noOfSqua
  * is out of the chunk's border OR is an air block the face
  * will be visible.
  */
-std::array<float, noOfSquaresInCube> 
+constexpr std::array<float, noOfSquaresInCube> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
     std::array<float, noOfSquaresInCube> visibleFaces {};
 
     // Back face
-    // TODO: Accessing outside of array's boundaries can lead to undefined behavior. Fix this!
-    if (isOutOfChunk({index.x , index.y, index.z - 1}) || chunk[index.x][index.y][index.z - 1].name == Air_Block)
+    if (faceIsVisible({index.x, index.y, index.z - 1}))
             visibleFaces[Face::BackFace] = completelyVisible;
 
     // Front face
-    if (isOutOfChunk({index.x , index.y, index.z + 1}) || chunk[index.x][index.y][index.z + 1].name == Air_Block)
+    if (faceIsVisible({index.x, index.y, index.z + 1}))
             visibleFaces[Face::FrontFace] = completelyVisible;
 
     // Right face
-    if (isOutOfChunk({index.x + 1, index.y, index.z}) || chunk[index.x + 1][index.y][index.z].name == Air_Block)
+    if (faceIsVisible({index.x + 1, index.y, index.z}))
             visibleFaces[Face::RightFace] = completelyVisible;
     
     // Left face
-    if (isOutOfChunk({index.x - 1, index.y, index.z}) || chunk[index.x - 1][index.y][index.z].name == Air_Block)
+    if (faceIsVisible({index.x - 1, index.y, index.z}))
             visibleFaces[Face::LeftFace] = completelyVisible;
     
     // Top face
-    if (isOutOfChunk({index.x , index.y + 1, index.z}) || chunk[index.x][index.y + 1][index.z].name == Air_Block)
+    if (faceIsVisible({index.x, index.y + 1, index.z}))
             visibleFaces[Face::TopFace] = completelyVisible;
 
     // Bottom face
-    if (isOutOfChunk({index.x , index.y - 1, index.z}) || chunk[index.x][index.y - 1][index.z].name == Air_Block)
+    if (faceIsVisible({index.x, index.y - 1, index.z}))
             visibleFaces[Face::BottomFace] = completelyVisible;
     
     return visibleFaces;
@@ -474,27 +471,26 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     static constexpr auto blockAmbientLevel {getAmbientVertices(defaultAmbientLevel)};
     position = {position.x * chunkWidth, position.y * chunkHeight, position.z * chunkLength};
 
-    for (float x {}; x < chunkWidth; x += 1.0f)
+    for (std::int32_t x {}; x < chunkWidth; x += 1.0f)
     {
-        for (float y {}; y < chunkHeight; y += 1.0f)
+        for (std::int32_t y {}; y < chunkHeight; y += 1.0f)
         {
-            const BlockName selectedBlock {(static_cast<uint8_t>(y) == chunkHeight - 1) ? (Grass_Block) : (Dirt_Block)};
-            for (float z {}; z < chunkLength; z += 1.0f)
+            const BlockName selectedBlock {(y == chunkHeight - 1) ? (Grass_Block) : (Dirt_Block)};
+            for (std::int32_t z {}; z < chunkLength; z += 1.0f)
             {
-                const uint8_t u8_x {static_cast<uint8_t>(x)}, u8_y {static_cast<uint8_t>(y)}, u8_z {static_cast<uint8_t>(z)};
                 const Block block {selectedBlock};
-                chunk[u8_x][u8_y][u8_z] = block;
+                chunk[x][y][z] = block;
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
                 const auto texture {getTextureVertices(block.getTexture())};
                 chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
-                                                                     pos.begin(), 
-                                                                     pos.end());
+                                                                         pos.begin(), 
+                                                                         pos.end());
                 chunkVertices.meshAttributes[Attribute::TexCoord].insert(chunkVertices.meshAttributes[Attribute::TexCoord].end(),
-                                                                     texture.begin(),
-                                                                     texture.end());
+                                                                         texture.begin(),
+                                                                         texture.end());
                 chunkVertices.meshAttributes[Attribute::Ambient].insert(chunkVertices.meshAttributes[Attribute::Ambient].end(),
-                                                                    blockAmbientLevel.begin(),
-                                                                    blockAmbientLevel.end());
+                                                                        blockAmbientLevel.begin(),
+                                                                        blockAmbientLevel.end());
             }
         }
     }
