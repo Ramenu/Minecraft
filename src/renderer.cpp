@@ -4,7 +4,7 @@
 #include <cstdio>
 
 
-static constexpr float noOfChunksOnStart {14.0f};
+static constexpr float noOfChunksOnStart {4.0f};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -105,7 +105,7 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
 void Renderer::update() noexcept
 {
     static constexpr glm::u64vec3 activeChunkKey {0, 0, 0};
-    Chunk *activeChunk {&allChunks.at(activeChunkKey)};
+    Chunk * const activeChunk {&allChunks.at(activeChunkKey)};
     const bool updateNearChunks {activeChunk->updateChunk()};
 
     if (updateNearChunks)
