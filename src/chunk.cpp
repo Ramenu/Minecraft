@@ -364,7 +364,7 @@ Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept
     std::array<float, noOfSquaresInCube> visibleFaces {};
 
     // Back face
-    // NOTE: Accessing outside of array's boundaries could lead to undefined behavior. Fix this
+    // TODO: Accessing outside of array's boundaries can lead to undefined behavior. Fix this!
     if (isOutOfChunk({index.x , index.y, index.z - 1}) || chunk[index.x][index.y][index.z - 1].name == Air_Block)
             visibleFaces[Face::BackFace] = completelyVisible;
 
