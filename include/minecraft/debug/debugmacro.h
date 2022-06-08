@@ -1,6 +1,0 @@
-#ifndef MC_DEBUGMACRO_H
-#define MC_DEBUGMACRO_H
-
-#define MC_DEBUG_BUILD
-
-#endif // MC_DEBUGMACRO_H

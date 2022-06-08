@@ -11,31 +11,31 @@
 #include <numeric>
 #include <algorithm>
 
-static constexpr auto invisibleVertices {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
-static constexpr float defaultAmbientLevel {1.5f};
-static constexpr float completelyVisible {1.0f};
+static constexpr auto INVISIBLE_VERTICES {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
+static constexpr float DEFAULT_AMBIENT_LEVEL {1.5f};
+static constexpr float COMPLETELY_VISIBLE {1.0f};
 
-static constexpr std::array<std::size_t, attributes.size()> sizeOfChunkVertices {[](){
-    std::array<std::size_t, attributes.size()> vertices {};
+static constexpr std::array<std::size_t, ATTRIBUTES.size()> SIZE_OF_CHUNK_VERTICES {[](){
+    std::array<std::size_t, ATTRIBUTES.size()> vertices {};
 
     for (std::size_t i {}; i < vertices.size(); ++i)
-        vertices[i] = verticesSizes[i] * chunkVolume * sizeof(float);  
+        vertices[i] = verticesSizes[i] * CHUNK_VOLUME * sizeof(float);  
 
     return vertices;
 }()};
 
-static constexpr std::array<std::size_t, attributes.size()> offsets {[](){
-    std::array<std::size_t, attributes.size()> attributeOffsets {};
+static constexpr std::array<std::size_t, ATTRIBUTES.size()> OFFSETS {[](){
+    std::array<std::size_t, ATTRIBUTES.size()> attributeOffsets {};
     std::size_t offset {};
-    for (std::size_t i {}; i < sizeOfChunkVertices.size(); ++i)
+    for (std::size_t i {}; i < SIZE_OF_CHUNK_VERTICES.size(); ++i)
     {
         attributeOffsets[i] = offset;
-        offset += sizeOfChunkVertices[i];
+        offset += SIZE_OF_CHUNK_VERTICES[i];
     }
     return attributeOffsets;
 }()};
 
-static constexpr std::size_t totalBytes {std::accumulate(sizeOfChunkVertices.begin(), sizeOfChunkVertices.end(), 0)};
+static constexpr std::size_t TOTAL_BYTES {std::accumulate(SIZE_OF_CHUNK_VERTICES.begin(), SIZE_OF_CHUNK_VERTICES.end(), 0)};
 
 /**
  * Returns a single index (from 0 to 'CHUNKVOLUME') 
@@ -43,14 +43,14 @@ static constexpr std::size_t totalBytes {std::accumulate(sizeOfChunkVertices.beg
  * array index.
  */
 static inline constexpr std::size_t getBlockIndex(glm::i8vec3 index) noexcept {
-    return ((index.y * chunkHeight + index.z) + index.x * chunkLength * chunkHeight);
+    return ((index.y * CHUNK_HEIGHT + index.z) + index.x * CHUNK_LENGTH * CHUNK_HEIGHT);
 }
 
 void Chunk::drawChunk() const noexcept
 {
-    static constexpr std::size_t first {0}, count {attributesToFormCube * chunkVolume};
+    static constexpr std::size_t FIRST {0}, COUNT {CUBE_ATTRIBUTES * CHUNK_VOLUME};
     glBindVertexArray(vertexArray);
-    glDrawArrays(GL_TRIANGLES, first, count - first);
+    glDrawArrays(GL_TRIANGLES, FIRST, COUNT - FIRST);
 }
 
 
@@ -96,12 +96,12 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
 bool Chunk::updateChunk() noexcept 
 {
     bool updateNeeded {};
-    static constexpr float highlightedAmbientLevel {1.9f};
-    for (std::int32_t x {}; x < chunkWidth; ++x)
+    static constexpr float HIGHLIGHTED_AMBIENT_LEVEL {1.9f};
+    for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
-        for (std::int32_t y {}; y < chunkHeight; ++y)
+        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
         {
-            for (std::int32_t z {}; z < chunkLength; ++z)
+            for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
                 // Not necessary to check if the player is looking at an air block
                 if (blockStates[x][y][z] != None)
@@ -111,14 +111,14 @@ bool Chunk::updateChunk() noexcept
                                                   static_cast<std::int32_t>(Camera::ray.getRay().z) == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
-                    static constexpr BlockState highlightedAndVisible {Highlighted|Visible};
-                    if (blockStates[x][y][z] == highlightedAndVisible)
+                    static constexpr BlockState HIGHLIGHTED_AND_VISIBLE {Highlighted|Visible};
+                    if (blockStates[x][y][z] == HIGHLIGHTED_AND_VISIBLE)
                     {
                         const glm::i8vec3 index {x, y, z};
                         if (!rayLookingAtBlock)
                         {
                             blockStates[x][y][z] &= Highlighted;
-                            highlightBlock(index, defaultAmbientLevel); // un-highlight the block
+                            highlightBlock(index, DEFAULT_AMBIENT_LEVEL); // un-highlight the block
                         }
                         // Destroy the block if the left mouse button is clicked
                         if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -147,7 +147,7 @@ bool Chunk::updateChunk() noexcept
                                 modifyChunk(blockPosition, Block{Cobblestone_Block});
                                 // Highlighting it is necessary, so in the next call the method can decide whether to still keep
                                 // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
-                                blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = highlightedAndVisible;
+                                blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = HIGHLIGHTED_AND_VISIBLE;
                                 Sound::playBlockPlacementSound(chunk[blockPosition.x][blockPosition.y][blockPosition.z].name);
                                 if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
                                     updateNeeded = true;
@@ -158,9 +158,9 @@ bool Chunk::updateChunk() noexcept
                     }
                     if (rayLookingAtBlock)
                     {
-                        blockStates[x][y][z] = highlightedAndVisible;
+                        blockStates[x][y][z] = HIGHLIGHTED_AND_VISIBLE;
                         const glm::i8vec3 index {x, y, z};
-                        highlightBlock(index, highlightedAmbientLevel); // highlight the block
+                        highlightBlock(index, HIGHLIGHTED_AMBIENT_LEVEL); // highlight the block
                     }
                 }
             }
@@ -215,12 +215,12 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
                 continue;
             }
             blockStates[x][y][z] = None;
-            updateBuffer(bufferIndex, Attribute::Visibility, invisibleVertices);
+            updateBuffer(bufferIndex, Attribute::Visibility, INVISIBLE_VERTICES);
         }
     }
 
     // Update this block's visibility
-    std::array<float, attributesToFormCube> visibilityVertices;
+    std::array<float, CUBE_ATTRIBUTES> visibilityVertices;
     if (chunk[index.x][index.y][index.z].name != Air_Block && blockIsVisibleToPlayer(index))
     {
         visibilityVertices = getVisibleBlockVertices(getVisibleFaces(index));
@@ -228,7 +228,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
     } 
     else
     {
-        visibilityVertices = invisibleVertices;
+        visibilityVertices = INVISIBLE_VERTICES;
         blockStates[index.x][index.y][index.z] = None;
     }
     updateBuffer(getBlockIndex(index), Attribute::Visibility, visibilityVertices);
@@ -240,7 +240,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
  * block that may be adjacent to the
  * block located at {x, y, z}. 
  */
-std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrounding(glm::i8vec3 index) noexcept
+std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> Chunk::getBlocksSurrounding(glm::i8vec3 index) noexcept
 {
     const glm::i8vec3 blockAtBack {index.x, index.y, index.z - 1_i8},
                       blockAtFront {index.x, index.y, index.z + 1_i8},
@@ -263,7 +263,7 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
         };
     }
 
-    const glm::i8vec3 adjacentBlocks[noOfSquaresInCube] {
+    const glm::i8vec3 adjacentBlocks[SQUARES_ON_CUBE] {
         blockAtBack,
         blockAtFront,
         blockAtRight,
@@ -272,7 +272,7 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
         blockAtBottom
     };
 
-    std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> surroundingBlocks {
+    std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> surroundingBlocks {
         std::nullopt, std::nullopt, std::nullopt,
         std::nullopt, std::nullopt, std::nullopt
     };
@@ -283,16 +283,16 @@ std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> Chunk::getBlocksSurrou
     return surroundingBlocks;
 }
 
-void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunkNeighbor, 
+void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunkNeighbor, 
                                             Face face) const noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    std::int32_t begin {0}, end {chunkHeight - 1};
+    std::int32_t begin {0}, end {CHUNK_HEIGHT - 1};
     if (face == FrontFace || face == RightFace || face == TopFace)
         std::swap(begin, end);
-    for (std::int32_t a {}; a < chunkWidth; ++a)
+    for (std::int32_t a {}; a < CHUNK_WIDTH; ++a)
     {
-        for (std::int32_t v {}; v < chunkHeight; ++v)
+        for (std::int32_t v {}; v < CHUNK_HEIGHT; ++v)
         {
             glm::i8vec3 index;
             float visibleLevel {};
@@ -300,19 +300,19 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
             {
                 index = {a, v, begin};
                 if (chunk[a][v][begin].name != Air_Block && chunkNeighbor[a][v][end].name == Air_Block)
-                    visibleLevel = completelyVisible;
+                    visibleLevel = COMPLETELY_VISIBLE;
             }
             else if (face == TopFace || face == BottomFace) // Check faces on Y
             {
                 index = {a, begin, v};
                 if (chunk[a][begin][v].name != Air_Block && chunkNeighbor[a][end][v].name == Air_Block)
-                    visibleLevel = completelyVisible;
+                    visibleLevel = COMPLETELY_VISIBLE;
             }
             else // Check faces on X
             {
                 index = {begin, v, a};
                 if (chunk[begin][v][a].name != Air_Block && chunkNeighbor[end][v][a].name == Air_Block)
-                    visibleLevel = completelyVisible;
+                    visibleLevel = COMPLETELY_VISIBLE;
             }
 
             const std::size_t blockOffset {getBlockIndex(index)};
@@ -331,8 +331,8 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
  */
 void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) noexcept
 {
-    const std::size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + offsets[attributeIndex])
-                                + face * noOfSquaresInCube * sizeof(float)};
+    const std::size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + OFFSETS[attributeIndex])
+                                + face * SQUARES_ON_CUBE * sizeof(float)};
     const std::size_t offsetEnd {vertices.size() * sizeof(float)};;
 
     glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, offsetEnd, vertices.data());
@@ -342,10 +342,10 @@ void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std:
  * Returns true if any of the
  * faces are visible.
  */
-static inline constexpr bool anyFacesAreVisible(const std::array<float, noOfSquaresInCube> &faces) 
+static inline constexpr bool anyFacesAreVisible(const std::array<float, SQUARES_ON_CUBE> &faces) 
 {
     return (std::any_of(faces.begin(), faces.end(), [](auto face) {
-        return face >= completelyVisible;
+        return face >= COMPLETELY_VISIBLE;
     }));
 }
 
@@ -356,34 +356,34 @@ static inline constexpr bool anyFacesAreVisible(const std::array<float, noOfSqua
  * is out of the chunk's border OR is an air block the face
  * will be visible.
  */
-constexpr std::array<float, noOfSquaresInCube> 
+constexpr std::array<float, SQUARES_ON_CUBE> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
-    std::array<float, noOfSquaresInCube> visibleFaces {};
+    std::array<float, SQUARES_ON_CUBE> visibleFaces {};
 
     // Back face
     if (faceIsVisible({index.x, index.y, index.z - 1}))
-            visibleFaces[Face::BackFace] = completelyVisible;
+            visibleFaces[Face::BackFace] = COMPLETELY_VISIBLE;
 
     // Front face
     if (faceIsVisible({index.x, index.y, index.z + 1}))
-            visibleFaces[Face::FrontFace] = completelyVisible;
+            visibleFaces[Face::FrontFace] = COMPLETELY_VISIBLE;
 
     // Right face
     if (faceIsVisible({index.x + 1, index.y, index.z}))
-            visibleFaces[Face::RightFace] = completelyVisible;
+            visibleFaces[Face::RightFace] = COMPLETELY_VISIBLE;
     
     // Left face
     if (faceIsVisible({index.x - 1, index.y, index.z}))
-            visibleFaces[Face::LeftFace] = completelyVisible;
+            visibleFaces[Face::LeftFace] = COMPLETELY_VISIBLE;
     
     // Top face
     if (faceIsVisible({index.x, index.y + 1, index.z}))
-            visibleFaces[Face::TopFace] = completelyVisible;
+            visibleFaces[Face::TopFace] = COMPLETELY_VISIBLE;
 
     // Bottom face
     if (faceIsVisible({index.x, index.y - 1, index.z}))
-            visibleFaces[Face::BottomFace] = completelyVisible;
+            visibleFaces[Face::BottomFace] = COMPLETELY_VISIBLE;
     
     return visibleFaces;
 }
@@ -398,32 +398,32 @@ void Chunk::updateChunkVisibility() noexcept
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
-    std::vector<float> visibleAttributes {}; 
-    for (std::int32_t x {}; x < chunkWidth; ++x)
+    std::vector<float> visibleATTRIBUTES {}; 
+    for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
-        for (std::int32_t y {}; y < chunkHeight; ++y)
+        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
         {
-            for (std::int32_t z {}; z < chunkLength; ++z)
+            for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
                 const glm::i8vec3 index {x, y, z};
                 if (blockIsVisibleToPlayer(index) && chunk[x][y][z].name != Air_Block)
                 {
                     const auto visibleFaces {getVisibleFaces(index)};
                     const auto visible {getVisibleBlockVertices(visibleFaces)};
-                    visibleAttributes.insert(visibleAttributes.end(), visible.begin(), visible.end()); 
+                    visibleATTRIBUTES.insert(visibleATTRIBUTES.end(), visible.begin(), visible.end()); 
                     blockStates[x][y][z] |= Visible;
                     continue;
                 }
                 blockStates[x][y][z] = None;
-                visibleAttributes.insert(visibleAttributes.end(), invisibleVertices.begin(), invisibleVertices.end());
+                visibleATTRIBUTES.insert(visibleATTRIBUTES.end(), INVISIBLE_VERTICES.begin(), INVISIBLE_VERTICES.end());
             }
         }
     }
     glBufferSubData(GL_ARRAY_BUFFER, 
-                    offsets[Attribute::Visibility], 
-                    sizeOfChunkVertices[Attribute::Visibility], 
+                    OFFSETS[Attribute::Visibility], 
+                    SIZE_OF_CHUNK_VERTICES[Attribute::Visibility], 
     // cppcheck-suppress containerOutOfBounds ; needed otherwise it gives a false positive
-                    &visibleAttributes[0]);
+                    &visibleATTRIBUTES[0]);
 }
 
 
@@ -468,15 +468,15 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glGenVertexArrays(1, &vertexArray);
     glGenBuffers(1, &vertexBuffer);
     ChunkMesh chunkVertices;
-    static constexpr auto blockAmbientLevel {getAmbientVertices(defaultAmbientLevel)};
-    position = {position.x * chunkWidth, position.y * chunkHeight, position.z * chunkLength};
+    static constexpr auto DEFAULT_BLOCK_AMBIENT_VERTICES {getAmbientVertices(DEFAULT_AMBIENT_LEVEL)};
+    position = {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
 
-    for (std::int32_t x {}; x < chunkWidth; x += 1.0f)
+    for (std::int32_t x {}; x < CHUNK_WIDTH; x += 1.0f)
     {
-        for (std::int32_t y {}; y < chunkHeight; y += 1.0f)
+        for (std::int32_t y {}; y < CHUNK_HEIGHT; y += 1.0f)
         {
-            const BlockName selectedBlock {(y == chunkHeight - 1) ? (Grass_Block) : (Dirt_Block)};
-            for (std::int32_t z {}; z < chunkLength; z += 1.0f)
+            const BlockName selectedBlock {(y == CHUNK_HEIGHT - 1) ? (Grass_Block) : (Dirt_Block)};
+            for (std::int32_t z {}; z < CHUNK_LENGTH; z += 1.0f)
             {
                 const Block block {selectedBlock};
                 chunk[x][y][z] = block;
@@ -489,8 +489,8 @@ void Chunk::initChunk(glm::vec3 position) noexcept
                                                                          texture.begin(),
                                                                          texture.end());
                 chunkVertices.meshAttributes[Attribute::Ambient].insert(chunkVertices.meshAttributes[Attribute::Ambient].end(),
-                                                                        blockAmbientLevel.begin(),
-                                                                        blockAmbientLevel.end());
+                                                                        DEFAULT_BLOCK_AMBIENT_VERTICES.begin(),
+                                                                        DEFAULT_BLOCK_AMBIENT_VERTICES.end());
             }
         }
     }
@@ -501,24 +501,24 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 
     glBindVertexArray(vertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, totalBytes, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, TOTAL_BYTES, nullptr, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
-    for (std::size_t i {}; i < attributes.size(); ++i)
-        glBufferSubData(GL_ARRAY_BUFFER, offsets[i], sizeOfChunkVertices[i], &chunkVertices.meshAttributes[i][0]);
+    for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
+        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], &chunkVertices.meshAttributes[i][0]);
     updateChunkVisibility();
 
-    // Tell OpenGL what to do with the buffer's data (where the attributes are, etc).
-    static constexpr int normalizedAttributes[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
-    for (std::size_t i {}; i < attributes.size(); ++i)
+    // Tell OpenGL what to do with the buffer's data (where the ATTRIBUTES are, etc).
+    static constexpr int NORMALIZED_ATTRIBUTES[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
+    for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
     {
         glEnableVertexArrayAttrib(vertexBuffer, i);
         glVertexAttribPointer(i,
-                              attributes[i], 
+                              ATTRIBUTES[i], 
                               GL_FLOAT, 
-                              normalizedAttributes[i], 
+                              NORMALIZED_ATTRIBUTES[i], 
                               0, // values are understood to be tightly-packed in array
-                              reinterpret_cast<const void*>(offsets[i]));
+                              reinterpret_cast<const void*>(OFFSETS[i]));
     }
 
 }

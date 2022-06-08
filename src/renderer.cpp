@@ -77,7 +77,7 @@ void Renderer::updateActiveChunks() const noexcept
  * Updates the chunks visibility adjacent to
  * the one located at the key given.
  */
-void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chosenChunk,
+void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chosenChunk,
                                     const glm::u64vec3 &key) const noexcept
 {
     if (key.x > 0)

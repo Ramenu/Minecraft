@@ -1,10 +1,10 @@
 #version 460 core
 
-#define BLOCK_ATTRIBUTES (36)
+#define BLOCK_ATTRIBUTES 36
 #if 0
-#define TOTAL_BLOCKS (5)
-#define ATLAS_WIDTH (3)
-#define ATLAS_HEIGHT ((BLOCK_ATTRIBUTES) - (1))
+#define TOTAL_BLOCKS 5
+#define ATLAS_WIDTH 3
+#define ATLAS_HEIGHT (BLOCK_ATTRIBUTES - 1)
 
 const float xPos = 1.0 / ATLAS_WIDTH;
 const float yPos = 1.0 / ATLAS_HEIGHT;

@@ -7,10 +7,10 @@
 #include <array>
 
 
-static constexpr std::array textureCoords {[](){
-    std::array<float, noBlocks> coords;
-    for (uint8_t i {}; i < noBlocks; i++)
-        coords[i] = static_cast<float>(i) / atlasHeight;
+static constexpr std::array TEXTURE_COORDS {[](){
+    std::array<float, NUMBER_OF_BLOCKS> coords {};
+    for (uint8_t i {}; i < NUMBER_OF_BLOCKS; ++i)
+        coords[i] = static_cast<float>(i) / ATLAS_HEIGHT;
     return coords;
 }()};
 
@@ -20,7 +20,7 @@ class Block
         Block() = default;
         inline constexpr explicit Block(BlockName blockName) noexcept : name {blockName} {}
         inline float getTexture() const noexcept {
-            return textureCoords[name - 1]; 
+            return TEXTURE_COORDS[name - 1]; 
         }
         BlockName name;
 };

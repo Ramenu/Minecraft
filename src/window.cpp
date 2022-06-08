@@ -17,16 +17,15 @@ namespace Window
      */
     void processMovement(float deltaTime) noexcept 
     {
-        using namespace Camera;
-        const float speedRate {speed * deltaTime};
+        const float speedRate {Camera::SPEED * deltaTime};
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += speedRate * direction.front;
+            Camera::cameraPos += speedRate * Camera::direction.front;
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= speedRate * direction.front;
+            Camera::cameraPos -= speedRate * Camera::direction.front;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= speedRate * direction.right;
+            Camera::cameraPos -= speedRate * Camera::direction.right;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += speedRate * direction.right;
+            Camera::cameraPos += speedRate * Camera::direction.right;
     }
 
     /**
@@ -81,7 +80,7 @@ namespace Window
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true); 
         #endif
 
-        glWindow = glfwCreateWindow(width, height, title, NULL, NULL);
+        glWindow = glfwCreateWindow(WIDTH, HEIGHT, title, NULL, NULL);
 
         //Occurs if window or OpenGL context creation fails (prints an error message and the title of the window)
         if (!glWindow)
@@ -101,9 +100,9 @@ namespace Window
         window = loadWindow(window, windowName);
         GLFWimage icon;
         icon.pixels = stbi_load("./icons/icon.png", &icon.width, &icon.height, 0, 0);
-        glfwSetWindowSize(window, width, height);
+        glfwSetWindowSize(window, WIDTH, HEIGHT);
         glfwSetWindowIcon(window, 1, &icon);
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWidth, int windowHeight) {glViewport(0, 0, windowWidth, windowHeight);});
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWIDTH, int windowHeight) {glViewport(0, 0, windowWIDTH, windowHeight);});
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetKeyCallback(window, key_callback);
         stbi_image_free(icon.pixels);

@@ -10,8 +10,8 @@ namespace Window
     extern void initWindow(const char *windowName) noexcept;
     extern void processMovement(float deltaTime) noexcept; 
     extern void deleteWindow() noexcept;
-    static constexpr std::size_t width {512}, height {512};
-    static constexpr float aspectRatio {width/height};
+    static constexpr std::size_t WIDTH {512}, HEIGHT {512};
+    static constexpr float ASPECT_RATIO {WIDTH/HEIGHT};
 }
 
 #endif // WINDOW_HPP

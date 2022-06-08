@@ -31,8 +31,8 @@ namespace Camera
             std::sin(yawRadians) * cosPitch
         };
 
-        view = glm::lookAt(cameraPos, cameraPos + direction.front, up);
-        direction.right = glm::normalize(glm::cross(direction.front, up));
+        view = glm::lookAt(cameraPos, cameraPos + direction.front, UP);
+        direction.right = glm::normalize(glm::cross(direction.front, UP));
         direction.front = glm::normalize(updatedDirection);
 
         double mouseX, mouseY;
@@ -50,14 +50,14 @@ namespace Camera
         settings.pitch += yOffset;
 
         // Angles in degrees
-        static constexpr float upDownTurnAngle {88.0f}; 
+        static constexpr float UP_DOWN_TURN_ANGLE {88.0f}; 
         //static constexpr float sideTurnAngle {360.0f};
 
         // Prevent the player tilting their head backwards
-        if (settings.pitch > upDownTurnAngle)
-            settings.pitch = upDownTurnAngle;
-        if (settings.pitch < -upDownTurnAngle)
-            settings.pitch = -upDownTurnAngle;
+        if (settings.pitch > UP_DOWN_TURN_ANGLE)
+            settings.pitch = UP_DOWN_TURN_ANGLE;
+        if (settings.pitch < -UP_DOWN_TURN_ANGLE)
+            settings.pitch = -UP_DOWN_TURN_ANGLE;
         
         // Reset the yaw so the player can spin their camera around 
         //if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)

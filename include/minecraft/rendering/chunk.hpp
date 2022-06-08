@@ -9,9 +9,9 @@
 #include <span>
 #include <optional>
 
-static constexpr std::int32_t chunkWidth {16}, chunkHeight {chunkWidth}, chunkLength {chunkWidth};
-static constexpr std::size_t chunkVolume {chunkWidth * chunkHeight * chunkLength};
-static_assert(chunkHeight == chunkWidth && chunkHeight == chunkLength, "ERROR: Width, height, and length of the chunk must be equal!");
+static constexpr std::int32_t CHUNK_WIDTH {16}, CHUNK_HEIGHT {CHUNK_WIDTH}, CHUNK_LENGTH {CHUNK_WIDTH};
+static constexpr std::size_t CHUNK_VOLUME {CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_LENGTH};
+static_assert(CHUNK_HEIGHT == CHUNK_WIDTH && CHUNK_HEIGHT == CHUNK_LENGTH, "ERROR: Width, height, and length of the chunk must be equal!");
 
 
 class Chunk
@@ -19,19 +19,19 @@ class Chunk
     private:
         GLuint vertexArray;
         GLuint vertexBuffer;
-        constexpr std::array<float, noOfSquaresInCube> getVisibleFaces(glm::i8vec3 index) const noexcept;
-        BlockState blockStates[chunkWidth][chunkHeight][chunkLength] {};
+        constexpr std::array<float, SQUARES_ON_CUBE> getVisibleFaces(glm::i8vec3 index) const noexcept;
+        BlockState blockStates[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LENGTH] {};
         void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
-        static std::array<std::optional<glm::i8vec3>, noOfSquaresInCube> getBlocksSurrounding(glm::i8vec3 index) noexcept;
+        static std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> getBlocksSurrounding(glm::i8vec3 index) noexcept;
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
-        std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> chunk;
+        std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> chunk;
     public:
 
         inline auto getChunk() const noexcept {return chunk;}
         
-        void updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, chunkLength>, chunkHeight>, chunkWidth> &chunkNeighbor,
+        void updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunkNeighbor,
                                              Face face) const noexcept;
 
         void updateChunkVisibility() noexcept;
@@ -60,12 +60,12 @@ class Chunk
          */
         static inline constexpr bool isOutOfChunk(glm::i8vec3 index) noexcept {
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
-                   (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
+                   (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
         }
 
         static inline constexpr bool isOutOfChunk(const glm::i32vec3 &index) noexcept {
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
-                   (index.x >= chunkWidth || index.y >= chunkHeight || index.z >= chunkLength));
+                   (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
         }
 
         /**

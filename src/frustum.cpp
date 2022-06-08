@@ -28,17 +28,17 @@ Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir,
 
 Frustum Frustum::getCameraFrustum() noexcept
 {
-    static constexpr float adjacent {Camera::far};
-    static constexpr float hypotenuse {adjacent * gcem::tan(Camera::fov.value() * 0.5f)};
-    static constexpr float opposite {hypotenuse * Window::aspectRatio};
-    const glm::vec3 farFront {Camera::far * Camera::direction.front};
+    static constexpr float adjacent {Camera::FAR};
+    static constexpr float hypotenuse {adjacent * gcem::tan(Camera::FOV.value() * 0.5f)};
+    static constexpr float opposite {hypotenuse * Window::ASPECT_RATIO};
+    const glm::vec3 farFront {Camera::FAR * Camera::direction.front};
     const glm::vec3 rightDirection {opposite * Camera::direction.right};
-    static constexpr glm::vec3 upDirection {hypotenuse * Camera::up};
+    static constexpr glm::vec3 upDirection {hypotenuse * Camera::UP};
 
-    const Plane nearFace {Camera::cameraPos + Camera::near * Camera::direction.front, Camera::direction.front};
+    const Plane nearFace {Camera::cameraPos + Camera::NEAR * Camera::direction.front, Camera::direction.front};
     const Plane farFace {Camera::cameraPos + farFront, -Camera::direction.front};
-    const Plane rightFace {Camera::cameraPos, glm::cross(Camera::up, farFront + rightDirection)};
-    const Plane leftFace {glm::cross(Camera::up, farFront - rightDirection), Camera::cameraPos};
+    const Plane rightFace {Camera::cameraPos, glm::cross(Camera::UP, farFront + rightDirection)};
+    const Plane leftFace {glm::cross(Camera::UP, farFront - rightDirection), Camera::cameraPos};
     const Plane topFace {Camera::cameraPos, glm::cross(Camera::direction.right, farFront - upDirection)};
     const Plane bottomFace {Camera::cameraPos, glm::cross(farFront + upDirection, Camera::direction.right)};
 

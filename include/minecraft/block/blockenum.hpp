@@ -36,6 +36,6 @@ enum BlockName : std::uint8_t
     Dirt_Block,
     Stone_Block
 };
-static constexpr int noBlocks {5}; 
+static constexpr int NUMBER_OF_BLOCKS {5}; 
 
 #endif // MC_BLOCKENUM_HPP

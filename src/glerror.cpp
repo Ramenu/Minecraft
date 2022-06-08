@@ -33,37 +33,37 @@ namespace GLError
                 case 131204: return;
             }
 
-            std::cerr << "---------------\nDebug message (" << id << "): " <<  message << '\n';
+            std::cout << "---------------\nDebug message (" << id << "): " <<  message << '\n';
 
             switch (source)
             {
-                case GL_DEBUG_SOURCE_API:             std::cerr << "Source: API\n"; break;
-                case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cerr << "Source: Window System\n"; break;
-                case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cerr << "Source: Shader Compiler\n"; break;
-                case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cerr << "Source: Third Party\n"; break;
-                case GL_DEBUG_SOURCE_APPLICATION:     std::cerr << "Source: Application\n"; break;
-                case GL_DEBUG_SOURCE_OTHER:           std::cerr << "Source: Other\n"; break;
+                case GL_DEBUG_SOURCE_API:             std::cout << "Source: API\n"; break;
+                case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System\n"; break;
+                case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler\n"; break;
+                case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party\n"; break;
+                case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application\n"; break;
+                case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other\n"; break;
             } 
 
             switch (type)
             {
-                case GL_DEBUG_TYPE_ERROR:               std::cerr << "Type: Error\n"; break;
-                case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cerr << "Type: Deprecated Behaviour\n"; break;
-                case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cerr << "Type: Undefined Behaviour\n"; break; 
-                case GL_DEBUG_TYPE_PORTABILITY:         std::cerr << "Type: Portability\n"; break;
-                case GL_DEBUG_TYPE_PERFORMANCE:         std::cerr << "Type: Performance\n"; break;
-                case GL_DEBUG_TYPE_MARKER:              std::cerr << "Type: Marker\n"; break;
-                case GL_DEBUG_TYPE_PUSH_GROUP:          std::cerr << "Type: Push Group\n"; break;
-                case GL_DEBUG_TYPE_POP_GROUP:           std::cerr << "Type: Pop Group\n"; break;
-                case GL_DEBUG_TYPE_OTHER:               std::cerr << "Type: Other\n"; break;
+                case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error\n"; break;
+                case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour\n"; break;
+                case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour\n"; break; 
+                case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability\n"; break;
+                case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance\n"; break;
+                case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker\n"; break;
+                case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group\n"; break;
+                case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group\n"; break;
+                case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other\n"; break;
             } 
             
             switch (severity)
             {
-                case GL_DEBUG_SEVERITY_HIGH:         std::cerr << "Severity: HIGH\n\n"; break;
-                case GL_DEBUG_SEVERITY_MEDIUM:       std::cerr << "Severity: MEDIUM\n\n"; break;
-                case GL_DEBUG_SEVERITY_LOW:          std::cerr << "Severity: LOW\n\n"; break;
-                case GL_DEBUG_SEVERITY_NOTIFICATION: std::cerr << "Severity: NOTIFICATION\n\n"; break;
+                case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: HIGH\n\n"; break;
+                case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: MEDIUM\n\n"; break;
+                case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: LOW\n\n"; break;
+                case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: NOTIFICATION\n\n"; break;
             } 
         }
 

@@ -103,10 +103,10 @@ Ray::~Ray() noexcept
  */
 bool Ray::intersectsWith(const glm::vec3 &b) const noexcept
 {
-    constexpr float blockWidth {0.5f};
+    constexpr float BLOCK_WIDTH {1.0f};
     return (
-        (ray.x >= b.x - blockWidth && ray.x < b.x) &&
-        (ray.y >= b.y - blockWidth && ray.y < b.y + blockWidth));
+        (ray.x >= b.x - BLOCK_WIDTH && ray.x < b.x) &&
+        (ray.y >= b.y - BLOCK_WIDTH && ray.y < b.y + BLOCK_WIDTH));
 }
 
 

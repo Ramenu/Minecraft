@@ -4,9 +4,9 @@
 #include "minecraft/gfx/texture.hpp"
 #include <array>
 
-static constexpr std::size_t attributesToFormCube {36};
-static constexpr std::size_t noOfSquaresInCube {6};
-static constexpr float xPos_2 {(atlasWidth - 1) * xPos};
+static constexpr std::size_t CUBE_ATTRIBUTES {36};
+static constexpr std::size_t SQUARES_ON_CUBE {6};
+static constexpr float X_POS_2 {(ATLAS_WIDTH - 1) * X_POS};
 
 enum Attribute : std::uint8_t
 {
@@ -16,17 +16,17 @@ enum Attribute : std::uint8_t
     Ambient
 };
 
-static constexpr std::array attributes {
+static constexpr std::array ATTRIBUTES {
     3ull, // Position 
     2ull, // Texture
     1ull, // Visibility
     1ull
 };
 
-static constexpr std::array<std::size_t, attributes.size()> verticesSizes {[](){
-    std::array<std::size_t, attributes.size()> ver {};
+static constexpr std::array<std::size_t, ATTRIBUTES.size()> verticesSizes {[](){
+    std::array<std::size_t, ATTRIBUTES.size()> ver {};
     for (std::size_t i {}; i < ver.size(); i++)
-        ver[i] = attributes[i] * noOfSquaresInCube * noOfSquaresInCube;
+        ver[i] = ATTRIBUTES[i] * SQUARES_ON_CUBE * SQUARES_ON_CUBE;
     return ver;
 }()};
 
@@ -136,53 +136,53 @@ constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(flo
 constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
 {
     return {
-        0.0f,   yPos + textureID,
-        xPos,   0.0f + textureID,
-        xPos,   yPos + textureID,
-        xPos,   0.0f + textureID,
-        0.0f,   yPos + textureID,
-        0.0f,   0.0f + textureID,
+        0.0f,    Y_POS + textureID,
+        X_POS,   0.0f  + textureID,
+        X_POS,   Y_POS + textureID,
+        X_POS,   0.0f  + textureID,
+        0.0f,    Y_POS + textureID,
+        0.0f,    0.0f  + textureID,
 
-        0.0f,   yPos + textureID,
-        xPos,   yPos + textureID,
-        xPos,   0.0f + textureID,
-        xPos,   0.0f + textureID,
-        0.0f,   0.0f + textureID,
-        0.0f,   yPos + textureID,
+        0.0f,    Y_POS + textureID,
+        X_POS,   Y_POS + textureID,
+        X_POS,   0.0f  + textureID,
+        X_POS,   0.0f  + textureID,
+        0.0f,    0.0f  + textureID,
+        0.0f,    Y_POS + textureID,
 
-        xPos,   0.0f + textureID,
-        0.0f,   yPos + textureID,
-        xPos,   yPos + textureID,
-        0.0f,   yPos + textureID,
-        xPos,   0.0f + textureID,
-        0.0f,   0.0f + textureID,
+        X_POS,   0.0f  + textureID,
+        0.0f,    Y_POS + textureID,
+        X_POS,   Y_POS + textureID,
+        0.0f,    Y_POS + textureID,
+        X_POS,   0.0f  + textureID,
+        0.0f,    0.0f  + textureID,
 
-        xPos,   0.0f + textureID,
-        xPos,   yPos + textureID,
-        0.0f,   yPos + textureID,
-        0.0f,   yPos + textureID,
-        0.0f,   0.0f + textureID,
-        xPos,   0.0f + textureID,
+        X_POS,   0.0f  + textureID,
+        X_POS,   Y_POS + textureID,
+        0.0f,    Y_POS + textureID,
+        0.0f,    Y_POS + textureID,
+        0.0f,    0.0f  + textureID,
+        X_POS,   0.0f  + textureID,
 
-        xPos,   0.0f + textureID,
-        xPos_2, yPos + textureID,
-        xPos_2, 0.0f + textureID,
-        xPos_2, yPos + textureID,
-        xPos,   0.0f + textureID,
-        xPos,   yPos + textureID,
+        X_POS,   0.0f  + textureID,
+        X_POS_2, Y_POS + textureID,
+        X_POS_2, 0.0f  + textureID,
+        X_POS_2, Y_POS + textureID,
+        X_POS,   0.0f  + textureID,
+        X_POS,   Y_POS + textureID,
 
-        xPos_2, yPos + textureID,
-        xPos_2, 0.0f + textureID,
-        1.0f,   yPos + textureID,
-        1.0f,   yPos + textureID,
-        xPos_2, 0.0f + textureID,
-        xPos_2, 0.0f + textureID
+        X_POS_2, Y_POS + textureID,
+        X_POS_2, 0.0f  + textureID,
+        1.0f,    Y_POS + textureID,
+        1.0f,    Y_POS + textureID,
+        X_POS_2, 0.0f  + textureID,
+        X_POS_2, 0.0f  + textureID
     };
 
 }
 
 constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
-getVisibleBlockVertices(const std::array<float, noOfSquaresInCube> &visible) noexcept
+getVisibleBlockVertices(const std::array<float, SQUARES_ON_CUBE> &visible) noexcept
 {
     return {
         visible[0],

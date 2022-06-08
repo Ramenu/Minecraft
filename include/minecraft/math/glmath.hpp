@@ -7,6 +7,8 @@
 
 namespace GLMath
 {
+    static constexpr glm::vec3 ZERO_VECTOR_3D {0.0f, 0.0f, 0.0f};
+    static constexpr glm::mat4 IDENTITY_MATRIX_4D {glm::mat4{1.0f}};
     extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
     inline constexpr double toDegrees(double radians) noexcept {
         return M_PI / 180.0 * radians;

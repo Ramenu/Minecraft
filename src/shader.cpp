@@ -65,9 +65,9 @@ void Shader::checkShaderCompilationErrors(GLuint shader, const std::string &shad
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        static constexpr std::size_t infoLogSize {512};
-        char infoLog[infoLogSize] {};
-        glGetShaderInfoLog(shader, infoLogSize, NULL, static_cast<char*>(infoLog));
+        static constexpr std::size_t INFO_LOG_SIZE {512};
+        char infoLog[INFO_LOG_SIZE] {};
+        glGetShaderInfoLog(shader, INFO_LOG_SIZE, NULL, static_cast<char*>(infoLog));
         GLError::error_message("Failed to compile shader \"" + shaderPath + "\". " + std::string{infoLog});
     }
 }
@@ -79,9 +79,9 @@ void Shader::checkLinkageErrors() const noexcept
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
     {
-        static constexpr std::size_t infoLogSize {512};
-        char infoLog[infoLogSize] {};
-        glGetProgramInfoLog(shaderProgram, infoLogSize, NULL, static_cast<char*>(infoLog));
+        static constexpr std::size_t INFO_LOG_SIZE {512};
+        char infoLog[INFO_LOG_SIZE] {};
+        glGetProgramInfoLog(shaderProgram, INFO_LOG_SIZE, NULL, static_cast<char*>(infoLog));
         GLError::error_message("Failed to link shader program:\n" + std::string{infoLog});
     }
 }

@@ -6,7 +6,7 @@
 
 struct ChunkMesh
 {
-    std::array<std::vector<float>, attributes.size()> meshAttributes; 
+    std::array<std::vector<float>, ATTRIBUTES.size()> meshAttributes; 
 };
 
 

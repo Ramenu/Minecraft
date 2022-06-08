@@ -48,7 +48,7 @@ void initGame(const char *windowTitle) noexcept
     #endif
 
     static constexpr float x {}, y {};
-    glViewport(x, y, Window::width, Window::height);
+    glViewport(x, y, Window::WIDTH, Window::HEIGHT);
     Lighting::initLightVAO();
 
     // Initialize uniform buffer, bind it, and store the data
@@ -61,9 +61,9 @@ void initGame(const char *windowTitle) noexcept
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
 
     // Fill in the buffer's data
-    static constexpr std::size_t bindingPoint {0}, offset {0};
-    glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer, offset, sizeof(glm::mat4) + sizeof(glm::mat3));
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
+    static constexpr int BINDING_POINT {0}, OFFSET {0};
+    glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4) + sizeof(glm::mat3));
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PROJECTION[0][0]);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -98,13 +98,13 @@ void runGame() noexcept
     #endif
 
     Camera::initCameraRay(Camera::cameraPos, {0.0f, 1.0f, 1.0f}, glm::vec3{0.0f, 0.0f, 2.0f});
-    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "anotherProjection"), 1, GL_FALSE, &projection[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "anotherProjection"), 1, GL_FALSE, &PROJECTION[0][0]);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
     // RGB constants for the game's background colors (including alpha)
-    static constexpr float red {0.0f}, green {0.8f}, blue {1.0f}, alpha {1.0f}; 
-    glClearColor(red, green, blue, alpha);
+    static constexpr float RED {0.0f}, GREEN {0.8f}, BLUE {1.0f}, ALPHA {1.0f}; 
+    glClearColor(RED, GREEN, BLUE, ALPHA);
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
