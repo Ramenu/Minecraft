@@ -13,13 +13,15 @@
 #include <fstream>
 #include <ostream>
 #include <sstream>
+#include "minecraft/math/glmath.hpp"
+#include "minecraft/debug/debug.hpp"
 
 /**
  * Initializes the origin of the ray, its direction 
  * and the ray's magnitude. Given these three vectors,
  * the end of the ray can be calculated to form the ray.
  */
-void Ray::initRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength)
+void Ray::initRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) noexcept
 {
     origin = rayOrigin;
     direction = rayDirection;
@@ -113,12 +115,16 @@ bool Ray::intersectsWith(const glm::vec3 &b) const noexcept
 /**
  * Updates the position of the ray.
  */
-void Ray::updateRay([[maybe_unused]] float xRotationRadians, [[maybe_unused]] float yRotationRadians, [[maybe_unused]] float zRotationRadians) 
+void Ray::updateRay([[maybe_unused]] float xRotationRadians, [[maybe_unused]] float yRotationRadians, [[maybe_unused]] float zRotationRadians) noexcept
 { 
+    static constexpr float r {glm::radians(90.0f)};
     glBindVertexArray(vao);
     glUseProgram(lineProgram);
-    glm::mat4 model {glm::translate(glm::mat4{1.0f}, glm::vec3{ray.x, ray.y - 0.1f, ray.z})};
-    model = glm::rotate(model, xRotationRadians, glm::vec3{0.0f, 1.0f, 0.0f});
+    glm::mat4 model {glm::translate(GLMath::IDENTITY_MATRIX_4D, glm::vec3{ray.x, ray.y - 0.1f, ray.z})};
+    model = glm::rotate(model, xRotationRadians - r, glm::vec3{0.0f, -1.0f, 0.0f});
+    model = glm::rotate(model, yRotationRadians, glm::vec3{-1.0f, 0.0f, 0.0f});
+    glm::vec4 vec4Ray {glm::vec4{ray, 1.0f} + (glm::vec4{ray, 1.0f} * model)};
+    setTitle({vec4Ray.x, vec4Ray.y, vec4Ray.z});
     //glm::mat4 rotationModelY {glm::rotate(rotationModelX, yRotationRadians, glm::vec3{-1.0f, 0.0f, 0.0f})};
     //glm::mat4 rotationModelZ {glm::rotate(model, zRotationRadians, glm::vec3(0.0f, 0.0f, -1.0f))};
     glUniformMatrix4fv(glGetUniformLocation(lineProgram, "model"), 1, GL_FALSE, &model[0][0]);

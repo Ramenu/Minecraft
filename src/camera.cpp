@@ -12,12 +12,11 @@ namespace Camera
     {
         //NOTE: GREEN IS YOU!
         ray.initRay({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 3.0f});
+        //ray.initRay(cameraPos, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 3.0f});
     }
 
     /** 
      * Updates the position of where the camera is looking.
-     * Parameters take the position of the mouse's 
-     * x-position and y-position.
      */
     void updateCameraPos() noexcept
     {
@@ -56,18 +55,18 @@ namespace Camera
         // Prevent the player tilting their head backwards
         if (settings.pitch > UP_DOWN_TURN_ANGLE)
             settings.pitch = UP_DOWN_TURN_ANGLE;
-        if (settings.pitch < -UP_DOWN_TURN_ANGLE)
+        else if (settings.pitch < -UP_DOWN_TURN_ANGLE)
             settings.pitch = -UP_DOWN_TURN_ANGLE;
         
         // Reset the yaw so the player can spin their camera around 
         //if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
         //    settings.yaw = 0.0f;
 
-        const double cosTime {updatedDirection.x * 1.3f};
-        ray.ray = {0.0f, 16.0f, 0.0f};
-        ray.updateRay(cosTime, direction.front.y, 0.0f);
+        //ray.ray = {3.0f, 23.0f, 3.0f};
+        ray.ray = cameraPos;
+        ray.updateRay(yawRadians, pitchRadians, 0.0f);
         //glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
-        glfwSetWindowTitle(Window::getWindow(), std::to_string(cosTime).c_str());
+        //glfwSetWindowTitle(Window::getWindow(), std::to_string(yawRadians).c_str());
 
     }
 }

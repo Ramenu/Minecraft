@@ -9,10 +9,10 @@ class Ray
 {
     public:
         Ray() : origin {0.0f, 0.0f, 0.0f} {}
-        void initRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength);
+        void initRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::vec3 &rayLength) noexcept;
         ~Ray() noexcept;
-        void updateRay(float xRotationRadians, float yRotationRadians, float zRotationRadians);
-        inline glm::vec3 getRay() const {return ray;}
+        void updateRay(float xRotationRadians, float yRotationRadians, float zRotationRadians) noexcept;
+        inline glm::vec3 getRay() const noexcept {return ray;}
         glm::vec3 origin;
         glm::vec3 direction;
         bool intersectsWith(const glm::vec3 &b) const noexcept;

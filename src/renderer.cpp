@@ -21,7 +21,7 @@ lightSource {[]() noexcept {
     return Lighting{components, direction, position};
 }()}
 {
-    #if 1
+    #if 0
     for (float x {}; x < noOfChunksOnStart; x += 1.0f)
         for (float z {}; z < noOfChunksOnStart; z += 1.0f)
             allChunks[{static_cast<std::size_t>(x), 0, static_cast<std::size_t>(z)}].initChunk({x, 0, z});
