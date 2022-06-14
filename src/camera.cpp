@@ -5,15 +5,9 @@
 namespace Camera
 {
     static glm::mat4 view;
+    static Ray cameraRay;
     glm::mat4 getView() noexcept {return view;}
-    Ray getRay() noexcept {return ray;}
-
-    void initCameraRay(const glm::vec3 &, const glm::vec3 &, const glm::vec3 &)
-    {
-        //NOTE: GREEN IS YOU!
-        ray.initRay({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 3.0f});
-        //ray.initRay(cameraPos, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 3.0f});
-    }
+    Ray getCameraRay() noexcept {return cameraRay;}
 
     /** 
      * Updates the position of where the camera is looking.
@@ -30,8 +24,9 @@ namespace Camera
             std::sin(yawRadians) * cosPitch
         };
 
-        view = glm::lookAt(cameraPos, cameraPos + direction.front, UP);
-        direction.right = glm::normalize(glm::cross(direction.front, UP));
+
+        view = glm::lookAt(cameraPos, cameraPos + direction.front, CAMERA_UP);
+        direction.right = glm::normalize(glm::cross(direction.front, CAMERA_UP));
         direction.front = glm::normalize(updatedDirection);
 
         double mouseX, mouseY;
@@ -49,24 +44,32 @@ namespace Camera
         settings.pitch += yOffset;
 
         // Angles in degrees
-        static constexpr float UP_DOWN_TURN_ANGLE {88.0f}; 
+        static constexpr float CAMERA_UP_DOWN_TURN_ANGLE {88.0f}; 
         //static constexpr float sideTurnAngle {360.0f};
 
         // Prevent the player tilting their head backwards
-        if (settings.pitch > UP_DOWN_TURN_ANGLE)
-            settings.pitch = UP_DOWN_TURN_ANGLE;
-        else if (settings.pitch < -UP_DOWN_TURN_ANGLE)
-            settings.pitch = -UP_DOWN_TURN_ANGLE;
+        if (settings.pitch > CAMERA_UP_DOWN_TURN_ANGLE)
+            settings.pitch = CAMERA_UP_DOWN_TURN_ANGLE;
+        else if (settings.pitch < -CAMERA_UP_DOWN_TURN_ANGLE)
+            settings.pitch = -CAMERA_UP_DOWN_TURN_ANGLE;
         
         // Reset the yaw so the player can spin their camera around 
         //if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
         //    settings.yaw = 0.0f;
 
-        //ray.ray = {3.0f, 23.0f, 3.0f};
-        ray.ray = cameraPos;
-        ray.updateRay(yawRadians, pitchRadians, 0.0f);
-        //glfwSetWindowTitle(Window::getWindow(), std::string{std::to_string(ray.getRay().x) + ", " +  std::to_string(ray.getRay().y) + ", " + std::to_string(ray.getRay().z)}.c_str());
-        //glfwSetWindowTitle(Window::getWindow(), std::to_string(yawRadians).c_str());
+         #if 1
+            //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
+            const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
+            switch (nearestDirectionToPlayer)
+            {
+                default: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z}, direction.front); break; // Up
+                case West: cameraRay.updateRay({cameraPos.x - 1, cameraPos.y, cameraPos.z}, direction.front); break;
+                case East: cameraRay.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
+                case North: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1}, direction.front); break;
+                case South: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z - 1}, direction.front); break;
+                case Down: cameraRay.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
+            }
+        #endif
 
     }
 }
