@@ -7,8 +7,9 @@
 #pragma GCC diagnostic pop
 
 
-Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir, const FrustumView &view) noexcept
+Frustum::Frustum([[maybe_unused]] const glm::vec3 &position, [[maybe_unused]] const Camera::CameraDirections &dir, [[maybe_unused]] const FrustumView &view) noexcept
 {
+    #if 0
     static constexpr glm::vec3 up {0.0f, 1.0f, 0.0f};
     const float adjacent {view.zFar};
     const float hypotenuse {adjacent * std::tan(view.fov.value() * 0.5f)};
@@ -23,25 +24,11 @@ Frustum::Frustum(const glm::vec3 &position, const Camera::CameraDirections &dir,
     leftFace = {glm::cross(up, farFront - rightDirection), position};
     topFace = {position, glm::cross(dir.right, farFront - upDirection)};
     bottomFace = {position, glm::cross(farFront + upDirection, dir.right)};
+    #endif
     
 }
 
 Frustum Frustum::getCameraFrustum() noexcept
 {
-    static constexpr float adjacent {Camera::FAR};
-    static constexpr float hypotenuse {adjacent * gcem::tan(Camera::FOV.value() * 0.5f)};
-    static constexpr float opposite {hypotenuse * Window::ASPECT_RATIO};
-    const glm::vec3 farFront {Camera::FAR * Camera::direction.front};
-    const glm::vec3 rightDirection {opposite * Camera::direction.right};
-    static constexpr glm::vec3 upDirection {hypotenuse * Camera::UP};
-
-    const Plane nearFace {Camera::cameraPos + Camera::NEAR * Camera::direction.front, Camera::direction.front};
-    const Plane farFace {Camera::cameraPos + farFront, -Camera::direction.front};
-    const Plane rightFace {Camera::cameraPos, glm::cross(Camera::UP, farFront + rightDirection)};
-    const Plane leftFace {glm::cross(Camera::UP, farFront - rightDirection), Camera::cameraPos};
-    const Plane topFace {Camera::cameraPos, glm::cross(Camera::direction.right, farFront - upDirection)};
-    const Plane bottomFace {Camera::cameraPos, glm::cross(farFront + upDirection, Camera::direction.right)};
-
-    return Frustum{nearFace, farFace, rightFace, leftFace, topFace, bottomFace};
-    
+    return Frustum{Plane{}, Plane{}, Plane{}, Plane{}, Plane{}, Plane{}};
 }
