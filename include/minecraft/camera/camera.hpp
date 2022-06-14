@@ -12,7 +12,7 @@ namespace Camera
 	static constexpr float NEAR {0.1f}, FAR {100.0f};
 	static constexpr float SPEED {12.0f};
 	static constexpr Radians FOV {45.0f};
-	static constexpr glm::vec3 UP {0.0f, 1.0f, 0.0f};
+	static constexpr glm::vec3 CAMERA_UP {0.0f, 1.0f, 0.0f};
 
 	struct CameraSettings
 	{
@@ -24,12 +24,10 @@ namespace Camera
 	struct CameraDirections
 	{
 		glm::vec3 front {0.0f, 0.0f, -1.0f};
-		glm::vec3 right {glm::normalize(glm::cross(front, UP)) * SPEED};
+		glm::vec3 right {glm::normalize(glm::cross(front, CAMERA_UP)) * SPEED};
 	};
 
-	inline Ray ray;
-	extern void initCameraRay(const glm::vec3 &origin, const glm::vec3 &dir, const glm::vec3 &length);
-	extern Ray getRay() noexcept;
+	extern Ray getCameraRay() noexcept;
 	extern glm::mat4 getView() noexcept;
 	extern void updateCameraPos() noexcept;
 	inline CameraSettings settings {.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f};
