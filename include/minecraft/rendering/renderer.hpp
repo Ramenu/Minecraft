@@ -3,9 +3,9 @@
 
 #define GLM_ENABLE_EXPERIMENTAL // For built-in glm hash
 
-#include "minecraft/lighting/lighting.hpp"
 #include "minecraft/camera/camera.hpp"
 #include "minecraft/window/window.hpp"
+#include "minecraft/shader/shader.hpp"
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
@@ -18,8 +18,6 @@
 
 static constexpr int INACTIVE_CHUNKS {5};
 
-static const glm::mat4 PROJECTION {glm::perspective(Camera::FOV.value(), Window::ASPECT_RATIO, Camera::NEAR, Camera::FAR)};
-[[maybe_unused]] static const glm::mat4 INVERSE_PROJECTION {glm::inverse(PROJECTION)};
 
 
 class Renderer
@@ -28,9 +26,9 @@ class Renderer
         Renderer() noexcept;
         void draw() const noexcept;
         void update() noexcept;
-        Shader cubeShader;
+        inline Shader getShader() const noexcept { return cubeShader; }
     private:
-		Lighting lightSource;
+        Shader cubeShader;
         inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
