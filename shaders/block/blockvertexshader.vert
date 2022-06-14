@@ -2,13 +2,13 @@
 
 #define BLOCK_ATTRIBUTES 36
 #if 0
-#define TOTAL_BLOCKS 5
-#define ATLAS_WIDTH 3
-#define ATLAS_HEIGHT (BLOCK_ATTRIBUTES - 1)
+    #define TOTAL_BLOCKS 5
+    #define ATLAS_WIDTH 3
+    #define ATLAS_HEIGHT (TOTAL_BLOCKS - 1)
 
-const float xPos = 1.0 / ATLAS_WIDTH;
-const float yPos = 1.0 / ATLAS_HEIGHT;
-const float xPos_2 = (ATLAS_WIDTH - 1) * xPos;
+    const float xPos = 1.0 / ATLAS_WIDTH;
+    const float yPos = 1.0 / ATLAS_HEIGHT;
+    const float xPos_2 = (ATLAS_WIDTH - 1) * xPos;
 #endif
 
 layout (location = 0) in vec3 aPos;
@@ -76,36 +76,36 @@ const vec2[BLOCK_ATTRIBUTES] textureCoords = {
 
 const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     // Back face
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
 
     // Front face
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
 
     // Right face
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
 
     // Left face
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
-    vec3(0.0,  0.0,  0.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  -1.0),
 
     // Top face
     vec3(0.0,  1.0,  0.0),
@@ -128,7 +128,7 @@ void main()
 {
     const int attributeId = gl_VertexID % BLOCK_ATTRIBUTES;
     FragPos = aPos * aVisible;
-    Normal = normalMatrix * lightDirections[attributeId];
+    Normal = lightDirections[attributeId];
     gl_Position = projection * view * vec4(FragPos, 1.0);
     TexCoord = aTexCoord;
     blockAmbient = aAmbient;
