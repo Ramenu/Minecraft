@@ -4,42 +4,24 @@
 #include <cstdio>
 
 
-static constexpr float noOfChunksOnStart {4.0f};
+static constexpr float CHUNKS_ON_START {5.0f};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
  * vertex buffer data.
  */
 Renderer::Renderer() noexcept : 
-cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"},
-lightSource {[]() noexcept {
-    static constexpr LightComponents components {.ambient = {0.25f, 0.25f, 0.25f}, 
-                                                 .specular = {1.0f, 1.0f, 1.0f}, 
-                                                 .diffuse = {0.7f, 0.7f, 0.7f}};
-    static constexpr glm::vec3 direction {-1.0f, -3.0f, -1.0f};
-    static constexpr glm::vec3 position {1.0f, 3.0f, 1.0f};
-    return Lighting{components, direction, position};
-}()}
+cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
 {
-    #if 0
-    for (float x {}; x < noOfChunksOnStart; x += 1.0f)
-        for (float z {}; z < noOfChunksOnStart; z += 1.0f)
-            allChunks[{static_cast<std::size_t>(x), 0, static_cast<std::size_t>(z)}].initChunk({x, 0, z});
+    #if 1
+    for (std::size_t x {}; x < CHUNKS_ON_START; ++x)
+        for (std::size_t z {}; z < CHUNKS_ON_START; ++z)
+            allChunks[{x, 0, z}].initChunk({x, 0, z});
     #else
         allChunks[{0, 0, 0}].initChunk({0, 0, 0});
     #endif
     cubeShader.useShader(); 
-    lightSource.shaderProgramLightSource(cubeShader);
-
     cubeShader.setInt("allTextures", 0);
-
-    // Same process again... for the light cubeShader (Don't need this right now since it is a directional light at the moment)
-    #if 0
-        Lighting::bindLightVAO();
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.getBuffer()); // Do not need to store the buffer data into it, since we already did it for the cube
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-    #endif
 }
 
 
