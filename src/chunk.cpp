@@ -5,6 +5,7 @@
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/window/window.hpp"
+#include "minecraft/worldgen.hpp"
 #include "GLFW/glfw3.h"
 #include <cmath>
 #include <cstdio>
@@ -106,9 +107,9 @@ bool Chunk::updateChunk() noexcept
                 // Not necessary to check if the player is looking at an air block
                 if (blockStates[x][y][z] != None)
                 {
-                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::ray.getRay().x) == x && 
-                                                  static_cast<std::int32_t>(Camera::ray.getRay().y) == y && 
-                                                  static_cast<std::int32_t>(Camera::ray.getRay().z) == z};
+                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::getCameraRay().getRay().x) == x && 
+                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().y) == y && 
+                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().z) == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
                     static constexpr BlockState HIGHLIGHTED_AND_VISIBLE {Highlighted|Visible};
@@ -135,9 +136,6 @@ bool Chunk::updateChunk() noexcept
                         if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
                         {
                             const glm::vec3 blockDirection {-getDirectionVector(GLMath::getDirectionClosestTo(Camera::direction.front))};
-
-                            // this cast seems weird and unsafe, though the chunk boundaries have already been checked for overflow
-                            // so it is fine to do this (but perhaps there is a better way to do this more neatly).
                             const glm::i32vec3 blockPosition {x + blockDirection.x, y + blockDirection.y, z + blockDirection.z};
 
                             // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
@@ -398,7 +396,7 @@ void Chunk::updateChunkVisibility() noexcept
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
-    std::vector<float> visibleATTRIBUTES {}; 
+    std::vector<float> visibleAttributes {}; 
     for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
         for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
@@ -410,12 +408,12 @@ void Chunk::updateChunkVisibility() noexcept
                 {
                     const auto visibleFaces {getVisibleFaces(index)};
                     const auto visible {getVisibleBlockVertices(visibleFaces)};
-                    visibleATTRIBUTES.insert(visibleATTRIBUTES.end(), visible.begin(), visible.end()); 
+                    visibleAttributes.insert(visibleAttributes.end(), visible.begin(), visible.end()); 
                     blockStates[x][y][z] |= Visible;
                     continue;
                 }
                 blockStates[x][y][z] = None;
-                visibleATTRIBUTES.insert(visibleATTRIBUTES.end(), INVISIBLE_VERTICES.begin(), INVISIBLE_VERTICES.end());
+                visibleAttributes.insert(visibleAttributes.end(), INVISIBLE_VERTICES.begin(), INVISIBLE_VERTICES.end());
             }
         }
     }
@@ -423,7 +421,7 @@ void Chunk::updateChunkVisibility() noexcept
                     OFFSETS[Attribute::Visibility], 
                     SIZE_OF_CHUNK_VERTICES[Attribute::Visibility], 
     // cppcheck-suppress containerOutOfBounds ; needed otherwise it gives a false positive
-                    &visibleATTRIBUTES[0]);
+                    &visibleAttributes[0]);
 }
 
 
@@ -469,19 +467,17 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glGenBuffers(1, &vertexBuffer);
     ChunkMesh chunkVertices;
     static constexpr auto DEFAULT_BLOCK_AMBIENT_VERTICES {getAmbientVertices(DEFAULT_AMBIENT_LEVEL)};
+	chunk = WorldGen::generateTerrain(WorldGen::Biome::Plains);
     position = {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
 
     for (std::int32_t x {}; x < CHUNK_WIDTH; x += 1.0f)
     {
         for (std::int32_t y {}; y < CHUNK_HEIGHT; y += 1.0f)
         {
-            const BlockName selectedBlock {(y == CHUNK_HEIGHT - 1) ? (Grass_Block) : (Dirt_Block)};
             for (std::int32_t z {}; z < CHUNK_LENGTH; z += 1.0f)
             {
-                const Block block {selectedBlock};
-                chunk[x][y][z] = block;
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
-                const auto texture {getTextureVertices(block.getTexture())};
+                const auto texture {getTextureVertices(chunk[x][y][z].getTexture())};
                 chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                          pos.begin(), 
                                                                          pos.end());
