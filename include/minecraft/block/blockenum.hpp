@@ -34,8 +34,15 @@ enum BlockName : std::uint8_t
     Grass_Block,
     Cobblestone_Block,
     Dirt_Block,
-    Stone_Block
+    Stone_Block,
+    CoalOre_Block,
+    IronOre_Block,
+    GoldOre_Block,
+    RedstoneOre_Block,
+    DiamondOre_Block,
+    EmeraldOre_Block
 };
-static constexpr int NUMBER_OF_BLOCKS {5}; 
+
+static constexpr std::uint8_t NUMBER_OF_BLOCKS {11}; 
 
 #endif // MC_BLOCKENUM_HPP
