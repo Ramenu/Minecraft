@@ -1,8 +1,30 @@
 #include "minecraft/audio/sound.hpp"
-#include "minecraft/audio/sounddata.hpp"
+
+#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsuggest-override"
+    #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic ignored "-Wfloat-equal"
+    #include "SFML/Audio.hpp"
+    #pragma GCC diagnostic pop
+#else
+    #include "SFML/Audio.hpp"
+#endif
 
 namespace Sound
 {
+    class SoundData
+    {
+        public:
+            explicit inline SoundData(const std::string &soundFilePath) noexcept
+            {
+                buffer.loadFromFile(soundFilePath);
+                audio.setBuffer(buffer);
+            }
+            sf::Sound audio;
+        private:
+            sf::SoundBuffer buffer;
+    };
     
     static std::pair<SoundData, SoundData> blockSounds[2] {
         std::pair<SoundData, SoundData>{"./sfx/grassblock/grassplace.ogg", "./sfx/grassblock/grassbreak.ogg"}, // Grass block sounds
@@ -18,12 +40,13 @@ namespace Sound
     static uint8_t getSoundID(BlockName name) noexcept
     {
         static constexpr int GRASS_BLOCK_SOUND_ID {0},
+                             DIRT_BLOCK_SOUND_ID {0},
                              STONE_BLOCK_SOUND_ID {1};
         switch (name)
         {
-            default: return GRASS_BLOCK_SOUND_ID;
-            case Cobblestone_Block: return STONE_BLOCK_SOUND_ID;
-            case Stone_Block: return STONE_BLOCK_SOUND_ID;
+            case Grass_Block: return GRASS_BLOCK_SOUND_ID;
+            case Dirt_Block: return DIRT_BLOCK_SOUND_ID;
+            default: return STONE_BLOCK_SOUND_ID;
         }
     }
 
