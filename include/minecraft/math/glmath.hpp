@@ -4,15 +4,28 @@
 #include "glm/vec3.hpp"
 #include "minecraft/math/direction.hpp"
 #include "minecraft/math/radians.hpp"
+#include "minecraft/camera/camera.hpp"
+#include "minecraft/window/window.hpp"
 
 namespace GLMath
 {
+    consteval glm::vec3 get3DUnitVector(Direction direction) noexcept
+    {
+        switch (direction)
+        {
+            case Down: return {0.0f, -1.0f, 0.0f};
+            case Up: return {0.0f, 1.0f, 0.0f};
+            case West: return {-1.0f, 0.0f, 0.0f};
+            case East: return {1.0f, 0.0f, 0.0f};
+            case South: return {0.0f, 0.0f, -1.0f};
+            case North: return {0.0f, 0.0f, 1.0f};
+        }
+    }
     static constexpr glm::vec3 ZERO_VECTOR_3D {0.0f, 0.0f, 0.0f};
     static constexpr glm::mat4 IDENTITY_MATRIX_4D {glm::mat4{1.0f}};
+    static const glm::mat4 PROJECTION {glm::perspective(Camera::FOV.value(), Window::ASPECT_RATIO, Camera::NEAR, Camera::FAR)};
+    [[maybe_unused]] static const glm::mat4 INVERSE_PROJECTION {glm::inverse(PROJECTION)};
     extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
-    inline constexpr double toDegrees(double radians) noexcept {
-        return M_PI / 180.0 * radians;
-    }
 
     #if 0
     /**
