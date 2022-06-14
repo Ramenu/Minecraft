@@ -9,8 +9,10 @@
 #ifdef GAME_BENCHMARK
     #include "misc/timer.hpp"
 #endif
+#include "minecraft/math/glmath.hpp"
 
 static GLuint uniformBuffer;
+static GLuint vao;
 
 #ifdef MC_DEBUG_BUILD
     /**
@@ -49,7 +51,10 @@ void initGame(const char *windowTitle) noexcept
 
     static constexpr float x {}, y {};
     glViewport(x, y, Window::WIDTH, Window::HEIGHT);
-    Lighting::initLightVAO();
+
+    // Initialize vertex array for uniform buffer
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     // Initialize uniform buffer, bind it, and store the data
     glGenBuffers(1, &uniformBuffer);
@@ -63,7 +68,7 @@ void initGame(const char *windowTitle) noexcept
     // Fill in the buffer's data
     static constexpr int BINDING_POINT {0}, OFFSET {0};
     glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4) + sizeof(glm::mat3));
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PROJECTION[0][0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &GLMath::PROJECTION[0][0]);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -74,11 +79,9 @@ static inline void updateCamera(const Renderer &renderer) noexcept
     double mouseXPos, mouseYPos;
     glfwGetCursorPos(Window::getWindow(), &mouseXPos, &mouseYPos);
     Camera::updateCameraPos();
-    glUseProgram(lineProgram);
-    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "view"), 1, GL_FALSE, &Camera::getView()[0][0]);
-    renderer.cubeShader.useShader();
-    renderer.cubeShader.setMat4("view", Camera::getView());
-    renderer.cubeShader.setVec3("viewPos", Camera::cameraPos);
+    renderer.getShader().useShader();
+    renderer.getShader().setMat4("view", Camera::getView());
+    renderer.getShader().setVec3("viewPos", Camera::cameraPos);
 }
 
 /**
@@ -97,8 +100,6 @@ void runGame() noexcept
         Timer<std::milli> time;
     #endif
 
-    Camera::initCameraRay(Camera::cameraPos, {0.0f, 1.0f, 1.0f}, glm::vec3{0.0f, 0.0f, 2.0f});
-    glUniformMatrix4fv(glGetUniformLocation(lineProgram, "anotherProjection"), 1, GL_FALSE, &PROJECTION[0][0]);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -133,8 +134,8 @@ void runGame() noexcept
     }
 
     // Free up remaining resources used by the game
+    glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &uniformBuffer);
-    Lighting::removeAllLights();
     Window::deleteWindow();
     #ifdef GAME_BENCHMARK
         time.detailedDisplay();
