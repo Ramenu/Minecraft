@@ -12,7 +12,7 @@ static constexpr glm::vec3 DIRECTIONS[6] {
     {0.0f, 0.0f, -1.0f}
 };
 
-enum Direction : uint8_t
+enum Direction : std::uint8_t
 {
     East,
     West,
@@ -23,7 +23,7 @@ enum Direction : uint8_t
 };
 
 inline constexpr glm::vec3 getDirectionVector(Direction direction) noexcept {
-    return DIRECTIONS[static_cast<uint8_t>(direction)];
+    return DIRECTIONS[direction];
 }
 
 #endif // MC_DIRECTION_HPP
