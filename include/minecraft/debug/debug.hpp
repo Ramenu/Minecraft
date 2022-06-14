@@ -8,7 +8,7 @@
 
 inline void setTitle(const glm::vec3 &vec) noexcept
 {
-    std::string s {std::to_string(std::round(vec.x)) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z)};
+    std::string s {std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z)};
     glfwSetWindowTitle(Window::getWindow(), s.c_str());
 }
 
