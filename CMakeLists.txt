@@ -24,13 +24,11 @@ add_executable(main
 ./src/game.cpp
 ./src/glerror.cpp
 ./src/glmath.cpp
-./src/lighting.cpp
 ./src/main.cpp
-./src/ray.cpp
 ./src/renderer.cpp
+./src/worldgen.cpp
 ./src/shader.cpp
 ./src/sound.cpp
-./src/sounddata.cpp
 ./src/texture.cpp
 ./src/window.cpp)
 
