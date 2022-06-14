@@ -8,10 +8,10 @@ class Plane
     public:
         Plane() = default;
         inline Plane(const glm::vec3 &vec, const glm::vec3 &norm) noexcept :
-            normal {glm::normalize(vec)},
-            distance {glm::dot(vec, norm)} {}
-        glm::vec3 normal {0.0f, 1.0f, 0.0f};
-        float distance {0.0f};
+            normal {glm::normalize(norm)},
+            distance {glm::dot(normal, vec)} {}
+        glm::vec3 normal;
+        float distance;
 };
 
 #endif // MC_PLANE_HPP
