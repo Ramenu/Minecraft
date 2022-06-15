@@ -60,16 +60,13 @@ void initGame(const char *windowTitle) noexcept
     glGenBuffers(1, &uniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
 
-    const glm::mat3 normalMatrix {glm::transpose(glm::inverse(glm::mat4(1.0f)))}; // No idea what this does yet..
-
     // Allocate enough space before filling in the buffer
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) + sizeof(glm::mat3), nullptr, GL_STATIC_DRAW); 
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW); 
 
     // Fill in the buffer's data
     static constexpr int BINDING_POINT {0}, OFFSET {0};
     glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4) + sizeof(glm::mat3));
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &GLMath::PROJECTION[0][0]);
-    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat3), &normalMatrix[0][0]);
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

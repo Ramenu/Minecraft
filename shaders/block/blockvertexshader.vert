@@ -25,7 +25,6 @@ uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
 {
     uniform mat4 projection;
-    uniform mat3 normalMatrix;
 };
 
 #if 0
