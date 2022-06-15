@@ -1,9 +1,36 @@
 #include "minecraft/worldgen.hpp"
 #include <algorithm>
+#include "GLFW/glfw3.h"
 
 namespace WorldGen
 {
 	static constexpr int CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
+
+	/**
+	 * Fills the chunk's x and z parts with air blocks starting from 'startY' 
+	 * (which should be greater than 'endY'). 
+	 * 
+	 * TODO: Later on try to find a way to optimize this.
+	 */
+	static void fillChunkWithAirBlocksDownTo(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
+	                                         std::int32_t startY, std::int32_t endY) noexcept {
+		for (std::int32_t y {startY}; y >= endY; --y)
+			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
+				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
+					chunk[x][y][z] = Block{Air_Block};
+	}
+
+	static inline int pickChunkHeightLevel(Biome biome) noexcept
+	{
+		static constexpr int MINIMUM_HEIGHT_LEVEL {5}, 
+		                     PLAINS_BIOME_MAXIMUM_HEIGHT_LEVEL_OFFSET {4};
+		
+		static constexpr int MAXIMUM_HEIGHT_LEVELS[] {
+			PLAINS_BIOME_MAXIMUM_HEIGHT_LEVEL_OFFSET
+		};
+
+		return std::rand() % MAXIMUM_HEIGHT_LEVELS[biome] + MINIMUM_HEIGHT_LEVEL;
+	}
 
 	/**
 	 * A function for editing a portion of a chunk. The 'portionSize' should be the
@@ -18,11 +45,10 @@ namespace WorldGen
 	 * For better locality, it is recommended that all of the components in the portion size
 	 * be the same.
 	 */
-	#if 1
 	static void editChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                      glm::u8vec3 portionSize,
 						  glm::u8vec3 currentIndex,
-						  Block block)
+						  Block block) noexcept
 	{
 		glm::u8vec3 offset {portionSize + currentIndex};
 		if (offset.x > CHUNK_WIDTH) offset.x = CHUNK_WIDTH;
@@ -34,14 +60,18 @@ namespace WorldGen
 					chunk[x][y][z] = block;
 
 	}
-	#endif
 
-	static BlockName selectOrePick(std::uint32_t y)
+	/**
+	 * Returns a pseudo-randomized ore. The
+	 * lower the 'y' coordinate is, the higher
+	 * probability there will be to get rarer ores.
+	 */
+	static BlockName selectOrePick(std::uint32_t y) noexcept
 	{
 		#ifndef NDEBUG
 			if (y >= 8)
 			{
-				printf("selectOrePick invalid pick!!!");
+				printf("selectOrePick invalid pick!!!: %d\n", y);
 				exit(EXIT_FAILURE);
 			}
 		#endif
@@ -69,7 +99,13 @@ namespace WorldGen
  		return oresToChooseFrom[randomSelect];
 	}
 
-	static glm::u8vec3 getOrePortionSize(BlockName ore)
+	/**
+	 * Returns a pseudo-randomized portion. Each ore
+	 * may have an exclusive set of combinations. Rarer
+	 * ores will have smaller portions whereas common ores
+	 * will have larger portions. 
+	 */
+	static glm::u8vec3 getOrePortionSize(BlockName ore) noexcept
 	{
 		static constexpr std::array coalAndRedstoneBlockCombinations {
 			glm::u8vec3{2, 2, 2},
@@ -112,13 +148,20 @@ namespace WorldGen
 	 * Should be immediately called when dealing with the lower parts of the chunk
 	 * (i.e., any y component lower than CHUNK_HEIGHT_HALF). Handles ore generation
 	 */
-	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk)
+	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk, int yStart) noexcept
 	{
+		#ifndef NDEBUG
+			if (!(yStart < 8))
+			{
+				printf("ERROR: At 'generateBottomHalfOfChunk' y's value is %d!\n", yStart);
+				exit(EXIT_FAILURE);
+			}
+		#endif
 		static constexpr std::uint32_t MAXIMUM_NUM {100};
 		static constexpr Block stoneBlock {Stone_Block};
 		static constexpr glm::u8vec3 STONE_BLOCK_PORTION {4, 4, 4};
 		glm::u8vec3 portion;
-		for (std::int32_t y {CHUNK_HEIGHT_HALF - 1}; y >= 0; --y)
+		for (std::int32_t y {yStart}; y >= 0; --y)
 		{
 			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 			{
@@ -142,17 +185,20 @@ namespace WorldGen
 
     static std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generatePlainsBiome() noexcept
 	{
+		const int heightLevel {pickChunkHeightLevel(Plains)};
+		const int heightLevelHalf {heightLevel / 2};
 		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
 
+		fillChunkWithAirBlocksDownTo(chunk, CHUNK_HEIGHT - 1, heightLevel);
 		Block selectedBlock {Grass_Block};
-		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= CHUNK_HEIGHT_HALF; --y)
+		for (std::int32_t y {heightLevel}; y >= heightLevelHalf; --y)
 		{
 			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 					chunk[x][y][z] = selectedBlock;
 			selectedBlock = Block{Dirt_Block};
 		}
-		generateBottomHalfOfChunk(chunk);
+		generateBottomHalfOfChunk(chunk, heightLevelHalf);
 		return chunk;
 	}
 
