@@ -38,25 +38,35 @@ namespace WorldGen
 
 	static BlockName selectOrePick(std::uint32_t y)
 	{
-		#ifdef DDEBUG
+		#ifndef NDEBUG
 			if (y >= 8)
 			{
 				printf("selectOrePick invalid pick!!!");
 				exit(EXIT_FAILURE);
 			}
 		#endif
-		const std::uint32_t rarity {CHUNK_HEIGHT_HALF - 1 - y}; // Higher is better
+		const std::uint32_t rarity {CHUNK_HEIGHT_HALF - y}; // Higher is better
 		static constexpr BlockName oresToChooseFrom[] {
 			CoalOre_Block, CoalOre_Block,
 			IronOre_Block, IronOre_Block,
 			GoldOre_Block,
 			RedstoneOre_Block,
-			DiamondOre_Block, 
+			DiamondOre_Block,
 			EmeraldOre_Block
 		};
 		if (rarity == 0) // To avoid floating-point exception
 			return oresToChooseFrom[0];
- 		return oresToChooseFrom[std::rand() % rarity];
+		
+		const auto randomSelect {std::rand() % rarity};
+		#ifndef NDEBUG
+			if (randomSelect >= 8)
+			{
+				printf("ERROR: INVALID RANDOM\n");
+				exit(-1);
+			}
+
+		#endif
+ 		return oresToChooseFrom[randomSelect];
 	}
 
 	static glm::u8vec3 getOrePortionSize(BlockName ore)
@@ -114,9 +124,10 @@ namespace WorldGen
 			{
 				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 				{
+					chunk[x][y][z] = Block{Stone_Block};
 					const glm::u8vec3 index {x, y, z};
 					const std::uint32_t randomPercent {std::rand() % MAXIMUM_NUM + 1};
-					if (randomPercent >= 1 && randomPercent <= 90)
+					if (randomPercent >= 1 && randomPercent <= 95)
 						editChunk(chunk, portion, STONE_BLOCK_PORTION, stoneBlock);
 					else
 					{
