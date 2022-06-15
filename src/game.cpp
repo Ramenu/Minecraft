@@ -35,6 +35,7 @@ static GLuint vao;
  */
 void initGame(const char *windowTitle) noexcept
 {
+	std::srand(time(nullptr)); // This is called for terrain generation randomization, should be called only once
     glfwInit();
     Window::initWindow(windowTitle);
     glfwMakeContextCurrent(Window::getWindow());
