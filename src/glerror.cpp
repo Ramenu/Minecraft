@@ -17,7 +17,7 @@ namespace GLError
         exit(EXIT_FAILURE);
     }
 
-    #ifdef MC_DEBUG_BUILD
+    #ifndef NDEBUG
         /**
          * Callback function for debugging OpenGL.
          */

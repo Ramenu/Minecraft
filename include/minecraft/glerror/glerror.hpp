@@ -6,7 +6,7 @@
 namespace GLError
 {
     extern void error_message(std::string_view error) noexcept;
-    #ifdef MC_DEBUG_BUILD
+    #ifndef NDEBUG
         extern void enableGLDebugCallBack();
     #endif
 }

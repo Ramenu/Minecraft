@@ -14,7 +14,7 @@
 static GLuint uniformBuffer;
 static GLuint vao;
 
-#ifdef MC_DEBUG_BUILD
+#ifndef NDEBUG
     /**
      * Returns true if the debug output context
      * was successfully initialized.
@@ -44,7 +44,7 @@ void initGame(const char *windowTitle) noexcept
         GLError::error_message("Failed to initialize GLAD");
     
     // Check if initializing the debug context was successful (if on a debug build)
-    #ifdef MC_DEBUG_BUILD
+    #ifndef NDEBUG
         if (!initializedDebugContext())
             GLError::error_message("Failed to initialize OpenGL debug context");
         GLError::enableGLDebugCallBack();
