@@ -470,11 +470,11 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 	chunk = WorldGen::generateTerrain(WorldGen::Biome::Plains);
     position = {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
 
-    for (std::int32_t x {}; x < CHUNK_WIDTH; x += 1.0f)
+    for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
-        for (std::int32_t y {}; y < CHUNK_HEIGHT; y += 1.0f)
+        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
         {
-            for (std::int32_t z {}; z < CHUNK_LENGTH; z += 1.0f)
+            for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
                 const auto texture {getTextureVertices(chunk[x][y][z].getTexture())};
