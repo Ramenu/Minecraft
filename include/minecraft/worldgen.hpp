@@ -5,7 +5,7 @@
 
 namespace WorldGen
 {
-    enum class Biome
+    enum Biome : std::uint8_t
     {
         Plains
     };
