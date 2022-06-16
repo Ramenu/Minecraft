@@ -27,6 +27,14 @@ namespace GLMath
     [[maybe_unused]] static const glm::mat4 INVERSE_PROJECTION {glm::inverse(PROJECTION)};
     extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
 
+    inline float randf() noexcept {
+        return static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);
+    }
+
+    inline constexpr float fade(float t) noexcept {
+        return ((6.0f*t - 15.0f)*t + 10.0f)*t*t*t;
+    }
+
     #if 0
     /**
      * Returns the two missing sides of a
