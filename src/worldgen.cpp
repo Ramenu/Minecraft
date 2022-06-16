@@ -1,25 +1,52 @@
-#include "minecraft/worldgen.hpp"
-#include <algorithm>
-#include "GLFW/glfw3.h"
+#include "minecraft/world/worldgen.hpp"
+#include "minecraft/world/perlin.hpp"
+#include <cmath>
 
 namespace WorldGen
 {
 	static constexpr int CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
 
+	enum class TerrainTopFormat : std::uint8_t
+	{
+		Standard // No peculiar features
+	};
+
+	enum class TerrainMidFormat : std::uint8_t
+	{
+		Standard // No peculiar features (to be defined)
+	};
+
+	struct TerrainFormat
+	{
+		Block mainBlock;
+		Block secondaryBlock;
+		union
+		{
+			TerrainTopFormat topFormat;
+			TerrainMidFormat midFormat;
+		};
+	};
+
+	void initSeed() noexcept
+	{
+		std::srand(time(nullptr));
+
+	}
+
 	/**
-	 * Fills the chunk's x and z parts with air blocks starting from 'startY' 
-	 * (which should be greater than 'endY'). 
-	 * 
+	 * Fills the chunk with air blocks.
 	 * TODO: Later on try to find a way to optimize this.
 	 */
-	static void fillChunkWithAirBlocksDownTo(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
-	                                         std::int32_t startY, std::int32_t endY) noexcept {
-		for (std::int32_t y {startY}; y >= endY; --y)
+	static constexpr std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> fillChunkWithAirBlocks() noexcept {
+		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
+		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= 0; --y)
 			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 					chunk[x][y][z] = Block{Air_Block};
+		return chunk;
 	}
 
+	#if 0
 	static inline int pickChunkHeightLevel(Biome biome) noexcept
 	{
 		static constexpr int MINIMUM_HEIGHT_LEVEL {5}, 
@@ -31,6 +58,7 @@ namespace WorldGen
 
 		return std::rand() % MAXIMUM_HEIGHT_LEVELS[biome] + MINIMUM_HEIGHT_LEVEL;
 	}
+	#endif
 
 	/**
 	 * A function for editing a portion of a chunk. The 'portionSize' should be the
@@ -144,6 +172,28 @@ namespace WorldGen
 
 	}
 
+	static int randomizeZIndex(std::int32_t x, std::int32_t y, const std::array<glm::vec2, 4> &gradients) noexcept
+	{
+		float noise {(perlin(x, y, gradients) + 1.0f) / 2.0f};
+		noise = std::clamp(noise, 0.0f, 1.0f);
+		return std::round(noise*(CHUNK_LENGTH - 1));
+	}
+
+	static void generateTopHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
+	                                   TerrainFormat format) noexcept
+	{
+		Block selectedBlock {format.mainBlock};
+		const auto gradients {generate2DGradients()};
+		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= 0; --y)
+		{
+			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
+			{
+				chunk[x][y][randomizeZIndex(x, y, gradients)] = selectedBlock;
+			}
+			selectedBlock = format.secondaryBlock;
+		}
+	}
+
 	/**
 	 * Should be immediately called when dealing with the lower parts of the chunk
 	 * (i.e., any y component lower than CHUNK_HEIGHT_HALF). Handles ore generation
@@ -180,25 +230,20 @@ namespace WorldGen
 				}
 			}
 		}
-		
 	}
+	
 
     static std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generatePlainsBiome() noexcept
 	{
-		const int heightLevel {pickChunkHeightLevel(Plains)};
-		const int heightLevelHalf {heightLevel / 2};
-		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
+		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {fillChunkWithAirBlocks()};
 
-		fillChunkWithAirBlocksDownTo(chunk, CHUNK_HEIGHT - 1, heightLevel);
-		Block selectedBlock {Grass_Block};
-		for (std::int32_t y {heightLevel}; y >= heightLevelHalf; --y)
-		{
-			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
-				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
-					chunk[x][y][z] = selectedBlock;
-			selectedBlock = Block{Dirt_Block};
-		}
-		generateBottomHalfOfChunk(chunk, heightLevelHalf);
+		const TerrainFormat format {
+			.mainBlock = Block{Grass_Block},
+			.secondaryBlock = Block{Dirt_Block},
+			.topFormat = TerrainTopFormat::Standard
+		};
+		generateTopHalfOfChunk(chunk, format);
+		generateBottomHalfOfChunk(chunk, CHUNK_HEIGHT_HALF - 1);
 		return chunk;
 	}
 
@@ -206,7 +251,7 @@ namespace WorldGen
     {
 		switch (biome)
 		{
-			case Biome::Plains: return generatePlainsBiome();
+			case Plains: return generatePlainsBiome();
 		}
 		return generatePlainsBiome();
     }
