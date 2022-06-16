@@ -25,6 +25,7 @@ add_executable(main
 ./src/glerror.cpp
 ./src/glmath.cpp
 ./src/main.cpp
+./src/perlin.cpp
 ./src/renderer.cpp
 ./src/worldgen.cpp
 ./src/shader.cpp
