@@ -10,6 +10,7 @@
     #include "misc/timer.hpp"
 #endif
 #include "minecraft/math/glmath.hpp"
+#include "minecraft/world/worldgen.hpp"
 
 static GLuint uniformBuffer;
 static GLuint vao;
@@ -35,8 +36,8 @@ static GLuint vao;
  */
 void initGame(const char *windowTitle) noexcept
 {
-	std::srand(time(nullptr)); // This is called for terrain generation randomization, should be called only once
     glfwInit();
+    WorldGen::initSeed();
     Window::initWindow(windowTitle);
     glfwMakeContextCurrent(Window::getWindow());
     
@@ -45,6 +46,7 @@ void initGame(const char *windowTitle) noexcept
     
     // Check if initializing the debug context was successful (if on a debug build)
     #ifndef NDEBUG
+        printf("Running on debug build.\n");
         if (!initializedDebugContext())
             GLError::error_message("Failed to initialize OpenGL debug context");
         GLError::enableGLDebugCallBack();

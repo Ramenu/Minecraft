@@ -5,7 +5,7 @@
 #include "minecraft/audio/sound.hpp"
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/window/window.hpp"
-#include "minecraft/worldgen.hpp"
+#include "minecraft/world/worldgen.hpp"
 #include "GLFW/glfw3.h"
 #include <cmath>
 #include <cstdio>
