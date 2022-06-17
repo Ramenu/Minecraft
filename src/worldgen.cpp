@@ -4,7 +4,9 @@
 
 namespace WorldGen
 {
+	static constexpr int CHUNK_WIDTH_HALF {CHUNK_WIDTH / 2};
 	static constexpr int CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
+	static constexpr int CHUNK_LENGTH_HALF {CHUNK_WIDTH / 2};
 
 	enum class TerrainTopFormat : std::uint8_t
 	{
@@ -65,10 +67,8 @@ namespace WorldGen
 	 * bounding volume of the block you want to emplace (e.g. create 4x4x4 coal blocks).
 	 * The current index lets the function know where to emplace those blocks specifically.
 	 * 
-	 * This function takes care of out-of-bounds access, HOWEVER it does assume that the
-	 * current index is less than the chunk's maximum x, y, z components. Do not call this
-	 * function if any of them are out of bounds (though, with proper use they shouldn't be
-	 * in the first place).
+	 * NOTE: This should only be used for generating the bottom parts of the chunk, this
+	 * does not account for out-of-bounds access.
 	 * 
 	 * For better locality, it is recommended that all of the components in the portion size
 	 * be the same.
@@ -78,10 +78,18 @@ namespace WorldGen
 						  glm::u8vec3 currentIndex,
 						  Block block) noexcept
 	{
+		#ifndef NDEBUG
+			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
+			{
+				printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
+				exit(EXIT_FAILURE);
+			}
+
+		#endif
 		glm::u8vec3 offset {portionSize + currentIndex};
-		if (offset.x > CHUNK_WIDTH) offset.x = CHUNK_WIDTH;
-		if (offset.y > CHUNK_HEIGHT) offset.y = CHUNK_HEIGHT;
-		if (offset.z > CHUNK_LENGTH) offset.z = CHUNK_LENGTH;
+		if (offset.x >= CHUNK_WIDTH_HALF) offset.x = CHUNK_WIDTH_HALF - 1;
+		if (offset.y >= CHUNK_HEIGHT_HALF) offset.y = CHUNK_HEIGHT_HALF - 1;
+		if (offset.z >= CHUNK_LENGTH_HALF) offset.z = CHUNK_LENGTH_HALF - 1;
 		for (std::int32_t x {currentIndex.x}; x < offset.x; ++x)
 			for (std::int32_t y {currentIndex.y}; y < offset.y; ++y)
 				for (std::int32_t z {currentIndex.z}; z < offset.z; ++z)
@@ -172,39 +180,60 @@ namespace WorldGen
 
 	}
 
-	static int randomizeZIndex(std::int32_t x, std::int32_t y, const std::array<glm::vec2, 4> &gradients) noexcept
+	static inline std::int32_t randomizeYIndex(std::int32_t x, std::int32_t z, 
+	                                           const std::array<glm::vec2, 4> &gradients,
+											   std::uint32_t maxHeight) noexcept
 	{
-		float noise {(perlin(x, y, gradients) + 1.0f) / 2.0f};
-		noise = std::clamp(noise, 0.0f, 1.0f);
-		return std::round(noise*(CHUNK_LENGTH - 1));
+		float noise {perlin(x, z, gradients)};
+
+		// Transform range to [0.0, 1.0] assuming range of the noise is [-1.0, 1.0]
+		noise += 1.0f;
+		noise /= 2.0f;
+
+		return static_cast<std::int32_t>(noise * maxHeight);
+
 	}
 
 	static void generateTopHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                                   TerrainFormat format) noexcept
 	{
-		// NOTE: When doing top half of chunk, when top block gets placed make sure to put the secondary block right underneath it!
-		Block selectedBlock {format.mainBlock};
-		const auto gradients {generate2DGradients()};
-		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= 0; --y)
+		#if 1
+		std::int32_t maxHeightForFormat {};
+		switch (format.topFormat)
 		{
-			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
-			{
-				chunk[x][y][randomizeZIndex(x, y, gradients)] = selectedBlock;
-			}
-			selectedBlock = format.secondaryBlock;
+			case TerrainTopFormat::Standard: maxHeightForFormat = 4; break;
 		}
+		// NOTE: When doing top half of chunk, when top block gets placed make sure to put the secondary block right underneath it!
+		if (maxHeightForFormat == 5)
+			return;
+		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF - 1};
+		const auto gradients {generate2DGradients()};
+		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
+		{
+			for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
+			{
+				const std::int32_t yIndex {randomizeYIndex(x, z, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
+				Block selectedBlock {format.mainBlock};
+				for (std::int32_t y {yIndex}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
+				{
+					chunk[x][y][z] = selectedBlock;
+					selectedBlock = format.secondaryBlock;
+				}
+			}
+		}
+		#endif
 	}
 
 	/**
 	 * Should be immediately called when dealing with the lower parts of the chunk
 	 * (i.e., any y component lower than CHUNK_HEIGHT_HALF). Handles ore generation
 	 */
-	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk, int yStart) noexcept
+	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk, int yEnd) noexcept
 	{
 		#ifndef NDEBUG
-			if (!(yStart < 8))
+			if (!(yEnd <= 8))
 			{
-				printf("ERROR: At 'generateBottomHalfOfChunk' y's value is %d!\n", yStart);
+				printf("ERROR: At 'generateBottomHalfOfChunk' y's value is %d!\n", yEnd);
 				exit(EXIT_FAILURE);
 			}
 		#endif
@@ -212,7 +241,7 @@ namespace WorldGen
 		static constexpr Block stoneBlock {Stone_Block};
 		static constexpr glm::u8vec3 STONE_BLOCK_PORTION {4, 4, 4};
 		glm::u8vec3 portion;
-		for (std::int32_t y {yStart}; y >= 0; --y)
+		for (std::int32_t y {}; y < yEnd; ++y)
 		{
 			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 			{
@@ -221,13 +250,13 @@ namespace WorldGen
 					chunk[x][y][z] = Block{Stone_Block};
 					const glm::u8vec3 index {x, y, z};
 					const std::uint32_t randomPercent {std::rand() % MAXIMUM_NUM + 1};
-					if (randomPercent >= 1 && randomPercent <= 95)
-						editChunk(chunk, portion, STONE_BLOCK_PORTION, stoneBlock);
-					else
+					if (randomPercent >= 80 && randomPercent <= 100)
 					{
 						const BlockName ore {selectOrePick(y)};
 						editChunk(chunk, getOrePortionSize(ore), index, Block{ore});
 					}
+					else
+						editChunk(chunk, portion, index, stoneBlock);
 				}
 			}
 		}
@@ -244,7 +273,7 @@ namespace WorldGen
 			.topFormat = TerrainTopFormat::Standard
 		};
 		generateTopHalfOfChunk(chunk, format);
-		generateBottomHalfOfChunk(chunk, CHUNK_HEIGHT_HALF - 1);
+		generateBottomHalfOfChunk(chunk, CHUNK_HEIGHT_HALF);
 		return chunk;
 	}
 
