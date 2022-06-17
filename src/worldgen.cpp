@@ -182,6 +182,7 @@ namespace WorldGen
 	static void generateTopHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                                   TerrainFormat format) noexcept
 	{
+		// NOTE: When doing top half of chunk, when top block gets placed make sure to put the secondary block right underneath it!
 		Block selectedBlock {format.mainBlock};
 		const auto gradients {generate2DGradients()};
 		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= 0; --y)
