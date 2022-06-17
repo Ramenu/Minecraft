@@ -27,20 +27,32 @@ namespace GLMath
     [[maybe_unused]] static const glm::mat4 INVERSE_PROJECTION {glm::inverse(PROJECTION)};
     extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
 
+    /**
+     * Returns a pseudo-randomized float ranging from
+     * [0.0 .. RAND_MAX].
+     */
     inline float randf() noexcept {
         return static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);
     }
 
+    /**
+     * Returns a float ranging from [0..1]
+     * If 'n' is closer to the endpoints (i.e.,
+     * min and max) then the returned value will
+     * be significantly closer to the endpoint it
+     * is closer to. It flattens out completely at
+     * 0 and 1. And in the middle, it doesn't change
+     * a lot.
+     */
     template<typename T>
     requires std::is_arithmetic_v<T>
     constexpr float smoothstep(T min, T max, T n) noexcept {
-        // remove this part if it ends up working.
         if (n <= min)
             return 0.0f;
         if (n >= max)
             return 1.0f;
-        n = (n - min) / (max - min);
-        return n * n * (3 - 2 * n);
+        n = (n - min) / (max - min); // Scale/bias into the [0..1] range
+        return n * n * (3.0f - 2.0f * n);
     }
 
     #if 0
