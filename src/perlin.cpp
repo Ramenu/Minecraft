@@ -41,13 +41,14 @@ std::array<glm::vec2, 4> generate2DGradients() noexcept {
  */
 float perlin(float p1, float p2, const std::array<glm::vec2, 4> &gradients) noexcept 
 {
-    const glm::vec2 point {p1, p2};
+    const glm::vec2 point {p1*0.01f, p2*0.01f};
     const float d1 {glm::dot(point, gradients[0])};
     const float d2 {glm::dot(point, gradients[1])};
     const float d3 {glm::dot(point, gradients[2])};
     const float d4 {glm::dot(point, gradients[3])};
 
-    const float t1 {GLMath::fade(p1)}, t2 {GLMath::fade(p2)};
-    const float li1 {std::lerp(d1, d2, t1)}, li2 {std::lerp(d3, d4, t1)};
-    return std::lerp(li1, li2, t2);
+    const float step1 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p1)};
+    const float step2 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p2)};
+    const float li1 {std::lerp(d1, d2, step1)}, li2 {std::lerp(d3, d4, step1)};
+    return std::lerp(li1, li2, step2);
 }
