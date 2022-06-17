@@ -31,8 +31,16 @@ namespace GLMath
         return static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);
     }
 
-    inline constexpr float fade(float t) noexcept {
-        return ((6.0f*t - 15.0f)*t + 10.0f)*t*t*t;
+    template<typename T>
+    requires std::is_arithmetic_v<T>
+    constexpr float smoothstep(T min, T max, T n) noexcept {
+        // remove this part if it ends up working.
+        if (n <= min)
+            return 0.0f;
+        if (n >= max)
+            return 1.0f;
+        n = (n - min) / (max - min);
+        return n * n * (3 - 2 * n);
     }
 
     #if 0
