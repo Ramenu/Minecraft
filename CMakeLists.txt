@@ -73,6 +73,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     -Wlogical-op
     -Wdisabled-optimization
     -Wvirtual-inheritance
+    -Wno-unused-function
     -fno-exceptions
     )
 
