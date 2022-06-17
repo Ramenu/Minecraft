@@ -48,20 +48,6 @@ namespace WorldGen
 		return chunk;
 	}
 
-	#if 0
-	static inline int pickChunkHeightLevel(Biome biome) noexcept
-	{
-		static constexpr int MINIMUM_HEIGHT_LEVEL {5}, 
-		                     PLAINS_BIOME_MAXIMUM_HEIGHT_LEVEL_OFFSET {4};
-		
-		static constexpr int MAXIMUM_HEIGHT_LEVELS[] {
-			PLAINS_BIOME_MAXIMUM_HEIGHT_LEVEL_OFFSET
-		};
-
-		return std::rand() % MAXIMUM_HEIGHT_LEVELS[biome] + MINIMUM_HEIGHT_LEVEL;
-	}
-	#endif
-
 	/**
 	 * A function for editing a portion of a chunk. The 'portionSize' should be the
 	 * bounding volume of the block you want to emplace (e.g. create 4x4x4 coal blocks).
@@ -180,6 +166,13 @@ namespace WorldGen
 
 	}
 
+	/**
+	 * Takes two coordinates 'x' and 'z' and outputs a
+	 * y index created from perlin noise. 4 gradients should be used
+	 * for each chunk for consistent and good-looking results.
+	 * The 'maxHeight' parameter is simply the maximum y index that
+	 * can be returned.
+	 */
 	static inline std::int32_t randomizeYIndex(std::int32_t x, std::int32_t z, 
 	                                           const std::array<glm::vec2, 4> &gradients,
 											   std::uint32_t maxHeight) noexcept
@@ -194,25 +187,32 @@ namespace WorldGen
 
 	}
 
+	/**
+	 * Generates the top half of the chunk.
+	 * Takes the chunk as a parameter and the format of the chunk,
+	 * which specifies the layout of the chunk and what blocks
+	 * should be used.
+	 */
 	static void generateTopHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                                   TerrainFormat format) noexcept
 	{
 		#if 1
 		std::int32_t maxHeightForFormat {};
+		float frequency {1.0f};
 		switch (format.topFormat)
 		{
-			case TerrainTopFormat::Standard: maxHeightForFormat = 4; break;
+			case TerrainTopFormat::Standard: 
+				maxHeightForFormat = 4; 
+				frequency = 5.0f;
+				break;
 		}
-		// NOTE: When doing top half of chunk, when top block gets placed make sure to put the secondary block right underneath it!
-		if (maxHeightForFormat == 5)
-			return;
-		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF - 1};
+		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
 		const auto gradients {generate2DGradients()};
 		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 		{
 			for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 			{
-				const std::int32_t yIndex {randomizeYIndex(x, z, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
+				std::int32_t yIndex {randomizeYIndex(x * frequency, z * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
 				Block selectedBlock {format.mainBlock};
 				for (std::int32_t y {yIndex}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
@@ -250,7 +250,7 @@ namespace WorldGen
 					chunk[x][y][z] = Block{Stone_Block};
 					const glm::u8vec3 index {x, y, z};
 					const std::uint32_t randomPercent {std::rand() % MAXIMUM_NUM + 1};
-					if (randomPercent >= 80 && randomPercent <= 100)
+					if (randomPercent >= 90 && randomPercent <= 100)
 					{
 						const BlockName ore {selectOrePick(y)};
 						editChunk(chunk, getOrePortionSize(ore), index, Block{ore});
@@ -263,10 +263,11 @@ namespace WorldGen
 	}
 	
 
-    static std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generatePlainsBiome() noexcept
+	/**
+	 * Modifies the chunk to make it look like a plains biome.
+	 */
+    static void generatePlainsBiome(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk) noexcept
 	{
-		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {fillChunkWithAirBlocks()};
-
 		const TerrainFormat format {
 			.mainBlock = Block{Grass_Block},
 			.secondaryBlock = Block{Dirt_Block},
@@ -274,16 +275,20 @@ namespace WorldGen
 		};
 		generateTopHalfOfChunk(chunk, format);
 		generateBottomHalfOfChunk(chunk, CHUNK_HEIGHT_HALF);
-		return chunk;
 	}
 
+	/**
+	 * Generates a terrain of the given biome, and returns a chunk
+	 * with the new terrain.
+	 */
     std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generateTerrain(Biome biome) noexcept 
     {
+		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {fillChunkWithAirBlocks()};
 		switch (biome)
 		{
-			case Plains: return generatePlainsBiome();
+			case Plains: generatePlainsBiome(chunk); break;
 		}
-		return generatePlainsBiome();
+		return chunk;
     }
 
 }
