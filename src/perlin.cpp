@@ -41,7 +41,7 @@ std::array<glm::vec2, 4> generate2DGradients() noexcept {
  */
 float perlin(float p1, float p2, const std::array<glm::vec2, 4> &gradients) noexcept 
 {
-    const glm::vec2 point {p1*0.01f, p2*0.01f};
+    const glm::vec2 point {p1, p2};
     const float d1 {glm::dot(point, gradients[0])};
     const float d2 {glm::dot(point, gradients[1])};
     const float d3 {glm::dot(point, gradients[2])};
