@@ -94,7 +94,7 @@ void runGame() noexcept
     [[maybe_unused]] float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
-    Texture textureAtlas {"./textures/textureatlas.jpg"};
+    Texture textureAtlas {"./textures/textureatlas.png"};
     Renderer renderer;
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
