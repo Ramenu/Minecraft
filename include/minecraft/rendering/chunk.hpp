@@ -29,7 +29,7 @@ class Chunk
         std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> chunk;
     public:
 
-        inline auto getChunk() const noexcept {return chunk;}
+        inline constexpr auto getChunk() const noexcept {return chunk;}
         
         void updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunkNeighbor,
                                              Face face) const noexcept;
