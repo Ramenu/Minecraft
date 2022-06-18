@@ -7,6 +7,8 @@ namespace WorldGen
 	static constexpr int CHUNK_WIDTH_HALF {CHUNK_WIDTH / 2};
 	static constexpr int CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
 	static constexpr int CHUNK_LENGTH_HALF {CHUNK_WIDTH / 2};
+	static constexpr int OAK_WOOD_MAXIMUM_HEIGHT {3}; // Maximum number of oak wood blocks a tree can have
+	static constexpr int TREE_HEIGHT {OAK_WOOD_MAXIMUM_HEIGHT + 4};
 
 	enum class TerrainTopFormat : std::uint8_t
 	{
@@ -48,6 +50,49 @@ namespace WorldGen
 		return chunk;
 	}
 
+	static constexpr void spawnTreeAt(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
+	                                  glm::u8vec3 index) noexcept
+	{
+
+		const std::int32_t treeOffset {index.y + TREE_HEIGHT};
+		const bool treeOnEdgesOfChunk {((index.x + 2 >= CHUNK_WIDTH) || (index.z + 2 >= CHUNK_LENGTH)) ||
+		                               ((index.x - 2 < 0) || (index.z - 2 < 0))};
+
+		// Only build the tree if there is enough space in the chunk to do so, and not on the edges of the chunk
+		if ((treeOffset < CHUNK_HEIGHT) && (!treeOnEdgesOfChunk))
+		{
+			const auto yTopWood {index.y + OAK_WOOD_MAXIMUM_HEIGHT + 1};
+
+			// Build the oak blocks
+			for (std::int32_t y {index.y}; y < yTopWood; ++y)
+				chunk[index.x][y][index.z] = Block{OakWood_Block};
+			
+			// First layer of leaves
+			for (std::int32_t x {index.x - 2}; x < index.x + 3; ++x)
+				for (std::int32_t z {index.z - 2}; z < index.z + 3; ++z)
+					chunk[x][yTopWood][z] = Block{Leaf_Block};
+			
+			// Remove edges of first layer
+			chunk[index.x - 2][yTopWood][index.z + 2] = Block{Air_Block};
+			chunk[index.x - 2][yTopWood][index.z - 2] = Block{Air_Block};
+			chunk[index.x + 2][yTopWood][index.z - 2] = Block{Air_Block};
+			chunk[index.x + 2][yTopWood][index.z + 2] = Block{Air_Block};
+			#if 1
+			// Second layer of leaves
+			for (std::int32_t x {index.x - 1}; x < index.x + 2; ++x)
+				for (std::int32_t z {index.z - 1}; z < index.z + 2; ++z)
+					chunk[x][yTopWood + 1][z] = Block{Leaf_Block};
+			
+			// Last layer of leaves (i.e., top layer)
+			for (std::int32_t x {index.x}; x < index.x + 1; ++x)
+				for (std::int32_t z {index.z}; z < index.z + 1; ++z)
+					chunk[x][yTopWood + 2][z] = Block{Leaf_Block};
+			#endif
+			
+		}
+
+	}
+
 	/**
 	 * A function for editing a portion of a chunk. The 'portionSize' should be the
 	 * bounding volume of the block you want to emplace (e.g. create 4x4x4 coal blocks).
@@ -59,7 +104,7 @@ namespace WorldGen
 	 * For better locality, it is recommended that all of the components in the portion size
 	 * be the same.
 	 */
-	static void editChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
+	static constexpr void editChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                      glm::u8vec3 portionSize,
 						  glm::u8vec3 currentIndex,
 						  Block block) noexcept
@@ -67,7 +112,7 @@ namespace WorldGen
 		#ifndef NDEBUG
 			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
 			{
-				printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
+				//printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
 				exit(EXIT_FAILURE);
 			}
 
@@ -94,7 +139,7 @@ namespace WorldGen
 			if (y >= 8)
 			{
 				printf("selectOrePick invalid pick!!!: %d\n", y);
-				exit(EXIT_FAILURE);
+				exit(-12);
 			}
 		#endif
 		const std::uint32_t rarity {CHUNK_HEIGHT_HALF - y}; // Higher is better
@@ -199,6 +244,7 @@ namespace WorldGen
 		#if 1
 		std::int32_t maxHeightForFormat {};
 		float frequency {1.0f};
+		bool formatCanSpawnTree {true};
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Standard: 
@@ -207,13 +253,21 @@ namespace WorldGen
 				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
+		static constexpr int SPAWN_TREE_MAXIMUM_ROLL {100};
+		static constexpr int MIN_ROLL_TO_SPAWN_TREE {98};
 		const auto gradients {generate2DGradients()};
 		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 		{
 			for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 			{
 				std::int32_t yIndex {randomizeYIndex(x * frequency, z * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
+				const bool spawnTree {(std::rand() % SPAWN_TREE_MAXIMUM_ROLL > MIN_ROLL_TO_SPAWN_TREE) && (yIndex + TREE_HEIGHT < CHUNK_HEIGHT)};
 				Block selectedBlock {format.mainBlock};
+				if (spawnTree&formatCanSpawnTree)
+				{
+					spawnTreeAt(chunk, {x, yIndex, z});
+					yIndex -= 1;
+				}
 				for (std::int32_t y {yIndex}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
 					chunk[x][y][z] = selectedBlock;
