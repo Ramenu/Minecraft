@@ -285,7 +285,7 @@ namespace WorldGen
 	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk, int yEnd) noexcept
 	{
 		#ifndef NDEBUG
-			if (!(yEnd <= 8))
+			if (!(yEnd <= CHUNK_HEIGHT_HALF))
 			{
 				printf("ERROR: At 'generateBottomHalfOfChunk' y's value is %d!\n", yEnd);
 				exit(EXIT_FAILURE);
