@@ -53,7 +53,7 @@ Texture::Texture(const std::string &pathToTexture) noexcept
         if (data)
         {
             static constexpr int MIPMAP_LEVEL {0};
-            const auto format {(pathToTexture == ".png") ? GL_RGBA : GL_RGB};
+            const auto format {(std_fs::path(pathToTexture).extension() == ".png") ? GL_RGBA : GL_RGB};
             glTexImage2D(GL_TEXTURE_2D, MIPMAP_LEVEL, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
             stbi_image_free(data);
