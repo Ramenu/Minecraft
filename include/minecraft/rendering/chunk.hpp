@@ -6,6 +6,7 @@
 #include "minecraft/data/vertexbuffer.hpp"
 #include "minecraft/mesh/chunkmesh.hpp"
 #include "minecraft/block/face.h"
+#include "glm/vec3.hpp"
 #include <span>
 #include <optional>
 
