@@ -12,6 +12,18 @@
 #include <numeric>
 #include <algorithm>
 
+static constexpr bool CHECK_BOUNDS_ACCESS {true}; // use for debug builds only
+
+#define ABORT_ON_OF_BOUNDS_ACCESS(index) \
+    if constexpr (CHECK_BOUNDS_ACCESS) { \
+        if (isOutOfChunk(index)) \
+        { \
+            printf("ERROR: At %s, index is {%f, %f, %f}!\n", __func__,static_cast<double>(index.x), static_cast<double>(index.y), static_cast<double>(index.z)); \
+            exit(EXIT_FAILURE); \
+        } \
+    }
+    
+
 static constexpr auto INVISIBLE_VERTICES {getVisibleBlockVertices({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f})};
 static constexpr float DEFAULT_AMBIENT_LEVEL {1.5f};
 static constexpr float COMPLETELY_VISIBLE {1.0f};
@@ -67,6 +79,7 @@ void Chunk::drawChunk() const noexcept
  */
 void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept 
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index)
     const std::int32_t x {index.x}, y {index.y}, z {index.z};
     chunk[x][y][z] = block;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -172,6 +185,7 @@ bool Chunk::updateChunk() noexcept
  */
 void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept 
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index)
     const std::size_t bufferIndex {getBlockIndex(index)};
     const auto vertices {getAmbientVertices(ambient)}; 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -193,6 +207,7 @@ void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept
  */
 void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     const auto adjacentBlocks {getBlocksSurrounding(index)};
     for (const auto&blockCoords: adjacentBlocks)
@@ -239,6 +254,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
  */
 std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> Chunk::getBlocksSurrounding(glm::i8vec3 index) noexcept
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index)
     const glm::i8vec3 blockAtBack {index.x, index.y, index.z - 1_i8},
                       blockAtFront {index.x, index.y, index.z + 1_i8},
                       blockAtRight {index.x - 1_i8, index.y, index.z},
@@ -356,6 +372,7 @@ static inline constexpr bool anyFacesAreVisible(const std::array<float, SQUARES_
 constexpr std::array<float, SQUARES_ON_CUBE> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index);
     std::array<float, SQUARES_ON_CUBE> visibleFaces {};
 
     // Back face
@@ -426,6 +443,7 @@ void Chunk::updateChunkVisibility() noexcept
 
 bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept 
 {
+    ABORT_ON_OF_BOUNDS_ACCESS(index)
     // This means that it is on the outskirts of the chunk, which means it is visible to the player
     if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
     {
