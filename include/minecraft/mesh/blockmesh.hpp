@@ -11,16 +11,16 @@ static constexpr float X_POS_2 {(ATLAS_WIDTH - 1) * X_POS};
 enum Attribute : std::uint8_t
 {
     Position,
-    TexCoord,
+    BlockID,
     Visibility,
     Ambient
 };
 
 static constexpr std::array ATTRIBUTES {
     3ull, // Position 
-    2ull, // Texture
+    1ull,
     1ull, // Visibility
-    1ull
+    1ull  // Ambient
 };
 
 static constexpr std::array<std::size_t, ATTRIBUTES.size()> verticesSizes {[](){
@@ -133,6 +133,50 @@ constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(flo
 
 }
 
+constexpr std::array<float, verticesSizes[Attribute::BlockID]> getBlockIDVertices(BlockName block) noexcept
+{
+    const float blockf {static_cast<float>(block)};
+    return {
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf,
+        blockf
+    };
+}
+
+#if 0
 constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
 {
     return {
@@ -180,6 +224,7 @@ constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertic
     };
 
 }
+#endif
 
 constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
 getVisibleBlockVertices(const std::array<float, SQUARES_ON_CUBE> &visible) noexcept
