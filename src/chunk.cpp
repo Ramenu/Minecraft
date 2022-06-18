@@ -73,8 +73,7 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
     if (block.name != Air_Block)
     {
         const std::size_t bufferOffset {getBlockIndex(index)};
-        const auto defaultTexCoordVertices {getTextureVertices(block.getTexture())};
-        updateBuffer(bufferOffset, Attribute::TexCoord, defaultTexCoordVertices);
+        updateBuffer(bufferOffset, Attribute::BlockID, getBlockIDVertices(block.name));
     }
 
     // We have to update the blocks surrounding the block that was modified only for performance
@@ -142,7 +141,7 @@ bool Chunk::updateChunk() noexcept
                             // placed on an air block
                             if (!isOutOfChunk(blockPosition) && chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
                             {
-                                modifyChunk(blockPosition, Block{Cobblestone_Block});
+                                modifyChunk(blockPosition, Block{Water_Block});
                                 // Highlighting it is necessary, so in the next call the method can decide whether to still keep
                                 // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
                                 blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = HIGHLIGHTED_AND_VISIBLE;
@@ -477,13 +476,15 @@ void Chunk::initChunk(glm::vec3 position) noexcept
             for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
                 const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
-                const auto texture {getTextureVertices(chunk[x][y][z].getTexture())};
+                const auto blockId {getBlockIDVertices(chunk[x][y][z].name)};
                 chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                          pos.begin(), 
                                                                          pos.end());
-                chunkVertices.meshAttributes[Attribute::TexCoord].insert(chunkVertices.meshAttributes[Attribute::TexCoord].end(),
-                                                                         texture.begin(),
-                                                                         texture.end());
+                
+                chunkVertices.meshAttributes[Attribute::BlockID].insert(chunkVertices.meshAttributes[Attribute::BlockID].end(),
+                                                                        blockId.begin(),
+                                                                        blockId.end());
+
                 chunkVertices.meshAttributes[Attribute::Ambient].insert(chunkVertices.meshAttributes[Attribute::Ambient].end(),
                                                                         DEFAULT_BLOCK_AMBIENT_VERTICES.begin(),
                                                                         DEFAULT_BLOCK_AMBIENT_VERTICES.end());
