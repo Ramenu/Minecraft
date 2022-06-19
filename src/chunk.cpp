@@ -59,6 +59,21 @@ static inline constexpr std::size_t getBlockIndex(glm::i8vec3 index) noexcept {
     return ((index.y * CHUNK_HEIGHT + index.z) + index.x * CHUNK_LENGTH * CHUNK_HEIGHT);
 }
 
+
+/**
+ * The index that should be passed should be the indice of the block
+ * that surround the block's face you want to check. For example, if
+ * you want to check if the bottom face of a block is visible, pass the
+ * indice bottom to the block's chunk index (so y - 1). Returns true if
+ * the face is visible.
+ */
+constexpr bool Chunk::faceIsVisible(glm::i8vec3 index) const noexcept {
+    if (isOutOfChunk(index))
+        return true;
+    return (chunk[index.x][index.y][index.z].name == Air_Block || chunk[index.x][index.y][index.z].name == Water_Block);
+}
+
+
 void Chunk::drawChunk() const noexcept
 {
     static constexpr std::size_t FIRST {0}, COUNT {CUBE_ATTRIBUTES * CHUNK_VOLUME};
@@ -451,13 +466,13 @@ bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
     }
     
 
-    // Check each block next to this block, if all of them are not air blocks then it is not visible to the player
-    return  (chunk[index.x + 1_i8][index.y][index.z].name == Air_Block ||
-             chunk[index.x - 1_i8][index.y][index.z].name == Air_Block ||
-             chunk[index.x][index.y + 1_i8][index.z].name == Air_Block ||
-             chunk[index.x][index.y - 1_i8][index.z].name == Air_Block ||
-             chunk[index.x][index.y][index.z + 1_i8].name == Air_Block ||
-             chunk[index.x][index.y][index.z - 1_i8].name == Air_Block);
+    // Check each block next to this block, if all of them are not air/water blocks then it is not visible to the player
+    return  ((chunk[index.x + 1_i8][index.y][index.z].name == Air_Block || chunk[index.x + 1_i8][index.y][index.z].name == Water_Block) ||
+             (chunk[index.x - 1_i8][index.y][index.z].name == Air_Block || chunk[index.x - 1_i8][index.y][index.z].name == Water_Block) ||
+             (chunk[index.x][index.y + 1_i8][index.z].name == Air_Block || chunk[index.x][index.y + 1_i8][index.z].name == Water_Block) ||
+             (chunk[index.x][index.y - 1_i8][index.z].name == Air_Block || chunk[index.x][index.y - 1_i8][index.z].name == Water_Block) ||
+             (chunk[index.x][index.y][index.z + 1_i8].name == Air_Block || chunk[index.x][index.y][index.z + 1_i8].name == Water_Block) ||
+             (chunk[index.x][index.y][index.z - 1_i8].name == Air_Block || chunk[index.x][index.y][index.z - 1_i8].name == Water_Block));
 }
 
 
