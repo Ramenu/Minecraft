@@ -41,7 +41,6 @@ float perlin(float p1, float p2, const std::array<glm::vec2, 4> &gradients) noex
     const float d3 {glm::dot(point, gradients[2])};
     const float d4 {glm::dot(point, gradients[3])};
 
-    //
     const float step1 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p1)};
     const float step2 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p2)};
     const float li1 {std::lerp(d1, d2, step1)}, li2 {std::lerp(d3, d4, step1)};
