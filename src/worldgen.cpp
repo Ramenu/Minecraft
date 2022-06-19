@@ -113,7 +113,7 @@ namespace WorldGen
 			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
 			{
 				//printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
-				exit(EXIT_FAILURE);
+				exit(-12);
 			}
 
 		#endif
