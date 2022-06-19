@@ -69,18 +69,8 @@ class Chunk
                    (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
         }
 
-        /**
-         * The index that should be passed should be the indice of the block
-         * that surround the block's face you want to check. For example, if
-         * you want to check if the bottom face of a block is visible, pass the
-         * indice bottom to the block's chunk index (so y - 1). Returns true if
-         * the face is visible.
-         */
-        inline constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept {
-            if (isOutOfChunk(index))
-                return true;
-            return (chunk[index.x][index.y][index.z].name == Air_Block);
-        }
+        constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept;
+        
 
 };
 
