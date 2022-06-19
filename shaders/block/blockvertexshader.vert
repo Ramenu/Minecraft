@@ -20,6 +20,7 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out float blockAmbient;
+out float blockOpacity;
 
 uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
@@ -83,28 +84,28 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.0,  0.0,  -1.0),
 
     // Front face
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
+    vec3(0.5,  0.0,  0.0),
+    vec3(0.5,  0.0,  0.0),
+    vec3(0.5,  0.0,  0.0),
+    vec3(0.5,  0.0,  0.0),
+    vec3(0.5,  0.0,  0.0),
+    vec3(0.5,  0.0,  0.0),
 
     // Right face
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,   1.0),
+    vec3(0.0,  0.0,   1.0),
+    vec3(0.0,  0.0,   1.0),
+    vec3(0.0,  0.0,   1.0),
+    vec3(0.0,  0.0,   1.0),
+    vec3(0.0,  0.0,   1.0),
 
     // Left face
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
-    vec3(0.0,  0.0,  -1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
+    vec3(0.0,  0.0,  1.0),
 
     // Top face
     vec3(0.0,  1.0,  0.0),
@@ -153,7 +154,7 @@ const float[TOTAL_BLOCKS] blockOpacities = {
    1.0, // Emerald Ore Block
    1.0, // Oak Wood Block
    1.0, // Leaf Block
-   0.7, // Water Block
+   0.8, // Water Block
 };
 
 void main()
@@ -164,4 +165,5 @@ void main()
     gl_Position = projection * view * vec4(FragPos, 1.0);
     TexCoord = vec2(textureCoords[attributeId].x, textureCoords[attributeId].y + textureCoordsY[int(blockID) - 1]);
     blockAmbient = aAmbient;
+    blockOpacity = blockOpacities[int(blockID) - 1];
 }
