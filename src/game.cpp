@@ -94,7 +94,7 @@ void runGame() noexcept
     [[maybe_unused]] float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
-    Texture textureAtlas {"./textures/textureatlas.png"};
+    const Texture textureAtlas {"./textures/textureatlas.png"};
     Renderer renderer;
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
@@ -102,10 +102,13 @@ void runGame() noexcept
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
 
     // RGB constants for the game's background colors (including alpha)
     static constexpr float RED {0.0f}, GREEN {0.8f}, BLUE {1.0f}, ALPHA {1.0f}; 
     glClearColor(RED, GREEN, BLUE, ALPHA);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // Main game loop
     while (!glfwWindowShouldClose(Window::getWindow()))
