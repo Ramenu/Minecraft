@@ -68,7 +68,7 @@ void initGame(const char *windowTitle) noexcept
 
     // Fill in the buffer's data
     static constexpr int BINDING_POINT {0}, OFFSET {0};
-    glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4) + sizeof(glm::mat3));
+    glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4));
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &GLMath::PROJECTION[0][0]);
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -91,7 +91,6 @@ static inline void updateCamera(const Renderer &renderer) noexcept
  */  
 void runGame() noexcept
 {
-    [[maybe_unused]] float deltaTime {0.0f}; // Time between current frame and last frame
     float lastFrame {0.0f}; // Time of last frame
 
     const Texture textureAtlas {"./textures/textureatlas.png"};
@@ -117,7 +116,7 @@ void runGame() noexcept
             time.start();
         #endif
         const float currentTime {static_cast<float>(glfwGetTime())};
-        deltaTime = currentTime - lastFrame;
+        const float deltaTime {currentTime - lastFrame};
         lastFrame = currentTime;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -126,7 +125,7 @@ void runGame() noexcept
         renderer.draw();
 
         glfwSwapBuffers(Window::getWindow()); // Swap color buffer
-        
+
         // Checks if any events are triggered (like keyboard input, etc)
         glfwPollEvents(); 
         renderer.update();
