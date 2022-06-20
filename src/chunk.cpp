@@ -461,9 +461,7 @@ bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
     ABORT_ON_OF_BOUNDS_ACCESS(index)
     // This means that it is on the outskirts of the chunk, which means it is visible to the player
     if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
-    {
         return true; 
-    }
     
 
     // Check each block next to this block, if all of them are not air/water blocks then it is not visible to the player
