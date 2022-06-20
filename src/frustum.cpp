@@ -1,11 +1,7 @@
 #include "minecraft/math/frustum.hpp"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/window/window.hpp"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-#include "gcem/gcem.hpp"
-#pragma GCC diagnostic pop
-
+#include "misc/boilerplate/gcem_noerr.hpp"
 
 Frustum::Frustum([[maybe_unused]] const glm::vec3 &position, [[maybe_unused]] const Camera::CameraDirections &dir, [[maybe_unused]] const FrustumView &view) noexcept
 {
@@ -30,5 +26,10 @@ Frustum::Frustum([[maybe_unused]] const glm::vec3 &position, [[maybe_unused]] co
 
 Frustum Frustum::getCameraFrustum() noexcept
 {
+    /*static constexpr float HEIGHT_NEAR {2.0f * gcem::tan(Camera::FOV.value() / 2.0f) * Camera::NEAR};
+    static constexpr float WIDTH_NEAR {HEIGHT_NEAR * Window::ASPECT_RATIO};
+
+    static constexpr float HEIGHT_FAR {2.0f * gcem::tan(Camera::FOV.value() / 2.0f) * Camera::FAR};
+    static constexpr float WIDTH_FAR {HEIGHT_FAR * Window::ASPECT_RATIO};*/
     return Frustum{Plane{}, Plane{}, Plane{}, Plane{}, Plane{}, Plane{}};
 }
