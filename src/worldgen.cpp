@@ -113,7 +113,7 @@ namespace WorldGen
 			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
 			{
 				//printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
-				exit(-12);
+				exit(-8);
 			}
 
 		#endif
@@ -138,7 +138,7 @@ namespace WorldGen
 		#ifndef NDEBUG
 			if (y >= 8)
 			{
-				printf("selectOrePick invalid pick!!!: %d\n", y);
+				printf("selectOrePick invalid pick!!!: %u\n", y);
 				exit(-12);
 			}
 		#endif
@@ -248,22 +248,25 @@ namespace WorldGen
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Standard: 
-				maxHeightForFormat = 4; 
-				frequency = 5.0f;
+				maxHeightForFormat = 3; 
+				frequency = 6.0f;
 				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
-		static constexpr int SPAWN_TREE_MAXIMUM_ROLL {100};
-		static constexpr int MIN_ROLL_TO_SPAWN_TREE {98};
+		static constexpr int SPAWN_TREE_MAXIMUM_ROLL {400};
+		static constexpr int MIN_ROLL_TO_SPAWN_TREE {397};
 		const auto gradients {generate2DGradients()};
+
 		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 		{
 			for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
 			{
-				std::int32_t yIndex {randomizeYIndex(x * frequency, z * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
-				const bool spawnTree {(std::rand() % SPAWN_TREE_MAXIMUM_ROLL > MIN_ROLL_TO_SPAWN_TREE) && (yIndex + TREE_HEIGHT < CHUNK_HEIGHT)};
+				std::int32_t yIndex {std::max(randomizeYIndex(x * frequency, z * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP, 
+				                              MINIMUM_HEIGHT_LEVEL_FOR_TOP)};
+				const auto roll {std::rand() % SPAWN_TREE_MAXIMUM_ROLL};
+				const bool spawnTree {(roll > MIN_ROLL_TO_SPAWN_TREE) && (yIndex + TREE_HEIGHT < CHUNK_HEIGHT)};
 				Block selectedBlock {format.mainBlock};
-				if (spawnTree&formatCanSpawnTree)
+				if (spawnTree&formatCanSpawnTree) // cppcheck-suppress bitwiseOnBoolean
 				{
 					spawnTreeAt(chunk, {x, yIndex, z});
 					yIndex -= 1;
