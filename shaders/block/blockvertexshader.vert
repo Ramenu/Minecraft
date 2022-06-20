@@ -154,7 +154,7 @@ const float[TOTAL_BLOCKS] blockOpacities = {
    1.0, // Emerald Ore Block
    1.0, // Oak Wood Block
    1.0, // Leaf Block
-   0.8, // Water Block
+   0.4, // Water Block
 };
 
 void main()
