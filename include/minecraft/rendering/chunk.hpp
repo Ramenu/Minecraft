@@ -6,12 +6,16 @@
 #include "minecraft/data/vertexbuffer.hpp"
 #include "minecraft/mesh/chunkmesh.hpp"
 #include "minecraft/block/face.h"
+#include "minecraft/math/shape/sphere.hpp"
 #include "glm/vec3.hpp"
 #include <span>
 #include <optional>
 
 static constexpr std::int32_t CHUNK_WIDTH {16}, CHUNK_HEIGHT {CHUNK_WIDTH}, CHUNK_LENGTH {CHUNK_WIDTH};
 static constexpr std::size_t CHUNK_VOLUME {CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_LENGTH};
+static constexpr float CHUNK_RADIUS {60.0f};
+static constexpr glm::vec3 CHUNK_OFFSET {CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_LENGTH};
+static constexpr glm::vec3 CHUNK_CENTER {CHUNK_WIDTH / 2.0f, CHUNK_HEIGHT / 2.0f, CHUNK_LENGTH / 2.0f};
 static_assert(CHUNK_HEIGHT == CHUNK_WIDTH && CHUNK_HEIGHT == CHUNK_LENGTH, "ERROR: Width, height, and length of the chunk must be equal!");
 
 
@@ -68,6 +72,16 @@ class Chunk
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
                    (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
         }
+
+        static inline constexpr glm::vec3 getChunkGlobalOffset(const glm::vec3 &chunkPos) noexcept {
+            return chunkPos * CHUNK_OFFSET;
+        }
+
+        static inline constexpr Sphere getChunkBoundingSphere(const glm::vec3 &chunkPos) noexcept {
+            return {getChunkGlobalOffset(chunkPos), CHUNK_RADIUS};
+        }
+
+        static bool isFacingChunk(const glm::i32vec3 &chunkPos) noexcept;
 
         constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept;
         
