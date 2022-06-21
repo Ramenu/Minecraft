@@ -5,7 +5,7 @@
 #include <cstdio>
 
 
-static constexpr std::int32_t CHUNKS_ON_START {12};
+static constexpr std::int32_t CHUNKS_ON_START {5};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
