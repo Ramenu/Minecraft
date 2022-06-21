@@ -134,9 +134,9 @@ bool Chunk::updateChunk() noexcept
                 // Not necessary to check if the player is looking at an air block
                 if (blockStates[x][y][z] != None)
                 {
-                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::getCameraRay().getRay().x) == x && 
-                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().y) == y && 
-                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().z) == z};
+                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::getCameraRay().getRay().x) % CHUNK_WIDTH == x && 
+                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().y) % CHUNK_HEIGHT == y && 
+                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().z) % CHUNK_LENGTH == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
                     static constexpr BlockState HIGHLIGHTED_AND_VISIBLE {Highlighted|Visible};
