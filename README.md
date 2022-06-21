@@ -1,9 +1,10 @@
 
-CLASSIC V2.8
+CLASSIC V2.9
 ------------
-- Perlin noise now used for top-level terrain generation
-- Changed the iron ore texture to make it stand out more (the last one was difficult to tell unless you were up close to it)
-- Modified the ore rarity a bit, but not too significantly
+- Significant rendering optimizations, most chunks that the player cannot see are not visible to the player
+- Small world gen changes for plains biomes and tree generation
+- Blocks can now be placed and breaked on every chunk
+
 
 Some links to the libraries I use, they are really great, go check them out:<br>
 https://www.glfw.org/ (Window and event handling library)<br>
