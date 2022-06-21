@@ -6,7 +6,9 @@ namespace Camera
 {
     static glm::mat4 view;
     static Ray cameraRay;
+    static glm::i32vec3 cameraPosChunkOffset;
     glm::mat4 getView() noexcept {return view;}
+    glm::i32vec3 getCameraPosChunkOffset() noexcept {return cameraPosChunkOffset;}
     Ray getCameraRay() noexcept {return cameraRay;}
 
     /** 
@@ -53,9 +55,11 @@ namespace Camera
         else if (settings.pitch < -CAMERA_UP_DOWN_TURN_ANGLE)
             settings.pitch = -CAMERA_UP_DOWN_TURN_ANGLE;
         
-        // Reset the yaw so the player can spin their camera around 
-        //if (settings.yaw > sideTurnAngle || settings.yaw < -sideTurnAngle)
-        //    settings.yaw = 0.0f;
+        cameraPosChunkOffset = glm::i32vec3 {
+            cameraPos.x / CHUNK_WIDTH,
+            cameraPos.y / CHUNK_HEIGHT,
+            cameraPos.z / CHUNK_LENGTH
+        };
 
          #if 1
             //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)

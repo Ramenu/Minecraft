@@ -27,6 +27,7 @@ namespace Camera
 		glm::vec3 right {glm::normalize(glm::cross(front, CAMERA_UP)) * SPEED};
 	};
 
+	extern glm::i32vec3 getCameraPosChunkOffset() noexcept;
 	extern Ray getCameraRay() noexcept;
 	extern glm::mat4 getView() noexcept;
 	extern void updateCameraPos() noexcept;
