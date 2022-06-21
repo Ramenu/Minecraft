@@ -33,10 +33,8 @@ class Renderer
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
         void updateAdjacentChunks(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunk,
-                                  const glm::u64vec3 &key) const noexcept;
-        void updateActiveChunks() const noexcept;
-        std::unordered_map<glm::u64vec3, Chunk> allChunks;
-        bool needsUpdate {true};
+                                  const glm::i32vec3 &key) const noexcept;
+        std::unordered_map<glm::i32vec3, Chunk> allChunks;
 };
 
 #endif // MC_RENDERER_HPP
