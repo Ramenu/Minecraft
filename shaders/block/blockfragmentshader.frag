@@ -18,7 +18,6 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 in float blockAmbient;
-in float blockOpacity;
 
 uniform sampler2D allTextures;
 uniform Material material;
@@ -39,5 +38,5 @@ void main()
 
     const vec3 result = (ambient + diffuse);
 
-    fragColor = vec4(result, blockOpacity);
+    fragColor = vec4(result, 1.0);
 }

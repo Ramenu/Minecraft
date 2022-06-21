@@ -20,7 +20,6 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out float blockAmbient;
-out float blockOpacity;
 
 uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
@@ -141,29 +140,13 @@ const float[TOTAL_BLOCKS] textureCoordsY = {
    0.9230769230769231, // Water Block
 };
 
-const float[TOTAL_BLOCKS] blockOpacities = {
-   1.0, // Grass Block
-   1.0, // Cobblestone Block
-   1.0, // Dirt Block
-   1.0, // Stone Block
-   1.0, // Coal Ore Block
-   1.0, // Iron Ore Block
-   1.0, // Gold Ore Block
-   1.0, // Redstone Ore Block
-   1.0, // Diamond Ore Block
-   1.0, // Emerald Ore Block
-   1.0, // Oak Wood Block
-   1.0, // Leaf Block
-   0.4, // Water Block
-};
-
 void main()
 {
     const int attributeId = gl_VertexID % BLOCK_ATTRIBUTES;
+    const int blockIDArrayIndex = int(blockID) - 1;
     FragPos = aPos * aVisible;
     Normal = lightDirections[attributeId];
     gl_Position = projection * view * vec4(FragPos, 1.0);
-    TexCoord = vec2(textureCoords[attributeId].x, textureCoords[attributeId].y + textureCoordsY[int(blockID) - 1]);
+    TexCoord = vec2(textureCoords[attributeId].x, textureCoords[attributeId].y + textureCoordsY[blockIDArrayIndex]);
     blockAmbient = aAmbient;
-    blockOpacity = blockOpacities[int(blockID) - 1];
 }
