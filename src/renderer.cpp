@@ -1,10 +1,11 @@
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/block/face.h"
 #include "minecraft/math/frustum.hpp"
+#include "minecraft/math/glmath.hpp"
 #include <cstdio>
 
 
-static constexpr float CHUNKS_ON_START {5.0f};
+static constexpr std::int32_t CHUNKS_ON_START {12};
 
 /**
  * Initializes the shaders, blocks and their positions, as well as the 
@@ -14,24 +15,18 @@ Renderer::Renderer() noexcept :
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
 {
     #if 1
-    for (std::size_t x {}; x < CHUNKS_ON_START; ++x)
-        for (std::size_t z {}; z < CHUNKS_ON_START; ++z)
+    for (std::int32_t x {}; x < CHUNKS_ON_START; ++x)
+        for (std::int32_t z {}; z < CHUNKS_ON_START; ++z)
             allChunks[{x, 0, z}].initChunk({x, 0, z});
     #else
         allChunks[{0, 0, 0}].initChunk({0, 0, 0});
     #endif
     cubeShader.useShader(); 
     cubeShader.setInt("allTextures", 0);
-}
 
-
-/**
- * Updates all of the active chunks.
- * Should be called only if an update
- * is required. 
- */
-void Renderer::updateActiveChunks() const noexcept
-{
+    // Update the visibility of the starting chunks relative to each other.
+    // Note that it is fine to simply check if the coordinate is over 0, since
+    // all the initialized chunks at the start do not have any negative coordinates.
     for (const auto&[chunkPos, chunk]: allChunks)
     {
         if (chunkPos.x > 0)
@@ -60,21 +55,21 @@ void Renderer::updateActiveChunks() const noexcept
  * the one located at the key given.
  */
 void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chosenChunk,
-                                    const glm::u64vec3 &key) const noexcept
+                                    const glm::i32vec3 &key) const noexcept
 {
-    if (key.x > 0)
+    if (allChunks.find({key.x - 1, key.y, key.z}) != allChunks.end())
         allChunks.at({key.x - 1, key.y, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, RightFace);
 
     if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
         allChunks.at({key.x + 1, key.y, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, LeftFace);
 
-    if (key.y > 0)
+    if (allChunks.find({key.x, key.y - 1, key.z}) != allChunks.end())
         allChunks.at({key.x, key.y - 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, TopFace);
 
     if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
         allChunks.at({key.x, key.y + 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, BottomFace);
 
-    if (key.z > 0)
+    if (allChunks.find({key.x, key.y, key.z - 1}) != allChunks.end())
         allChunks.at({key.x, key.y, key.z - 1}).updateChunkVisibilityToNeighbor(chosenChunk, FrontFace);
 
     if (allChunks.find({key.x, key.y, key.z + 1}) != allChunks.end())
@@ -92,14 +87,6 @@ void Renderer::update() noexcept
 
     if (updateNearChunks)
         updateAdjacentChunks(activeChunk->getChunk(), activeChunkKey);
-    
-    // This updates all of the chunks, and should be only set to true
-    // sparingly.
-    if (needsUpdate)
-    {
-        updateActiveChunks();
-        needsUpdate = false;
-    }
 }
 
 /**
@@ -107,6 +94,41 @@ void Renderer::update() noexcept
  */
 void Renderer::draw() const noexcept 
 {
-    for (const auto&[chunkPos, chunk]: allChunks)
-        chunk.drawChunk();
+    // Number of how many chunks the player can see on X and Z
+    #if 1
+    static constexpr int RENDER_DISTANCE_X {6}, RENDER_DISTANCE_Z {6};
+    const int32_t playerGlobalPosX {static_cast<int32_t>(Camera::cameraPos.x / CHUNK_WIDTH)},
+                  playerGlobalPosZ {static_cast<int32_t>(Camera::cameraPos.z / CHUNK_LENGTH)};
+    for (std::int32_t x {playerGlobalPosX - RENDER_DISTANCE_X}; x < playerGlobalPosX + RENDER_DISTANCE_X; ++x)
+    {
+        for (std::int32_t z {playerGlobalPosZ - RENDER_DISTANCE_Z}; z < playerGlobalPosZ + RENDER_DISTANCE_Z; ++z)
+        {
+            const glm::i32vec3 index {x, 0, z};
+            // If the chunk key is found and the player is facing the chunk
+            #if 1
+            if (allChunks.find(index) != allChunks.end() && Chunk::isFacingChunk(Chunk::getChunkGlobalOffset(index))) 
+                allChunks.at(index).drawChunk();
+            #else
+            if (allChunks.find(index) != allChunks.end())
+            {
+                if (Chunk::isFacingChunk(Chunk::getChunkGlobalOffset(index)))
+                    allChunks.at(index).drawChunk();
+                else
+                    printf("Chunk {%d, %d, %d} not visible\n", index.x, index.y, index.z);
+            }
+            #endif
+        }
+    }
+    #else
+        #if 0
+        for (const auto&[chunkPos, chunk]: allChunks)
+        {
+            printf("{%lu, %lu, %lu}\n", chunkPos.x, chunkPos.y, chunkPos.z);
+            chunk.drawChunk();
+        }
+        #else
+        if (allChunks.find({0, 0, 0}) != allChunks.end())
+            allChunks.at({0, 0, 0}).drawChunk();
+        #endif
+    #endif
 }
