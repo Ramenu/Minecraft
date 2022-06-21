@@ -81,12 +81,15 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
  */
 void Renderer::update() noexcept
 {
-    static constexpr glm::u64vec3 activeChunkKey {0, 0, 0};
-    Chunk * const activeChunk {&allChunks.at(activeChunkKey)};
-    const bool updateNearChunks {activeChunk->updateChunk()};
+    const auto globalPos {Camera::getCameraPosChunkOffset()};
+    if (allChunks.find(globalPos) != allChunks.end())
+    {
+        Chunk * const activeChunk {&allChunks.at(globalPos)};
+        const bool updateNearChunks {activeChunk->updateChunk()};
 
-    if (updateNearChunks)
-        updateAdjacentChunks(activeChunk->getChunk(), activeChunkKey);
+        if (updateNearChunks)
+            updateAdjacentChunks(activeChunk->getChunk(), globalPos);
+    }
 }
 
 /**
@@ -97,11 +100,10 @@ void Renderer::draw() const noexcept
     // Number of how many chunks the player can see on X and Z
     #if 1
     static constexpr int RENDER_DISTANCE_X {6}, RENDER_DISTANCE_Z {6};
-    const int32_t playerGlobalPosX {static_cast<int32_t>(Camera::cameraPos.x / CHUNK_WIDTH)},
-                  playerGlobalPosZ {static_cast<int32_t>(Camera::cameraPos.z / CHUNK_LENGTH)};
-    for (std::int32_t x {playerGlobalPosX - RENDER_DISTANCE_X}; x < playerGlobalPosX + RENDER_DISTANCE_X; ++x)
+    const auto globalPos {Camera::getCameraPosChunkOffset()};
+    for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X}; x < globalPos.x + RENDER_DISTANCE_X; ++x)
     {
-        for (std::int32_t z {playerGlobalPosZ - RENDER_DISTANCE_Z}; z < playerGlobalPosZ + RENDER_DISTANCE_Z; ++z)
+        for (std::int32_t z {globalPos.z - RENDER_DISTANCE_Z}; z < globalPos.z + RENDER_DISTANCE_Z; ++z)
         {
             const glm::i32vec3 index {x, 0, z};
             // If the chunk key is found and the player is facing the chunk
