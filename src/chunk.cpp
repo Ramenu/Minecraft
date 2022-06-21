@@ -473,6 +473,29 @@ bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
              (chunk[index.x][index.y][index.z - 1_i8].name == Air_Block || chunk[index.x][index.y][index.z - 1_i8].name == Water_Block));
 }
 
+/**
+ * Returns true if the player is facing the chunk's
+ * direction.
+ */
+bool Chunk::isFacingChunk(const glm::i32vec3 &chunkPos) noexcept 
+{
+    static constexpr float MINIMUM_ANGLE_TO_SEE {-0.36f};
+    bool facingChunk {true};
+    if (Camera::cameraPos.x - chunkPos.x > CHUNK_WIDTH)
+        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{-1.0f, 0.0f, 0.0f}) >= MINIMUM_ANGLE_TO_SEE);
+    else if (Camera::cameraPos.x - chunkPos.x < -CHUNK_WIDTH)
+        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{1.0f, 0.0f, 0.0f}) >= MINIMUM_ANGLE_TO_SEE);
+    
+    if (!facingChunk) // No point to continue checking if 'facingChunk' was already set to false
+        return false;
+
+    if (Camera::cameraPos.z - chunkPos.z > CHUNK_LENGTH)
+        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, -1.0f}) >= MINIMUM_ANGLE_TO_SEE);
+    else if (Camera::cameraPos.z - chunkPos.z < -CHUNK_LENGTH)
+        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, 1.0f}) >= MINIMUM_ANGLE_TO_SEE);
+    return facingChunk;
+}
+
 
 /**
  * 
