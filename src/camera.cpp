@@ -1,3 +1,4 @@
+#include <cmath>
 #include "minecraft/camera/camera.hpp"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/window/window.hpp"
@@ -16,7 +17,8 @@ namespace Camera
      */
     void updateCameraPos() noexcept
     {
-        const float yawRadians {glm::radians(settings.yaw)}, pitchRadians {glm::radians(settings.pitch)};
+        const float yawRadians {glm::radians(settings.yaw)};
+        const float pitchRadians {glm::radians(settings.pitch)};
         const float cosPitch {std::cos(pitchRadians)};
 
         // Calculate a 3D vector given the yaw and pitch
@@ -31,9 +33,11 @@ namespace Camera
         direction.right = glm::normalize(glm::cross(direction.front, CAMERA_UP));
         direction.front = glm::normalize(updatedDirection);
 
-        double mouseX, mouseY;
+        double mouseX {};
+        double mouseY {};
         glfwGetCursorPos(Window::getWindow(), &mouseX, &mouseY);
-        static double lastX {mouseX}, lastY {mouseY};
+        static double lastX {mouseX};
+        static double lastY {mouseY};
 
         const float xOffset {static_cast<float>(mouseX - lastX) * settings.sensitivity};
         const float yOffset {static_cast<float>(lastY - mouseY) * settings.sensitivity}; // y-axis is reversed, which is why the order is flipped
@@ -46,8 +50,7 @@ namespace Camera
         settings.pitch += yOffset;
 
         // Angles in degrees
-        static constexpr float CAMERA_UP_DOWN_TURN_ANGLE {88.0f}; 
-        //static constexpr float sideTurnAngle {360.0f};
+        static constexpr float CAMERA_UP_DOWN_TURN_ANGLE {88.0F}; 
 
         // Prevent the player tilting their head backwards
         if (settings.pitch > CAMERA_UP_DOWN_TURN_ANGLE)

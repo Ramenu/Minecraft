@@ -1,6 +1,8 @@
 #define GLFW_INCLUDE_NONE
 #define GAME_BENCHMARK
 
+#include <cmath>
+
 #include "minecraft/game/game.hpp"
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/glerror/glerror.hpp"
@@ -22,9 +24,10 @@ static GLuint vao;
      */
     static bool initializedDebugContext() noexcept
     {
-        int flag;
+        static constexpr int DEBUG_CONTEXT_INITIALIZATION_FAILURE {0};
+        int flag {};
         glGetIntegerv(GL_CONTEXT_FLAGS, &flag);
-        return (flag & GL_CONTEXT_FLAG_DEBUG_BIT);
+        return ((flag & GL_CONTEXT_FLAG_DEBUG_BIT) != DEBUG_CONTEXT_INITIALIZATION_FAILURE);
     }
 #endif
 
@@ -41,18 +44,21 @@ void initGame(const char *windowTitle) noexcept
     Window::initWindow(windowTitle);
     glfwMakeContextCurrent(Window::getWindow());
     
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    static constexpr int GLAD_INITIALIZATION_FAILURE {0};
+    if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == GLAD_INITIALIZATION_FAILURE)
         GLError::error_message("Failed to initialize GLAD");
     
     // Check if initializing the debug context was successful (if on a debug build)
     #ifndef NDEBUG
         printf("Running on debug build.\n");
-        if (!initializedDebugContext())
+        if (!initializedDebugContext()) {
             GLError::error_message("Failed to initialize OpenGL debug context");
+}
         GLError::enableGLDebugCallBack();
     #endif
 
-    static constexpr float x {}, y {};
+    static constexpr float x {};
+    static constexpr float y {};
     glViewport(x, y, Window::WIDTH, Window::HEIGHT);
 
     // Initialize vertex array for uniform buffer
@@ -67,7 +73,8 @@ void initGame(const char *windowTitle) noexcept
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW); 
 
     // Fill in the buffer's data
-    static constexpr int BINDING_POINT {0}, OFFSET {0};
+    static constexpr int BINDING_POINT {0};
+    static constexpr int OFFSET {0};
     glBindBufferRange(GL_UNIFORM_BUFFER, BINDING_POINT, uniformBuffer, OFFSET, sizeof(glm::mat4));
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &GLMath::PROJECTION[0][0]);
 
@@ -76,12 +83,14 @@ void initGame(const char *windowTitle) noexcept
 
 static inline void updateCamera(const Renderer &renderer) noexcept
 {
-    double mouseXPos, mouseYPos;
+    double mouseXPos {};
+    double mouseYPos {};
     glfwGetCursorPos(Window::getWindow(), &mouseXPos, &mouseYPos);
     Camera::updateCameraPos();
     renderer.getShader().useShader();
     renderer.getShader().setMat4("view", Camera::getView());
     renderer.getShader().setVec3("viewPos", Camera::cameraPos);
+    renderer.getShader().setFloat("iTime", static_cast<float>(glfwGetTime()));
 }
 
 /**
@@ -91,7 +100,7 @@ static inline void updateCamera(const Renderer &renderer) noexcept
  */  
 void runGame() noexcept
 {
-    float lastFrame {0.0f}; // Time of last frame
+    float lastFrame {0.0F}; // Time of last frame
 
     const Texture textureAtlas {"./textures/textureatlas.png"};
     Renderer renderer;
@@ -101,16 +110,19 @@ void runGame() noexcept
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
 
     // RGB constants for the game's background colors (including alpha)
-    static constexpr float RED {0.0f}, GREEN {0.8f}, BLUE {1.0f}, ALPHA {1.0f}; 
+    static constexpr float RED {0.0F};
+    static constexpr float GREEN {0.8F};
+    static constexpr float BLUE {1.0F};
+    static constexpr float ALPHA {1.0F}; 
     glClearColor(RED, GREEN, BLUE, ALPHA);
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+    renderer.getShader().setVec2("iResolution", glm::vec2{Window::WIDTH, Window::HEIGHT});
+
     // Main game loop
-    while (!glfwWindowShouldClose(Window::getWindow()))
+    static constexpr int WINDOW_NOT_CLOSED {0};
+    while (glfwWindowShouldClose(Window::getWindow()) == WINDOW_NOT_CLOSED)
     {
         #ifdef GAME_BENCHMARK
             time.start();

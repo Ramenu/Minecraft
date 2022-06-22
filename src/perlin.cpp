@@ -33,7 +33,7 @@ std::array<glm::vec2, 4> generate2DGradients() noexcept {
  */
 float perlin(float p1, float p2, const std::array<glm::vec2, 4> &gradients) noexcept 
 {
-    const glm::vec2 point {p1*0.01f, p2*0.01f};
+    const glm::vec2 point {p1*0.01F, p2*0.01F};
 
     // Compute the distance between the point and each of the gradients
     const float d1 {glm::dot(point, gradients[0])};
@@ -41,8 +41,9 @@ float perlin(float p1, float p2, const std::array<glm::vec2, 4> &gradients) noex
     const float d3 {glm::dot(point, gradients[2])};
     const float d4 {glm::dot(point, gradients[3])};
 
-    const float step1 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p1)};
-    const float step2 {GLMath::smoothstep(0.0f, CHUNK_HEIGHT - 1.0f, p2)};
-    const float li1 {std::lerp(d1, d2, step1)}, li2 {std::lerp(d3, d4, step1)};
+    const float step1 {GLMath::smoothstep(0.0F, CHUNK_HEIGHT - 1.0F, p1)};
+    const float step2 {GLMath::smoothstep(0.0F, CHUNK_HEIGHT - 1.0F, p2)};
+    const float li1 {std::lerp(d1, d2, step1)};
+    const float li2 {std::lerp(d3, d4, step1)};
     return std::lerp(li1, li2, step2);
 }

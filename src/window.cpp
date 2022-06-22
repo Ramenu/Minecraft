@@ -31,12 +31,13 @@ namespace Window
     /**
      * Key callback for GLFW.
      */
-    static void key_callback(GLFWwindow *glWindow, int key, int, int, int) noexcept
+    static void key_callback(GLFWwindow *glWindow, int key, int /*unused*/, int /*unused*/, int /*unused*/) noexcept
     {
+        static constexpr int CLOSE_WINDOW {1};
         switch (key)
         {
             case GLFW_KEY_Q: return renderWireFrames();
-            case GLFW_KEY_ESCAPE: return glfwSetWindowShouldClose(glWindow, true);
+            case GLFW_KEY_ESCAPE: return glfwSetWindowShouldClose(glWindow, CLOSE_WINDOW);
         }
     }
 
@@ -50,7 +51,7 @@ namespace Window
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         {
             static constinit bool wireFrameMode {true};
-            if ((wireFrameMode = !wireFrameMode)) // cppcheck-suppress knownConditionTrueFalse
+            if ((wireFrameMode = !wireFrameMode))// cppcheck-suppress knownConditionTrueFalse
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             else
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -59,7 +60,7 @@ namespace Window
 
     void deleteWindow() noexcept
     {
-        if (window)
+        if (window != nullptr)
             glfwDestroyWindow(window);
     }
 
@@ -80,10 +81,10 @@ namespace Window
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true); 
         #endif
 
-        glWindow = glfwCreateWindow(WIDTH, HEIGHT, title, NULL, NULL);
+        glWindow = glfwCreateWindow(WIDTH, HEIGHT, title, nullptr, nullptr);
 
         //Occurs if window or OpenGL context creation fails (prints an error message and the title of the window)
-        if (!glWindow)
+        if (glWindow == nullptr)
         {
             glfwTerminate();
             GLError::error_message("Failed to contextualize window");
@@ -99,10 +100,12 @@ namespace Window
     {
         window = loadWindow(window, windowName);
         GLFWimage icon;
-        icon.pixels = stbi_load("./icons/icon.png", &icon.width, &icon.height, 0, 0);
+        icon.pixels = stbi_load("./icons/icon.png", &icon.width, &icon.height, nullptr, 0);
         glfwSetWindowSize(window, WIDTH, HEIGHT);
         glfwSetWindowIcon(window, 1, &icon);
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWIDTH, int windowHeight) {glViewport(0, 0, windowWIDTH, windowHeight);});
+        static constexpr int viewportX {0};
+        static constexpr int viewportY {0};
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWIDTH, int windowHeight) {glViewport(viewportX, viewportY, windowWIDTH, windowHeight);});
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetKeyCallback(window, key_callback);
         stbi_image_free(icon.pixels);

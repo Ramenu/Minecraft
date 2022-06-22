@@ -39,9 +39,9 @@ namespace Sound
      */
     static uint8_t getSoundID(BlockName name) noexcept
     {
-        static constexpr int GRASS_BLOCK_SOUND_ID {0},
-                             DIRT_BLOCK_SOUND_ID {0},
-                             STONE_BLOCK_SOUND_ID {1};
+        static constexpr int GRASS_BLOCK_SOUND_ID {0};
+        static constexpr int DIRT_BLOCK_SOUND_ID {0};
+        static constexpr int STONE_BLOCK_SOUND_ID {1};
         switch (name)
         {
             case Grass_Block: return GRASS_BLOCK_SOUND_ID;

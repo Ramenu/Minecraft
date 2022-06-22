@@ -22,7 +22,7 @@ namespace GLError
          * Callback function for debugging OpenGL.
          */
         void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id, GLenum severity, 
-                                    GLsizei, const char *message, const void *){
+                                    GLsizei /*unused*/, const char *message, const void * /*unused*/){
 
             // ignore non-significant error/warning codes
             switch (id)
