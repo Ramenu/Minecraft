@@ -10,7 +10,7 @@ static constexpr float X_POS {1.0f / ATLAS_WIDTH}, Y_POS {1.0f / ATLAS_HEIGHT};
 class Texture
 {
     private:
-        unsigned int texture;
+        unsigned int texture {};
     public:
         explicit Texture(const std::string &pathToTexture) noexcept;
         ~Texture() noexcept;
