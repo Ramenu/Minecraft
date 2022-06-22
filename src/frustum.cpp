@@ -27,9 +27,9 @@ Frustum::Frustum([[maybe_unused]] const glm::vec3 &position, [[maybe_unused]] co
 
 Frustum Frustum::getCameraFrustum() noexcept
 {
-    Frustum frustum;
+    Frustum frustum{};
     #if 1
-    static constexpr float HEIGHT_FAR_HALF {gcem::tan(Camera::FOV.value() / 2.0f) * Camera::FAR};
+    static constexpr float HEIGHT_FAR_HALF {gcem::tan(Camera::FOV.value() / 2.0F) * Camera::FAR};
     static constexpr float WIDTH_FAR_HALF {HEIGHT_FAR_HALF * Window::ASPECT_RATIO};
     const glm::vec3 frontMultFar {Camera::direction.front * Camera::FAR};
     const glm::vec3 rightNormal {glm::normalize(frontMultFar + Camera::direction.right * WIDTH_FAR_HALF)};
