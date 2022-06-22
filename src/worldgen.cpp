@@ -37,18 +37,6 @@ namespace WorldGen
 
 	}
 
-	/**
-	 * Fills the chunk with air blocks.
-	 * TODO: Later on try to find a way to optimize this.
-	 */
-	static constexpr std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> fillChunkWithAirBlocks() noexcept {
-		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
-		for (std::int32_t y {CHUNK_HEIGHT - 1}; y >= 0; --y)
-			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
-				for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
-					chunk[x][y][z] = Block{Air_Block};
-		return chunk;
-	}
 
 	static constexpr void spawnTreeAt(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
 	                                  glm::u8vec3 index) noexcept
@@ -118,9 +106,12 @@ namespace WorldGen
 
 		#endif
 		glm::u8vec3 offset {portionSize + currentIndex};
-		if (offset.x >= CHUNK_WIDTH_HALF) offset.x = CHUNK_WIDTH_HALF - 1;
-		if (offset.y >= CHUNK_HEIGHT_HALF) offset.y = CHUNK_HEIGHT_HALF - 1;
-		if (offset.z >= CHUNK_LENGTH_HALF) offset.z = CHUNK_LENGTH_HALF - 1;
+		if (offset.x >= CHUNK_WIDTH_HALF)
+			offset.x = CHUNK_WIDTH_HALF - 1;
+		if (offset.y >= CHUNK_HEIGHT_HALF)
+			offset.y = CHUNK_HEIGHT_HALF - 1;
+		if (offset.z >= CHUNK_LENGTH_HALF)
+			offset.z = CHUNK_LENGTH_HALF - 1;
 		for (std::int32_t x {currentIndex.x}; x < offset.x; ++x)
 			for (std::int32_t y {currentIndex.y}; y < offset.y; ++y)
 				for (std::int32_t z {currentIndex.z}; z < offset.z; ++z)
@@ -225,8 +216,8 @@ namespace WorldGen
 		float noise {perlin(x, z, gradients)};
 
 		// Transform range to [0.0, 1.0] assuming range of the noise is [-1.0, 1.0]
-		noise += 1.0f;
-		noise /= 2.0f;
+		noise += 1.0F;
+		noise /= 2.0F;
 
 		return static_cast<std::int32_t>(noise * maxHeight);
 
@@ -243,13 +234,13 @@ namespace WorldGen
 	{
 		#if 1
 		std::int32_t maxHeightForFormat {};
-		float frequency {1.0f};
+		float frequency {1.0F};
 		bool formatCanSpawnTree {true};
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Standard: 
 				maxHeightForFormat = 3; 
-				frequency = 6.0f;
+				frequency = 6.0F;
 				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
@@ -340,7 +331,7 @@ namespace WorldGen
 	 */
     std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generateTerrain(Biome biome) noexcept 
     {
-		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {fillChunkWithAirBlocks()};
+		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {};
 		switch (biome)
 		{
 			case Plains: generatePlainsBiome(chunk); break;
