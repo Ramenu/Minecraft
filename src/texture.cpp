@@ -47,13 +47,16 @@ Texture::Texture(const std::string &pathToTexture) noexcept
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        int width, height, colorChannels;
+        int width {};
+        int height {};
+        int colorChannels {};
         unsigned char *data {stbi_load(pathToTexture.c_str(), &width, &height, &colorChannels, 0)};
 
-        if (data)
+        if (data != nullptr)
         {
             static constexpr int MIPMAP_LEVEL {0};
-            int format {GL_RGB}, internalformat {GL_RGB};
+            int format {GL_RGB};
+            int internalformat {GL_RGB};
             if (std_fs::path(pathToTexture).extension() == ".png")
             {
                 format = GL_RGBA;
