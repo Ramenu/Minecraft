@@ -1,5 +1,7 @@
 #version 460 core
 
+precision lowp float;
+
 #define TOTAL_BLOCKS 13
 #define BLOCK_ATTRIBUTES 36
 #if 1
@@ -20,6 +22,7 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out float blockAmbient;
+flat out int blockFragID;
 
 uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
@@ -91,12 +94,12 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
     vec3(0.43,  0.0,  0.0),
 
     // Right face
-    vec3(0.0,  0.0,   1.0),
-    vec3(0.0,  0.0,   1.0),
-    vec3(0.0,  0.0,   1.0),
-    vec3(0.0,  0.0,   1.0),
-    vec3(0.0,  0.0,   1.0),
-    vec3(0.0,  0.0,   1.0),
+    vec3(0.1,  0.0,   0.0),
+    vec3(0.1,  0.0,   0.0),
+    vec3(0.1,  0.0,   0.0),
+    vec3(0.1,  0.0,   0.0),
+    vec3(0.1,  0.0,   0.0),
+    vec3(0.1,  0.0,   0.0),
 
     // Left face
     vec3(0.0,  0.0,  1.0),
@@ -143,10 +146,10 @@ const float[TOTAL_BLOCKS] textureCoordsY = {
 void main()
 {
     const int attributeId = gl_VertexID % BLOCK_ATTRIBUTES;
-    const int blockIDArrayIndex = int(blockID) - 1;
+    blockFragID = int(blockID) - 1;
     FragPos = aPos * aVisible;
     Normal = lightDirections[attributeId];
     gl_Position = projection * view * vec4(FragPos, 1.0);
-    TexCoord = vec2(textureCoords[attributeId].x, textureCoords[attributeId].y + textureCoordsY[blockIDArrayIndex]);
+    TexCoord = vec2(textureCoords[attributeId].x, textureCoords[attributeId].y + textureCoordsY[blockFragID]);
     blockAmbient = aAmbient;
 }
