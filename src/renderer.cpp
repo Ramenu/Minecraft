@@ -27,6 +27,7 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
     // Update the visibility of the starting chunks relative to each other.
     // Note that it is fine to simply check if the coordinate is over 0, since
     // all the initialized chunks at the start do not have any negative coordinates.
+    #if 1
     for (const auto&[chunkPos, chunk]: allChunks)
     {
         if (chunkPos.x > 0)
@@ -48,6 +49,7 @@ cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragment
             chunkZ->updateChunkVisibilityToNeighbor(chunk.getChunk(), FrontFace);
         } 
     }
+    #endif
 }
 
 /**
@@ -93,13 +95,24 @@ void Renderer::update() noexcept
 }
 
 /**
+ * Creates a chunk at the given location.
+ */
+void Renderer::createChunk(const glm::i32vec3 &chunkPos) noexcept 
+{
+    Chunk * const chunk {&allChunks[chunkPos]};
+    chunk->initChunk(chunkPos);
+    updateAdjacentChunks(chunk->getChunk(), chunkPos);
+}
+
+/**
  * Draws all of the chunks.
  */
 void Renderer::draw() const noexcept 
 {
     // Number of how many chunks the player can see on X and Z
     #if 1
-    static constexpr int RENDER_DISTANCE_X {6}, RENDER_DISTANCE_Z {6};
+    static constexpr int RENDER_DISTANCE_X {6};
+    static constexpr int RENDER_DISTANCE_Z {6};
     const auto globalPos {Camera::getCameraPosChunkOffset()};
     for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X}; x < globalPos.x + RENDER_DISTANCE_X; ++x)
     {
