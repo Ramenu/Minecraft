@@ -16,12 +16,12 @@ struct FrustumView
 class Frustum
 {
     private:
-        Plane nearFace;
-        Plane farFace;
-        Plane rightFace;
-        Plane leftFace;
-        Plane topFace;
-        Plane bottomFace;
+        Plane nearFace{};
+        Plane farFace{};
+        Plane rightFace{};
+        Plane leftFace{};
+        Plane topFace{};
+        Plane bottomFace{};
     public:
         Frustum() = default;
         Frustum(const Plane &near, const Plane &far, const Plane &right,
