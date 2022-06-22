@@ -9,7 +9,7 @@ class Shader
 {
     private:
         GLuint shaderProgram;
-        void checkShaderCompilationErrors(GLuint shader, const std::string &shaderPath) const noexcept;
+        static void checkShaderCompilationErrors(GLuint shader, const std::string &shaderPath) noexcept;
         void checkLinkageErrors() const noexcept;
     public:
         Shader() = default;
