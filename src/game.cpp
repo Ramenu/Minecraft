@@ -51,9 +51,8 @@ void initGame(const char *windowTitle) noexcept
     // Check if initializing the debug context was successful (if on a debug build)
     #ifndef NDEBUG
         printf("Running on debug build.\n");
-        if (!initializedDebugContext()) {
+        if (!initializedDebugContext())
             GLError::error_message("Failed to initialize OpenGL debug context");
-}
         GLError::enableGLDebugCallBack();
     #endif
 
