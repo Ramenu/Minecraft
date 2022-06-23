@@ -77,7 +77,7 @@ namespace Window
         #endif
 
         // Enable debug output context on debug builds
-        #ifdef MC_DEBUG_BUILD
+        #ifndef NDEBUG
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true); 
         #endif
 
