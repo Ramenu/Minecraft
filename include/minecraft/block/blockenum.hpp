@@ -5,9 +5,9 @@
 
 enum BlockState : std::uint8_t
 {
-    None = 1,
-    Visible = 2,
-    Highlighted = 4
+    None = 0,
+    Visible = 1,
+    Highlighted = 2,
 };
 
 inline constexpr BlockState operator|(BlockState a, BlockState b) noexcept {
