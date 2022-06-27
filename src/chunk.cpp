@@ -134,7 +134,7 @@ bool Chunk::updateChunk() noexcept
         {
             for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
-                // Not necessary to check if the player is looking at an air block
+                // Not necessary to check if the player is looking at an air block, or is not visible to the player
                 if (blockStates[x][y][z] != None)
                 {
                     const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::getCameraRay().getRay().x) % CHUNK_WIDTH == x && 
