@@ -93,11 +93,13 @@ void Renderer::update() noexcept
     // We need to check if the chunk offset changed since the last call, since
     // the last chunk may have an invalid state (e.g., block still highlighted).
     // If this is the case, then we need to update the last chunk the camera was on.
-    if (lastPos != globalPos)
+    if (lastPos.x != globalPos.x || lastPos.z != globalPos.z)
     {
-        if (allChunks.find(lastPos) != allChunks.end())
+        if (allChunks.find({lastPos.x, 0, lastPos.z}) != allChunks.end())
+        {
             allChunks[lastPos].updateChunk();
-        lastPos = globalPos;
+            lastPos = globalPos;
+        }
     }
 
     if (allChunks.find(globalPos) != allChunks.end())
