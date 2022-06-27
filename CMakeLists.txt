@@ -82,6 +82,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
         message(STATUS "Running release build")
         target_compile_options(main PRIVATE
+        -DNDEBUG
         -O3
         -ffast-math
         -flto
