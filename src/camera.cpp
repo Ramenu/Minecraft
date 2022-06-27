@@ -2,6 +2,7 @@
 #include "minecraft/camera/camera.hpp"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/window/window.hpp"
+#include "minecraft/debug/debug.hpp"
 
 namespace Camera
 {
@@ -64,19 +65,13 @@ namespace Camera
             cameraPos.z / CHUNK_LENGTH
         };
 
-         #if 1
-            //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
-            const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
-            switch (nearestDirectionToPlayer)
-            {
-                default: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z}, direction.front); break; // Up
-                case West: cameraRay.updateRay({cameraPos.x - 1, cameraPos.y, cameraPos.z}, direction.front); break;
-                case East: cameraRay.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
-                case North: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1}, direction.front); break;
-                case South: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z - 1}, direction.front); break;
-                case Down: cameraRay.updateRay({cameraPos.x + 1, cameraPos.y, cameraPos.z}, direction.front); break;
-            }
-        #endif
-
+        //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
+        const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
+        switch (nearestDirectionToPlayer)
+        {
+            default: cameraRay.updateRay(cameraPos, direction.front); break;
+            case North: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1.0f}, direction.front); break;
+            case East: cameraRay.updateRay({cameraPos.x + 1.0f, cameraPos.y, cameraPos.z}, direction.front); break;
+        }
     }
 }
