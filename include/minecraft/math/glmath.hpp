@@ -25,7 +25,7 @@ namespace GLMath
     static constexpr glm::mat4 IDENTITY_MATRIX_4D {glm::mat4{1.0f}};
     static const glm::mat4 PROJECTION {glm::perspective(Camera::FOV.value(), Window::ASPECT_RATIO, Camera::NEAR, Camera::FAR)};
     [[maybe_unused]] static const glm::mat4 INVERSE_PROJECTION {glm::inverse(PROJECTION)};
-    extern Direction getDirectionClosestTo(const glm::vec3 &vec) noexcept;
+    extern Direction getDirectionClosestTo(const glm::vec3 &normal) noexcept;
 
     /**
      * Returns a pseudo-randomized float ranging from
