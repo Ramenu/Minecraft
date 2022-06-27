@@ -142,13 +142,13 @@ bool Chunk::updateChunk() noexcept
                                                   static_cast<std::int32_t>(Camera::getCameraRay().getRay().z) % CHUNK_LENGTH == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
+                    const glm::i8vec3 index {x, y, z};
                     static constexpr BlockState HIGHLIGHTED_AND_VISIBLE {Highlighted|Visible};
                     if (blockStates[x][y][z] == HIGHLIGHTED_AND_VISIBLE)
                     {
-                        const glm::i8vec3 index {x, y, z};
                         if (!rayLookingAtBlock)
                         {
-                            blockStates[x][y][z] &= Highlighted;
+                            blockStates[x][y][z] &= Visible;
                             highlightBlock(index, DEFAULT_AMBIENT_LEVEL); // un-highlight the block
                         }
                         // Destroy the block if the left mouse button is clicked
@@ -156,6 +156,7 @@ bool Chunk::updateChunk() noexcept
                         {
                             Sound::playBlockBreakSound(chunk[x][y][z].name);
                             modifyChunk(index, Block{Air_Block});
+                            // Block was destroyed at the edge of the chunk, so the other chunks must be updated as well
                             if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
                                 updateNeeded = true;
                         }
@@ -170,15 +171,18 @@ bool Chunk::updateChunk() noexcept
 
                             // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
                             // placed on an air block
-                            if (!isOutOfChunk(blockPosition) && chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
+                            if (!isOutOfChunk(blockPosition))
                             {
-                                modifyChunk(blockPosition, Block{Water_Block});
-                                // Highlighting it is necessary, so in the next call the method can decide whether to still keep
-                                // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
-                                blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = HIGHLIGHTED_AND_VISIBLE;
-                                Sound::playBlockPlacementSound(chunk[blockPosition.x][blockPosition.y][blockPosition.z].name);
-                                if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
-                                    updateNeeded = true;
+                                if (chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
+                                {
+                                    modifyChunk(blockPosition, Block{Cobblestone_Block});
+                                    // Highlighting it is necessary, so in the next call the method can decide whether to still keep
+                                    // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
+                                    blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = HIGHLIGHTED_AND_VISIBLE;
+                                    Sound::playBlockPlacementSound(chunk[blockPosition.x][blockPosition.y][blockPosition.z].name);
+                                    if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
+                                        updateNeeded = true;
+                                }
                             }
                         }
                         oldState = newState;
@@ -186,8 +190,7 @@ bool Chunk::updateChunk() noexcept
                     }
                     if (rayLookingAtBlock)
                     {
-                        blockStates[x][y][z] = HIGHLIGHTED_AND_VISIBLE;
-                        const glm::i8vec3 index {x, y, z};
+                        blockStates[x][y][z] |= Highlighted;
                         highlightBlock(index, HIGHLIGHTED_AMBIENT_LEVEL); // highlight the block
                     }
                 }
@@ -527,6 +530,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 	chunk = WorldGen::generateTerrain(WorldGen::Biome::Plains);
     position = {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
 
+    // TODO: I wonder if putting all the data into one array would have a performance impact on glDrawArrays? Investigate.
     for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
         for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
