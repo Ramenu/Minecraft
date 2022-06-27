@@ -65,11 +65,14 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
     if (allChunks.find({key.x + 1, key.y, key.z}) != allChunks.end())
         allChunks.at({key.x + 1, key.y, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, LeftFace);
 
+    // Top and bottom chunks not a feature (yet..)
+    #if 0
     if (allChunks.find({key.x, key.y - 1, key.z}) != allChunks.end())
         allChunks.at({key.x, key.y - 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, TopFace);
 
     if (allChunks.find({key.x, key.y + 1, key.z}) != allChunks.end())
         allChunks.at({key.x, key.y + 1, key.z}).updateChunkVisibilityToNeighbor(chosenChunk, BottomFace);
+    #endif
 
     if (allChunks.find({key.x, key.y, key.z - 1}) != allChunks.end())
         allChunks.at({key.x, key.y, key.z - 1}).updateChunkVisibilityToNeighbor(chosenChunk, FrontFace);
@@ -78,15 +81,28 @@ void Renderer::updateAdjacentChunks(const std::array<std::array<std::array<Block
         allChunks.at({key.x, key.y, key.z + 1}).updateChunkVisibilityToNeighbor(chosenChunk, BackFace);
 }
 
+
 /**
  * Updates the state of the renderer.
  */
 void Renderer::update() noexcept
 {
+    static auto lastPos {Camera::getCameraPosChunkOffset()};
     const auto globalPos {Camera::getCameraPosChunkOffset()};
+
+    // We need to check if the chunk offset changed since the last call, since
+    // the last chunk may have an invalid state (e.g., block still highlighted).
+    // If this is the case, then we need to update the last chunk the camera was on.
+    if (lastPos != globalPos)
+    {
+        if (allChunks.find(lastPos) != allChunks.end())
+            allChunks[lastPos].updateChunk();
+        lastPos = globalPos;
+    }
+
     if (allChunks.find(globalPos) != allChunks.end())
     {
-        Chunk * const activeChunk {&allChunks.at(globalPos)};
+        Chunk * const activeChunk {&allChunks[globalPos]};
         const bool updateNearChunks {activeChunk->updateChunk()};
 
         if (updateNearChunks)
