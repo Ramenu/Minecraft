@@ -1,9 +1,8 @@
 
-CLASSIC V2.9
+CLASSIC V2.91
 ------------
-- Significant rendering optimizations, most chunks that the player cannot see are not visible to the player
-- Small world gen changes for plains biomes and tree generation
-- Blocks can now be placed and breaked on every chunk
+- Fixed most issues with blocks being highlighted even when the player is not looking at them (I say mostly, because it can still occur sometimes..)
+- Improved ray casting
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
