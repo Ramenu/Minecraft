@@ -149,11 +149,10 @@ endif()
 
 # Include directories
 target_include_directories(main PUBLIC "./include")
+target_link_directories(main PUBLIC "./lib")
 
 # Link libraries
 if (WIN32)
-    # Directories to search for libraries
-    link_directories("./lib")
 
     # Linker flags
     target_link_options(main PUBLIC ../icons/icon.res -Wl,--gc-sections)
@@ -164,7 +163,6 @@ if (WIN32)
     sfml-audio-3
     timer)
 elseif(UNIX)
-    target_link_directories(main PUBLIC ./lib)
     target_link_libraries(main PUBLIC
     glad
     glfw
