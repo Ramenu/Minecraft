@@ -34,14 +34,12 @@ namespace ChunkGenerator
                 if (mappedBiomes.find(chunkOffset) == mappedBiomes.end())
                     mappedBiomes.insert({chunkOffset, initChunkData(Plains, chunkOffset)});
 
-                #if 0
                 const auto currentCameraOffset {Camera::getCameraPosChunkOffset()};
 
                 // If the position of the player changes while adding new chunks, return immediately
                 // so we can get the updated position the next time the function is called.
                 if (currentCameraOffset.x != p.x || currentCameraOffset.z != p.z)
                     return;
-                #endif
             }
         }
     }
