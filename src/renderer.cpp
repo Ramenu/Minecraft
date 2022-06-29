@@ -123,8 +123,9 @@ void Renderer::createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept
 void Renderer::draw() noexcept 
 {
     // Number of how many chunks the player can see on X and Z
-    #if 1
     const auto globalPos {Camera::getCameraPosChunkOffset()};
+
+    bool createdChunkThisFrame {false}; // Create only one chunk per frame for performance
     for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X}; x < globalPos.x + RENDER_DISTANCE_X; ++x)
     {
         for (std::int32_t z {globalPos.z - RENDER_DISTANCE_Z}; z < globalPos.z + RENDER_DISTANCE_Z; ++z)
@@ -139,23 +140,14 @@ void Renderer::draw() noexcept
                         allChunks.at(index).drawChunk();
                 }
                 #if 1
-                else
+                else if (!createdChunkThisFrame)
+                {
                     createChunkAndDraw(index);
+                    createdChunkThisFrame = true;
+                }
                 #endif
             }
             
         }
     }
-    #else
-        #if 0
-        for (const auto&[chunkPos, chunk]: allChunks)
-        {
-            printf("{%lu, %lu, %lu}\n", chunkPos.x, chunkPos.y, chunkPos.z);
-            chunk.drawChunk();
-        }
-        #else
-        if (allChunks.find({0, 0, 0}) != allChunks.end())
-            allChunks.at({0, 0, 0}).drawChunk();
-        #endif
-    #endif
 }
