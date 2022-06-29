@@ -12,6 +12,7 @@ namespace Window
     extern void deleteWindow() noexcept;
     static constexpr std::size_t WIDTH {512}, HEIGHT {512};
     static constexpr float ASPECT_RATIO {WIDTH/HEIGHT};
+    inline bool runningInDebugMode {false};
 }
 
 #endif // WINDOW_HPP
