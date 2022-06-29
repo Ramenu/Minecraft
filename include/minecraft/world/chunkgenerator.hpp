@@ -10,7 +10,7 @@ namespace ChunkGenerator
 {
     inline bool stopThread {false};
     extern void init() noexcept;
-    extern ChunkData retrieveChunk(const glm::i32vec3 &position) noexcept;
+    extern std::pair<ChunkData, std::uint8_t> retrieveChunk(const glm::i32vec3 &position) noexcept;
     extern bool hasFinishedStockpiling() noexcept;
 }
 
