@@ -15,7 +15,7 @@
 
 static constexpr bool CHECK_BOUNDS_ACCESS {true}; // use for debug builds only
 
-#define ABORT_ON_OF_BOUNDS_ACCESS(index) \
+#define ABORT_ON_OUT_OF_BOUNDS_ACCESS(index) \
     if constexpr (CHECK_BOUNDS_ACCESS) { \
         if (isOutOfChunk(index)) \
         { \
@@ -56,7 +56,7 @@ static constexpr std::size_t TOTAL_BYTES {std::accumulate(SIZE_OF_CHUNK_VERTICES
  * array index.
  */
 static inline constexpr std::size_t getBlockIndex(glm::i8vec3 index) noexcept {
-    return ((index.y * CHUNK_HEIGHT + index.z) + index.x * CHUNK_LENGTH * CHUNK_HEIGHT);
+    return ((index.x * CHUNK_HEIGHT + index.z) + index.y * CHUNK_LENGTH * CHUNK_HEIGHT);
 }
 
 
@@ -78,10 +78,10 @@ void Chunk::drawChunk() const noexcept
 {
     // TODO: Do not draw any blocks that are below the top layer (by top later I mean blocks that the player can see)
     // TODO: Check angle of camera and draw amount of blocks based on that
-    static constexpr std::size_t FIRST {CUBE_ATTRIBUTES * 0};
+    const std::size_t first {lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * CUBE_ATTRIBUTES};
     static constexpr std::size_t COUNT {CUBE_ATTRIBUTES * CHUNK_VOLUME};
     glBindVertexArray(vertexArray);
-    glDrawArrays(GL_TRIANGLES, FIRST, COUNT - FIRST);
+    glDrawArrays(GL_TRIANGLES, first, COUNT - first);
 }
 
 
@@ -97,7 +97,7 @@ void Chunk::drawChunk() const noexcept
  */
 void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept 
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index)
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index)
     const std::int32_t x {index.x};
     const std::int32_t y {index.y};
     const std::int32_t z {index.z};
@@ -140,16 +140,13 @@ bool Chunk::updateChunk() noexcept
                 if (blockStates[x][y][z] != None)
                 {
                     auto rX {static_cast<int32_t>(Camera::getCameraRay().getRay().x) % CHUNK_WIDTH};
-                    auto rY {static_cast<int32_t>(Camera::getCameraRay().getRay().y) % CHUNK_HEIGHT};
+                    auto rY {static_cast<int32_t>(Camera::getCameraRay().getRay().y)};
                     auto rZ {static_cast<int32_t>(Camera::getCameraRay().getRay().z) % CHUNK_LENGTH};
 
                     if (rX < 0)
                         rX += CHUNK_WIDTH;
                     if (rZ < 0)
                         rZ += CHUNK_LENGTH;
-
-                    if (glfwGetKey(Window::getWindow(), GLFW_KEY_E) == GLFW_PRESS)
-                        printf("X: %d, Y: %d, Z: %d\n", rX, rY, rZ);
 
                     const bool rayLookingAtBlock {rX == x && rY == y && rZ == z};
 
@@ -218,7 +215,7 @@ bool Chunk::updateChunk() noexcept
  */
 void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept 
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index)
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index)
     const std::size_t bufferIndex {getBlockIndex(index)};
     const auto vertices {getAmbientVertices(ambient)}; 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -240,7 +237,7 @@ void Chunk::highlightBlock(glm::i8vec3 index, float ambient) const noexcept
  */
 void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index)
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     const auto adjacentBlocks {getBlocksSurrounding(index)};
     for (const auto&blockCoords: adjacentBlocks)
@@ -257,6 +254,8 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
                 const auto visibleVertices {getVisibleBlockVertices(visibleFaces)};
                 updateBuffer(bufferIndex, Attribute::Visibility, visibleVertices);
                 blockStates[x][y][z] = Visible;
+                if (y < lowestVisibleLayer)
+                    lowestVisibleLayer = y;
                 continue;
             }
             blockStates[x][y][z] = None;
@@ -287,7 +286,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
  */
 std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> Chunk::getBlocksSurrounding(glm::i8vec3 index) noexcept
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index)
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index)
     const glm::i8vec3 blockAtBack {index.x, index.y, index.z - 1_i8};
     const glm::i8vec3 blockAtFront {index.x, index.y, index.z + 1_i8};
     const glm::i8vec3 blockAtRight {index.x - 1_i8, index.y, index.z};
@@ -338,7 +337,7 @@ void Chunk::updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Fac
         std::swap(begin, end);
     for (std::int32_t a {}; a < CHUNK_WIDTH; ++a)
     {
-        for (std::int32_t v {}; v < CHUNK_HEIGHT; ++v)
+        for (std::int32_t v {}; v < CHUNK_LENGTH; ++v)
         {
             glm::i8vec3 index;
             float visibleLevel {};
@@ -405,7 +404,7 @@ static inline constexpr bool anyFacesAreVisible(const std::array<float, SQUARES_
 constexpr std::array<float, SQUARES_ON_CUBE> 
 Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept 
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index);
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index);
     std::array<float, SQUARES_ON_CUBE> visibleFaces {};
 
     // Back face
@@ -438,17 +437,16 @@ Chunk::getVisibleFaces(glm::i8vec3 index) const noexcept
 /**
  * Updates the entire chunk's blocks.
  * Checks which blocks are visible to
- * the player. Should be called whenever
- * the chunk's state has changed.
+ * the player. 
  */
 void Chunk::updateChunkVisibility() noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
     std::vector<float> visibleAttributes {}; 
-    for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
+    for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
     {
-        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
+        for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
         {
             for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
             {
@@ -474,9 +472,9 @@ void Chunk::updateChunkVisibility() noexcept
 }
 
 
-bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept 
+constexpr bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept 
 {
-    ABORT_ON_OF_BOUNDS_ACCESS(index)
+    ABORT_ON_OUT_OF_BOUNDS_ACCESS(index)
     // This means that it is on the outskirts of the chunk, which means it is visible to the player
     if (isOutOfChunk(index + 1_i8) || isOutOfChunk(index - 1_i8))
         return true; 
@@ -495,23 +493,42 @@ bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
  * Returns true if the player is facing the chunk's
  * direction.
  */
-bool Chunk::isFacingChunk(const glm::i32vec3 &chunkPos) noexcept 
+bool Chunk::isFacingChunk(const glm::i32vec3 &chunkWorldPos) noexcept 
 {
-    static constexpr float MINIMUM_ANGLE_TO_SEE {-0.36F};
-    bool facingChunk {true};
-    if (Camera::cameraPos.x - chunkPos.x > CHUNK_WIDTH)
-        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{-1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE);
-    else if (Camera::cameraPos.x - chunkPos.x < -CHUNK_WIDTH)
-        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE);
-    
-    if (!facingChunk)// No point to continue checking if 'facingChunk' was already set to false
-        return false;
+    static constexpr float MINIMUM_ANGLE_TO_SEE {-0.34F};
 
-    if (Camera::cameraPos.z - chunkPos.z > CHUNK_LENGTH)
-        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, -1.0F}) >= MINIMUM_ANGLE_TO_SEE);
-    else if (Camera::cameraPos.z - chunkPos.z < -CHUNK_LENGTH)
-        facingChunk = (glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, 1.0F}) >= MINIMUM_ANGLE_TO_SEE);
-    return facingChunk;
+    // First check if the player is looking completely down or up, if so, this means that the player can only see
+    // the chunk that they are on
+    #if 1
+    static constexpr float LOOKING_DOWN {0.85f};
+    if (glm::dot(Camera::direction.front, glm::vec3{0.0F, -1.0F, 0.0F}) >= LOOKING_DOWN)
+    {
+        static constexpr int MAXIMUM_SEEABLE_CHUNKS {3};
+        if (!(std::abs(Camera::cameraPos.x - chunkWorldPos.x) < CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS && 
+              std::abs(Camera::cameraPos.z - chunkWorldPos.z) < CHUNK_LENGTH * MAXIMUM_SEEABLE_CHUNKS))
+            return false;
+    }
+    #endif
+
+    if (Camera::cameraPos.x - chunkWorldPos.x > CHUNK_WIDTH)
+    {
+        if (!(glm::dot(Camera::direction.front, glm::vec3{-1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE))
+            return false;
+    }
+    else if (Camera::cameraPos.x - chunkWorldPos.x < -CHUNK_WIDTH)
+        if (!(glm::dot(Camera::direction.front, glm::vec3{1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE))
+            return false;
+    
+    if (Camera::cameraPos.z - chunkWorldPos.z > CHUNK_LENGTH)
+    {
+        if (!(glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, -1.0F}) >= MINIMUM_ANGLE_TO_SEE))
+            return false;
+    }
+    else if (Camera::cameraPos.z - chunkWorldPos.z < -CHUNK_LENGTH)
+        if (!(glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, 1.0F}) >= MINIMUM_ANGLE_TO_SEE))
+            return false;
+
+    return true;
 }
 
 
