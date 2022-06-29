@@ -348,12 +348,14 @@ void Chunk::updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Fac
                 if (chunk[a][v][begin].name != Air_Block && chunkNeighbor[a][v][end].name == Air_Block)
                     visibleLevel = COMPLETELY_VISIBLE;
             }
+            #if 0
             else if (face == TopFace || face == BottomFace) // Check faces on Y
             {
                 index = {a, begin, v};
                 if (chunk[a][begin][v].name != Air_Block && chunkNeighbor[a][end][v].name == Air_Block)
                     visibleLevel = COMPLETELY_VISIBLE;
             }
+            #endif
             else // Check faces on X
             {
                 index = {begin, v, a};
