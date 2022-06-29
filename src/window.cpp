@@ -106,7 +106,8 @@ namespace Window
         static constexpr int viewportX {0};
         static constexpr int viewportY {0};
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int windowWIDTH, int windowHeight) {glViewport(viewportX, viewportY, windowWIDTH, windowHeight);});
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        const int cursorMode {runningInDebugMode ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED};
+        glfwSetInputMode(window, GLFW_CURSOR, cursorMode);
         glfwSetKeyCallback(window, key_callback);
         stbi_image_free(icon.pixels);
     }
