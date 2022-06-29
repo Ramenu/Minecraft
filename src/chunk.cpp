@@ -76,7 +76,9 @@ constexpr bool Chunk::faceIsVisible(glm::i8vec3 index) const noexcept {
 
 void Chunk::drawChunk() const noexcept
 {
-    static constexpr std::size_t FIRST {0};
+    // TODO: Do not draw any blocks that are below the top layer (by top later I mean blocks that the player can see)
+    // TODO: Check angle of camera and draw amount of blocks based on that
+    static constexpr std::size_t FIRST {CUBE_ATTRIBUTES * 0};
     static constexpr std::size_t COUNT {CUBE_ATTRIBUTES * CHUNK_VOLUME};
     glBindVertexArray(vertexArray);
     glDrawArrays(GL_TRIANGLES, FIRST, COUNT - FIRST);
