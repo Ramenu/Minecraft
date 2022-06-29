@@ -5,7 +5,6 @@
 namespace WorldGen
 {
 	static constexpr int CHUNK_WIDTH_HALF {CHUNK_WIDTH / 2};
-	static constexpr int CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
 	static constexpr int CHUNK_LENGTH_HALF {CHUNK_WIDTH / 2};
 	static constexpr int OAK_WOOD_MAXIMUM_HEIGHT {3}; // Maximum number of oak wood blocks a tree can have
 	static constexpr int TREE_HEIGHT {OAK_WOOD_MAXIMUM_HEIGHT + 4};
@@ -255,10 +254,7 @@ namespace WorldGen
 				Block selectedBlock {format.mainBlock};
 				// NOLINTNEXTLINE
 				if (spawnTree&formatCanSpawnTree) // cppcheck-suppress bitwiseOnBoolean
-				{
 					spawnTreeAt(chunk, {x, yIndex, z});
-					yIndex -= 1;
-				}
 				for (std::int32_t y {yIndex}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
 					chunk[x][y][z] = selectedBlock;
@@ -329,10 +325,21 @@ namespace WorldGen
     ChunkArray generateTerrain(Biome biome) noexcept 
     {
 		ChunkArray chunk {};
+		#if 1
 		switch (biome)
 		{
 			case Plains: generatePlainsBiome(chunk); break;
 		}
+		#else
+			if (biome == Plains)
+			{
+				for (std::uint32_t x {}; x < CHUNK_WIDTH; ++x)
+					for (std::uint32_t y {}; y < CHUNK_HEIGHT; ++y)
+						for (std::uint32_t z {}; z < CHUNK_LENGTH; ++z)
+							chunk[x][y][z] = Block{Grass_Block};
+			}
+
+		#endif
 		return chunk;
     }
 
