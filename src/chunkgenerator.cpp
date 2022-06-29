@@ -62,9 +62,9 @@ namespace ChunkGenerator
         }()};
 
         const glm::i32vec3 worldCoords {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
-        for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
+        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
         {
-            for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
+            for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
             {
                 for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
                 {
@@ -87,8 +87,8 @@ namespace ChunkGenerator
 
     static ChunkData initChunkData(Biome biome, const glm::i32vec3 &position) noexcept
     {
-        const auto terrain {WorldGen::generateTerrain(biome)};
-        const auto mesh {generateChunkMesh(terrain, position)};
+        auto terrain {WorldGen::generateTerrain(biome)};
+        auto mesh {generateChunkMesh(terrain, position)};
         return {terrain, mesh};
     }
 
