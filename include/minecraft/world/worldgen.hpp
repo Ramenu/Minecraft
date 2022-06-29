@@ -6,7 +6,7 @@
 
 namespace WorldGen
 {
-    extern ChunkArray generateTerrain(Biome biome) noexcept;
+    extern std::pair<ChunkArray, std::uint8_t> generateTerrain(Biome biome) noexcept;
     extern void initSeed() noexcept;
 }
 
