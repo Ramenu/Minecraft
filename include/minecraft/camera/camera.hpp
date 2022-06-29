@@ -13,6 +13,9 @@ namespace Camera
 	static constexpr float SPEED {12.0f};
 	static constexpr Radians FOV {45.0f};
 	static constexpr glm::vec3 CAMERA_UP {0.0f, 1.0f, 0.0f};
+	static constexpr float CAMERA_START_X {0.0f};
+	static constexpr float CAMERA_START_Y {CHUNK_HEIGHT * 2.0f};
+	static constexpr float CAMERA_START_Z {3.0F};
 
 	struct CameraSettings
 	{
@@ -33,7 +36,7 @@ namespace Camera
 	extern void updateCameraPos() noexcept;
 	inline CameraSettings settings {.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f};
 	inline CameraDirections direction;
-	inline glm::vec3 cameraPos {0.0f, CHUNK_HEIGHT * 2, 3.0f};
+	inline constinit glm::vec3 cameraPos {CAMERA_START_X, CAMERA_START_Y, CAMERA_START_Z};
 
 }
 
