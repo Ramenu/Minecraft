@@ -16,9 +16,6 @@
 #endif
 #include <unordered_map>
 
-static constexpr int INACTIVE_CHUNKS {5};
-
-
 
 class Renderer
 {
@@ -28,8 +25,8 @@ class Renderer
         void update() noexcept;
         inline Shader getShader() const noexcept { return cubeShader; }
     private:
-        void createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept;
         Shader cubeShader;
+        void createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept;
         inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
