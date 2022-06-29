@@ -13,6 +13,7 @@
 #include <optional>
 
 static constexpr std::int32_t CHUNK_WIDTH {16}, CHUNK_HEIGHT {CHUNK_WIDTH}, CHUNK_LENGTH {CHUNK_WIDTH};
+static constexpr std::int32_t CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
 static constexpr std::size_t CHUNK_VOLUME {CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_LENGTH};
 static constexpr float CHUNK_RADIUS {60.0f};
 static constexpr glm::vec3 CHUNK_OFFSET {CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_LENGTH};
@@ -32,6 +33,7 @@ class Chunk
     private:
         GLuint vertexArray;
         GLuint vertexBuffer;
+        std::uint16_t lowestVisibleLayer {CHUNK_HEIGHT_HALF}; // Minimum visible height level for a chunk
         constexpr std::array<float, SQUARES_ON_CUBE> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LENGTH] {};
         void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
@@ -59,11 +61,9 @@ class Chunk
 
         void drawChunk() const noexcept;
 
-        void deleteChunk() noexcept;
-
         bool updateChunk() noexcept;
 
-        bool blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept;
+        constexpr bool blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept;
         
         /**
          * This function requires a 3D vector with 3 indices
@@ -88,7 +88,7 @@ class Chunk
             return {getChunkGlobalOffset(chunkPos), CHUNK_RADIUS};
         }
 
-        static bool isFacingChunk(const glm::i32vec3 &chunkPos) noexcept;
+        static bool isFacingChunk(const glm::i32vec3 &chunkWorldPos) noexcept;
 
         constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept;
         
