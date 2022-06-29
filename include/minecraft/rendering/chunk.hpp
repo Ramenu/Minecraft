@@ -34,7 +34,7 @@ class Chunk
         GLuint vertexArray;
         GLuint vertexBuffer;
         std::uint8_t lowestVisibleLayer {CHUNK_HEIGHT_HALF}; // Minimum visible height level for a chunk
-        std::uint8_t highestVisibleLayer {CHUNK_HEIGHT - 3}; // Maximum visible height level for a chunk
+        std::uint8_t highestVisibleLayer {CHUNK_HEIGHT}; // Maximum visible height level for a chunk
         constexpr std::array<float, SQUARES_ON_CUBE> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LENGTH] {};
         void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
@@ -71,12 +71,8 @@ class Chunk
          * to access the block. Returns true if any of the indices
          * are out of the chunk's array boundaries.
          */
-        static inline constexpr bool isOutOfChunk(glm::i8vec3 index) noexcept {
-            return ((index.x < 0 || index.y < 0 || index.z < 0) ||
-                   (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
-        }
-
-        static inline constexpr bool isOutOfChunk(const glm::i32vec3 &index) noexcept {
+        template<typename T>
+        static inline constexpr bool isOutOfChunk(const T &index) noexcept {
             return ((index.x < 0 || index.y < 0 || index.z < 0) ||
                    (index.x >= CHUNK_WIDTH || index.y >= CHUNK_HEIGHT || index.z >= CHUNK_LENGTH));
         }
