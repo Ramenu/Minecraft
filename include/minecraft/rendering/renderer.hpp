@@ -24,17 +24,16 @@ class Renderer
 {
     public:
         Renderer() noexcept;
-        void draw() const noexcept;
+        void draw() noexcept;
         void update() noexcept;
         inline Shader getShader() const noexcept { return cubeShader; }
     private:
-        void createChunk(const glm::i32vec3 &chunkPos) noexcept;
+        void createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept;
         Shader cubeShader;
         inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
-        void updateAdjacentChunks(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunk,
-                                  const glm::i32vec3 &key) const noexcept;
+        void updateAdjacentChunks(const Chunk &chunk, const glm::i32vec3 &key) const noexcept;
         std::unordered_map<glm::i32vec3, Chunk> allChunks;
 };
 
