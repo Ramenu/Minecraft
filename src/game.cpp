@@ -1,8 +1,8 @@
 #define GLFW_INCLUDE_NONE
+
 #define GAME_BENCHMARK
 
 #include <cmath>
-
 #include "minecraft/game/game.hpp"
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/glerror/glerror.hpp"
@@ -13,6 +13,8 @@
 #endif
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/world/worldgen.hpp"
+#include "minecraft/world/chunkgenerator.hpp"
+#include <thread>
 
 static GLuint uniformBuffer;
 static GLuint vao;
@@ -99,10 +101,10 @@ static inline void updateCamera(const Renderer &renderer) noexcept
  */  
 void runGame() noexcept
 {
+    std::jthread maker {ChunkGenerator::init}; // Will do the terrain and mesh generation
     float lastFrame {0.0F}; // Time of last frame
 
     const Texture textureAtlas {"./textures/textureatlas.png"};
-    Renderer renderer;
     #ifdef GAME_BENCHMARK
         Timer<std::milli> time;
     #endif
@@ -116,6 +118,9 @@ void runGame() noexcept
     static constexpr float BLUE {1.0F};
     static constexpr float ALPHA {1.0F}; 
     glClearColor(RED, GREEN, BLUE, ALPHA);
+
+    while (!ChunkGenerator::hasFinishedStockpiling()); // Don't initialize the renderer until enoughs chunks have been generated
+    Renderer renderer;
 
     renderer.getShader().setVec2("iResolution", glm::vec2{Window::WIDTH, Window::HEIGHT});
 
@@ -145,6 +150,8 @@ void runGame() noexcept
             time.end();
         #endif
     }
+    
+    ChunkGenerator::stopThread = true;
 
     // Free up remaining resources used by the game
     glDeleteVertexArrays(1, &vao);
