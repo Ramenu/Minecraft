@@ -7,6 +7,7 @@
 #include "minecraft/mesh/chunkmesh.hpp"
 #include "minecraft/block/face.h"
 #include "minecraft/math/shape/sphere.hpp"
+#include "minecraft/world/biome.h"
 #include "glm/vec3.hpp"
 #include <span>
 #include <optional>
@@ -18,6 +19,13 @@ static constexpr glm::vec3 CHUNK_OFFSET {CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_LENGTH
 static constexpr glm::vec3 CHUNK_CENTER {CHUNK_WIDTH / 2.0f, CHUNK_HEIGHT / 2.0f, CHUNK_LENGTH / 2.0f};
 static_assert(CHUNK_HEIGHT == CHUNK_WIDTH && CHUNK_HEIGHT == CHUNK_LENGTH, "ERROR: Width, height, and length of the chunk must be equal!");
 
+using ChunkArray = std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH>;
+
+struct ChunkData
+{
+    std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
+    ChunkMesh mesh;
+};
 
 class Chunk
 {
@@ -31,13 +39,12 @@ class Chunk
         void updateChunkVisibility(glm::i8vec3 index) noexcept;
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
-        std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> chunk;
+        ChunkArray chunk;
     public:
 
         inline constexpr auto getChunk() const noexcept {return chunk;}
         
-        void updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunkNeighbor,
-                                             Face face) const noexcept;
+        void updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Face face) const noexcept;
 
         void updateChunkVisibility() noexcept;
 
