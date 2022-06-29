@@ -17,13 +17,28 @@
 
 namespace ChunkGenerator
 {
+    static ChunkMesh generateChunkMesh(const ChunkArray &terrain, const glm::i32vec3 &position) noexcept;
     static constexpr int PRELOAD_CHUNKS {1};
-    static ChunkData initChunkData(Biome biome, const glm::i32vec3 &position) noexcept;
 
     bool finishedInitialization {false};
-    std::unordered_map<glm::i32vec3, ChunkData> mappedBiomes;
+    std::unordered_map<glm::i32vec3, std::pair<ChunkData, std::uint8_t>> mappedBiomes;
 
 
+    /**
+     * Returns a chunk of the given biome and at the chunk offset
+     * position specified.
+     */
+    static std::pair<ChunkData, std::uint8_t> initChunkData(Biome biome, const glm::i32vec3 &position) noexcept
+    {
+        auto terrain {WorldGen::generateTerrain(biome)};
+        auto mesh {generateChunkMesh(terrain.first, position)};
+        return {ChunkData{terrain.first, mesh}, terrain.second};
+    }
+
+    /**
+     * Creates chunks near the player's position,
+     * where 'p' is the player's chunk offset.
+     */
     static void createChunksNearPlayer(const glm::i32vec3 &p) noexcept
     {
         for (auto x {p.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS}; x < p.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS; ++x)
@@ -68,7 +83,10 @@ namespace ChunkGenerator
             {
                 for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
                 {
-                    const auto pos {createCubeAt(x + worldCoords.x, y + worldCoords.y, z + worldCoords.z)};
+                    const float xW {static_cast<float>(x + worldCoords.x)};
+                    const float yW {static_cast<float>(y + worldCoords.y)};
+                    const float yZ {static_cast<float>(z + worldCoords.z)};
+                    const auto pos {createCubeAt(xW, yW, yZ)};
                     const auto blockId {getBlockIDVertices(terrain[x][y][z].name)};
                     chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                             pos.begin(), 
@@ -85,14 +103,14 @@ namespace ChunkGenerator
         return chunkVertices;
     }
 
-    static ChunkData initChunkData(Biome biome, const glm::i32vec3 &position) noexcept
-    {
-        auto terrain {WorldGen::generateTerrain(biome)};
-        auto mesh {generateChunkMesh(terrain, position)};
-        return {terrain, mesh};
-    }
 
-
+    /**
+     * Initializes the chunk generator. Should be called
+     * from a seperate thread. Runs in a continuous loop
+     * generating chunks near the player, so when the game
+     * is done running, make sure to set 'stopThread' to
+     * true.
+     */
     void init() noexcept 
     {
         createChunksNearPlayer(Camera::getCameraPosChunkOffset());
@@ -107,12 +125,16 @@ namespace ChunkGenerator
      * Returns the specified biome's chunk data
      * (i.e., the mesh and terrain layout).
      */
-    ChunkData retrieveChunk(const glm::i32vec3 &position) noexcept
+    std::pair<ChunkData, std::uint8_t> retrieveChunk(const glm::i32vec3 &position) noexcept
     {
-        ChunkData data {std::move(mappedBiomes.at(position))}; // copying the data can be expensive so move it instead
+        auto data {std::move(mappedBiomes.at(position))}; // copying the data can be expensive so move it instead
         return data;
     }
 
+    /**
+     * Returns true if enough chunks have been
+     * stockpiled around the player.
+     */
     bool hasFinishedStockpiling() noexcept {
         return finishedInitialization;
     }
