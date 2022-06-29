@@ -59,7 +59,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     -Wimplicit-fallthrough
     -Wmissing-include-dirs
     -Wformat=2
-    #-Wconversion
+    -Wconversion
     -Wduplicated-branches
     -Wduplicated-cond
     -Wshadow
@@ -69,7 +69,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     -Wcast-align
     -Wnull-dereference
     -Winvalid-pch
-    -Winline
     -Wunsafe-loop-optimizations
     -Wlogical-op
     -Wdisabled-optimization
@@ -86,9 +85,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         -DNDEBUG
         -O3
         -ffast-math
-        -flto
-        -fprofile-generate=./profile # This executes the binary a few times for sample analysis (Replace with "fprofile-use=PATH" once complete)
-        -fprofile-partial-training
+        #-flto # flto seems to break the program, weird..
+        #-fprofile-generate=./profile # This executes the binary a few times for sample analysis (Replace with "fprofile-use=PATH" once complete)
+        #-fprofile-partial-training
         -march=native)
         target_link_options(main PUBLIC -flto -s)
         target_link_libraries(main PUBLIC gcov)
@@ -146,6 +145,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wunreachable-code-aggressive
     -Wunused
     -Wvector-conversion
+    -march=native
+    -O3
     )
 endif()
 
