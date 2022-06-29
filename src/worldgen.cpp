@@ -38,8 +38,7 @@ namespace WorldGen
 	}
 
 
-	static constexpr void spawnTreeAt(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
-	                                  glm::u8vec3 index) noexcept
+	static constexpr void spawnTreeAt(ChunkArray &chunk, glm::u8vec3 index) noexcept
 	{
 
 		const std::int32_t treeOffset {index.y + TREE_HEIGHT};
@@ -92,10 +91,7 @@ namespace WorldGen
 	 * For better locality, it is recommended that all of the components in the portion size
 	 * be the same.
 	 */
-	static constexpr void editChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
-	                      glm::u8vec3 portionSize,
-						  glm::u8vec3 currentIndex,
-						  Block block) noexcept
+	static constexpr void editChunk(ChunkArray &chunk, glm::u8vec3 portionSize, glm::u8vec3 currentIndex, Block block) noexcept
 	{
 		#ifndef NDEBUG
 			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
@@ -229,7 +225,7 @@ namespace WorldGen
 	 * which specifies the layout of the chunk and what blocks
 	 * should be used.
 	 */
-	static void generateTopHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk,
+	static void generateTopHalfOfChunk(ChunkArray &chunk,
 	                                   TerrainFormat format) noexcept
 	{
 		#if 1
@@ -257,6 +253,7 @@ namespace WorldGen
 				const auto roll {std::rand() % SPAWN_TREE_MAXIMUM_ROLL};
 				const bool spawnTree {(roll > MIN_ROLL_TO_SPAWN_TREE) && (yIndex + TREE_HEIGHT < CHUNK_HEIGHT)};
 				Block selectedBlock {format.mainBlock};
+				// NOLINTNEXTLINE
 				if (spawnTree&formatCanSpawnTree) // cppcheck-suppress bitwiseOnBoolean
 				{
 					spawnTreeAt(chunk, {x, yIndex, z});
@@ -276,7 +273,7 @@ namespace WorldGen
 	 * Should be immediately called when dealing with the lower parts of the chunk
 	 * (i.e., any y component lower than CHUNK_HEIGHT_HALF). Handles ore generation
 	 */
-	static void generateBottomHalfOfChunk(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk, int yEnd) noexcept
+	static void generateBottomHalfOfChunk(ChunkArray &chunk, int yEnd) noexcept
 	{
 		#ifndef NDEBUG
 			if (!(yEnd <= CHUNK_HEIGHT_HALF))
@@ -314,7 +311,7 @@ namespace WorldGen
 	/**
 	 * Modifies the chunk to make it look like a plains biome.
 	 */
-    static void generatePlainsBiome(std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> &chunk) noexcept
+    static void generatePlainsBiome(ChunkArray &chunk) noexcept
 	{
 		const TerrainFormat format {
 			.mainBlock = Block{Grass_Block},
@@ -329,9 +326,9 @@ namespace WorldGen
 	 * Generates a terrain of the given biome, and returns a chunk
 	 * with the new terrain.
 	 */
-    std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> generateTerrain(Biome biome) noexcept 
+    ChunkArray generateTerrain(Biome biome) noexcept 
     {
-		std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk {};
+		ChunkArray chunk {};
 		switch (biome)
 		{
 			case Plains: generatePlainsBiome(chunk); break;
