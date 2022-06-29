@@ -24,7 +24,7 @@ using ChunkArray = std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_
 
 struct ChunkData
 {
-    std::array<std::array<std::array<Block, CHUNK_WIDTH>, CHUNK_HEIGHT>, CHUNK_LENGTH> chunk;
+    ChunkArray chunk;
     ChunkMesh mesh;
 };
 
@@ -33,7 +33,8 @@ class Chunk
     private:
         GLuint vertexArray;
         GLuint vertexBuffer;
-        std::uint16_t lowestVisibleLayer {CHUNK_HEIGHT_HALF}; // Minimum visible height level for a chunk
+        std::uint8_t lowestVisibleLayer {CHUNK_HEIGHT_HALF}; // Minimum visible height level for a chunk
+        std::uint8_t highestVisibleLayer {CHUNK_HEIGHT - 3}; // Maximum visible height level for a chunk
         constexpr std::array<float, SQUARES_ON_CUBE> getVisibleFaces(glm::i8vec3 index) const noexcept;
         BlockState blockStates[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LENGTH] {};
         void highlightBlock(glm::i8vec3 index, float ambient) const noexcept;
@@ -88,7 +89,7 @@ class Chunk
             return {getChunkGlobalOffset(chunkPos), CHUNK_RADIUS};
         }
 
-        static bool isFacingChunk(const glm::i32vec3 &chunkWorldPos) noexcept;
+        static bool isFacingChunk(const glm::vec3 &chunkWorldPos) noexcept;
 
         constexpr bool faceIsVisible(glm::i8vec3 index) const noexcept;
         
