@@ -6,7 +6,7 @@
 
 static constexpr std::size_t CUBE_ATTRIBUTES {36};
 static constexpr std::size_t SQUARES_ON_CUBE {6};
-static constexpr float X_POS_2 {(ATLAS_WIDTH - 1) * X_POS};
+static constexpr float DEFAULT_AMBIENT_LEVEL {1.5F};
 
 enum Attribute : std::uint8_t
 {
@@ -17,27 +17,27 @@ enum Attribute : std::uint8_t
 };
 
 static constexpr std::array ATTRIBUTES {
-    3ull, // Position 
-    1ull,
-    1ull, // Visibility
-    1ull  // Ambient
+    3, // Position 
+    1, // Block ID
+    1, // Visibility
+    1  // Ambient
 };
 
-static constexpr std::array<std::size_t, ATTRIBUTES.size()> verticesSizes {[](){
+static constexpr std::array<std::size_t, ATTRIBUTES.size()> VERTICES_SIZES {[](){
     std::array<std::size_t, ATTRIBUTES.size()> ver {};
     for (std::size_t i {}; i < ver.size(); i++)
         ver[i] = ATTRIBUTES[i] * SQUARES_ON_CUBE * SQUARES_ON_CUBE;
     return ver;
 }()};
 
-static constexpr std::size_t noOfVertices {[](){
+static constexpr std::size_t NO_OF_VERTICES {[](){
     std::size_t sum {};
-    for (const auto&i: verticesSizes)
+    for (const auto&i: VERTICES_SIZES)
         sum += i;
     return sum;
 }()};
 
-constexpr std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertices(float ambient) noexcept
+constexpr std::array<float, VERTICES_SIZES[Attribute::Ambient]> getAmbientVertices(float ambient) noexcept
 {
     return {
         ambient,
@@ -79,7 +79,7 @@ constexpr std::array<float, verticesSizes[Attribute::Ambient]> getAmbientVertice
     };
 }
 
-constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(float x, float y, float z) noexcept
+constexpr std::array<float, VERTICES_SIZES[Attribute::Position]> createCubeAt(float x, float y, float z) noexcept
 {
     return {
         // Back (First square)
@@ -133,7 +133,7 @@ constexpr std::array<float, verticesSizes[Attribute::Position]> createCubeAt(flo
 
 }
 
-constexpr std::array<float, verticesSizes[Attribute::BlockID]> getBlockIDVertices(BlockName block) noexcept
+constexpr std::array<float, VERTICES_SIZES[Attribute::BlockID]> getBlockIDVertices(BlockName block) noexcept
 {
     const float blockf {static_cast<float>(block)};
     return {
@@ -177,7 +177,7 @@ constexpr std::array<float, verticesSizes[Attribute::BlockID]> getBlockIDVertice
 }
 
 #if 0
-constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
+constexpr std::array<float, VERTICES_SIZES[Attribute::TexCoord]> getTextureVertices(float textureID) noexcept
 {
     return {
         0.0f,    Y_POS + textureID,
@@ -226,7 +226,7 @@ constexpr std::array<float, verticesSizes[Attribute::TexCoord]> getTextureVertic
 }
 #endif
 
-constexpr std::array<float, verticesSizes[Attribute::Visibility]> 
+constexpr std::array<float, VERTICES_SIZES[Attribute::Visibility]> 
 getVisibleBlockVertices(const std::array<float, SQUARES_ON_CUBE> &visible) noexcept
 {
     return {
