@@ -6,6 +6,7 @@
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/window/window.hpp"
 #include "minecraft/world/worldgen.hpp"
+#include "minecraft/world/chunkgenerator.hpp"
 #include "GLFW/glfw3.h"
 #include <cmath>
 #include <cstdio>
@@ -25,14 +26,13 @@ static constexpr bool CHECK_BOUNDS_ACCESS {true}; // use for debug builds only
     
 
 static constexpr auto INVISIBLE_VERTICES {getVisibleBlockVertices({0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F})};
-static constexpr float DEFAULT_AMBIENT_LEVEL {1.5F};
 static constexpr float COMPLETELY_VISIBLE {1.0F};
 
 static constexpr std::array<std::size_t, ATTRIBUTES.size()> SIZE_OF_CHUNK_VERTICES {[](){
     std::array<std::size_t, ATTRIBUTES.size()> vertices {};
 
     for (std::size_t i {}; i < vertices.size(); ++i)
-        vertices[i] = verticesSizes[i] * CHUNK_VOLUME * sizeof(float);  
+        vertices[i] = VERTICES_SIZES[i] * CHUNK_VOLUME * sizeof(float);  
 
     return vertices;
 }()};
@@ -137,9 +137,19 @@ bool Chunk::updateChunk() noexcept
                 // Not necessary to check if the player is looking at an air block, or is not visible to the player
                 if (blockStates[x][y][z] != None)
                 {
-                    const bool rayLookingAtBlock {static_cast<std::int32_t>(Camera::getCameraRay().getRay().x) % CHUNK_WIDTH == x && 
-                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().y) % CHUNK_HEIGHT == y && 
-                                                  static_cast<std::int32_t>(Camera::getCameraRay().getRay().z) % CHUNK_LENGTH == z};
+                    auto rX {static_cast<int32_t>(Camera::getCameraRay().getRay().x) % CHUNK_WIDTH};
+                    auto rY {static_cast<int32_t>(Camera::getCameraRay().getRay().y) % CHUNK_HEIGHT};
+                    auto rZ {static_cast<int32_t>(Camera::getCameraRay().getRay().z) % CHUNK_LENGTH};
+
+                    if (rX < 0)
+                        rX += CHUNK_WIDTH;
+                    if (rZ < 0)
+                        rZ += CHUNK_LENGTH;
+
+                    if (glfwGetKey(Window::getWindow(), GLFW_KEY_E) == GLFW_PRESS)
+                        printf("X: %d, Y: %d, Z: %d\n", rX, rY, rZ);
+
+                    const bool rayLookingAtBlock {rX == x && rY == y && rZ == z};
 
                     // If the block is highlighted check to see if its still being looked at by the player
                     const glm::i8vec3 index {x, y, z};
@@ -253,7 +263,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
     }
 
     // Update this block's visibility
-    std::array<float, CUBE_ATTRIBUTES> visibilityVertices;
+    std::array<float, CUBE_ATTRIBUTES> visibilityVertices{};
     if (chunk[index.x][index.y][index.z].name != Air_Block && blockIsVisibleToPlayer(index))
     {
         visibilityVertices = getVisibleBlockVertices(getVisibleFaces(index));
@@ -317,8 +327,7 @@ std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> Chunk::getBlocksSurround
     return surroundingBlocks;
 }
 
-void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH> &chunkNeighbor, 
-                                            Face face) const noexcept 
+void Chunk::updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Face face) const noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     std::int32_t begin {0};
@@ -366,7 +375,7 @@ void Chunk::updateChunkVisibilityToNeighbor(const std::array<std::array<std::arr
  */
 void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std::span<const float> vertices, Face face) noexcept
 {
-    const std::size_t bufferOffset {(bufferIndex * verticesSizes[attributeIndex] * sizeof(float) + OFFSETS[attributeIndex])
+    const std::size_t bufferOffset {(bufferIndex * VERTICES_SIZES[attributeIndex] * sizeof(float) + OFFSETS[attributeIndex])
                                 + face * SQUARES_ON_CUBE * sizeof(float)};
     const std::size_t offsetEnd {vertices.size() * sizeof(float)};;
 
@@ -525,34 +534,8 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 {
     glGenVertexArrays(1, &vertexArray);
     glGenBuffers(1, &vertexBuffer);
-    ChunkMesh chunkVertices;
-    static constexpr auto DEFAULT_BLOCK_AMBIENT_VERTICES {getAmbientVertices(DEFAULT_AMBIENT_LEVEL)};
-	chunk = WorldGen::generateTerrain(WorldGen::Biome::Plains);
-    position = {position.x * CHUNK_WIDTH, position.y * CHUNK_HEIGHT, position.z * CHUNK_LENGTH};
-
-    // TODO: I wonder if putting all the data into one array would have a performance impact on glDrawArrays? Investigate.
-    for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
-    {
-        for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
-        {
-            for (std::int32_t z {}; z < CHUNK_LENGTH; ++z)
-            {
-                const auto pos {createCubeAt(x + position.x, y + position.y, z + position.z)};
-                const auto blockId {getBlockIDVertices(chunk[x][y][z].name)};
-                chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
-                                                                         pos.begin(), 
-                                                                         pos.end());
-                
-                chunkVertices.meshAttributes[Attribute::BlockID].insert(chunkVertices.meshAttributes[Attribute::BlockID].end(),
-                                                                        blockId.begin(),
-                                                                        blockId.end());
-
-                chunkVertices.meshAttributes[Attribute::Ambient].insert(chunkVertices.meshAttributes[Attribute::Ambient].end(),
-                                                                        DEFAULT_BLOCK_AMBIENT_VERTICES.begin(),
-                                                                        DEFAULT_BLOCK_AMBIENT_VERTICES.end());
-            }
-        }
-    }
+    ChunkData data {ChunkGenerator::retrieveChunk(position)};
+    chunk = data.chunk;
 
     // Now put the data into the chunk's vertex buffer
     // -----------------------------------------------
@@ -564,7 +547,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 
     // Now fill in the buffer's data
     for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
-        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], chunkVertices.meshAttributes[i].data());
+        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], data.mesh.meshAttributes[i].data());
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the ATTRIBUTES are, etc).
