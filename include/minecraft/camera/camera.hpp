@@ -9,7 +9,7 @@
 
 namespace Camera
 {
-	static constexpr float NEAR {0.1f}, FAR {100.0f};
+	static constexpr float NEAR {0.1f}, FAR {65.0f};
 	static constexpr float SPEED {12.0f};
 	static constexpr Radians FOV {45.0f};
 	static constexpr glm::vec3 CAMERA_UP {0.0f, 1.0f, 0.0f};
