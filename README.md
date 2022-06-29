@@ -1,8 +1,7 @@
 
-CLASSIC V2.91
+CLASSIC V2.92
 ------------
-- Fixed most issues with blocks being highlighted even when the player is not looking at them (I say mostly, because it can still occur sometimes..)
-- Improved ray casting
+- Significant rendering optimizations, a lot less frame stutters and lag should be apparent now. 
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
