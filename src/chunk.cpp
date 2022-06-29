@@ -78,10 +78,10 @@ void Chunk::drawChunk() const noexcept
 {
     // TODO: Do not draw any blocks that are below the top layer (by top later I mean blocks that the player can see)
     // TODO: Check angle of camera and draw amount of blocks based on that
-    const std::size_t first {lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * CUBE_ATTRIBUTES};
-    static constexpr std::size_t COUNT {CUBE_ATTRIBUTES * CHUNK_VOLUME};
+    const GLint first {lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
+    const GLint count {highestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
     glBindVertexArray(vertexArray);
-    glDrawArrays(GL_TRIANGLES, first, COUNT - first);
+    glDrawArrays(GL_TRIANGLES, first, count - first);
 }
 
 
@@ -176,7 +176,9 @@ bool Chunk::updateChunk() noexcept
                         if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
                         {
                             const glm::vec3 blockDirection {-getDirectionVector(GLMath::getDirectionClosestTo(Camera::direction.front))};
-                            const glm::i32vec3 blockPosition {x + blockDirection.x, y + blockDirection.y, z + blockDirection.z};
+                            const glm::i32vec3 blockPosition {x + static_cast<std::int32_t>(blockDirection.x), 
+                                                              y + static_cast<std::int32_t>(blockDirection.y), 
+                                                              z + static_cast<std::int32_t>(blockDirection.z)};
 
                             // Make sure that the player is not placing a block outside of the chunk's boundaries and that it is being
                             // placed on an air block
@@ -255,7 +257,7 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
                 updateBuffer(bufferIndex, Attribute::Visibility, visibleVertices);
                 blockStates[x][y][z] = Visible;
                 if (y < lowestVisibleLayer)
-                    lowestVisibleLayer = y;
+                    lowestVisibleLayer = static_cast<uint8_t>(y);
                 continue;
             }
             blockStates[x][y][z] = None;
@@ -267,14 +269,13 @@ void Chunk::updateChunkVisibility(glm::i8vec3 index) noexcept
     std::array<float, CUBE_ATTRIBUTES> visibilityVertices{};
     if (chunk[index.x][index.y][index.z].name != Air_Block && blockIsVisibleToPlayer(index))
     {
+        if (index.y + 1 > highestVisibleLayer)
+            highestVisibleLayer = static_cast<uint8_t>(index.y + 1);
         visibilityVertices = getVisibleBlockVertices(getVisibleFaces(index));
         blockStates[index.x][index.y][index.z] |= Visible;
     } 
     else
-    {
-        visibilityVertices = INVISIBLE_VERTICES;
         blockStates[index.x][index.y][index.z] = None;
-    }
     updateBuffer(getBlockIndex(index), Attribute::Visibility, visibilityVertices);
 }
 
@@ -493,9 +494,9 @@ constexpr bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
  * Returns true if the player is facing the chunk's
  * direction.
  */
-bool Chunk::isFacingChunk(const glm::i32vec3 &chunkWorldPos) noexcept 
+bool Chunk::isFacingChunk(const glm::vec3 &chunkWorldPos) noexcept 
 {
-    static constexpr float MINIMUM_ANGLE_TO_SEE {-0.34F};
+    static constexpr float MINIMUM_ANGLE_TO_SEE {-0.36F};
 
     // First check if the player is looking completely down or up, if so, this means that the player can only see
     // the chunk that they are on
@@ -553,8 +554,9 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 {
     glGenVertexArrays(1, &vertexArray);
     glGenBuffers(1, &vertexBuffer);
-    ChunkData data {ChunkGenerator::retrieveChunk(position)};
-    chunk = data.chunk;
+    std::pair<ChunkData, std::uint8_t> data {ChunkGenerator::retrieveChunk(position)};
+    chunk = data.first.chunk;
+    highestVisibleLayer = data.second;
 
     // Now put the data into the chunk's vertex buffer
     // -----------------------------------------------
@@ -566,12 +568,12 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 
     // Now fill in the buffer's data
     for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
-        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], data.mesh.meshAttributes[i].data());
+        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], data.first.mesh.meshAttributes[i].data());
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the ATTRIBUTES are, etc).
-    static constexpr int NORMALIZED_ATTRIBUTES[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
-    for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
+    static constexpr GLboolean NORMALIZED_ATTRIBUTES[] {GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE};
+    for (GLuint i {}; i < ATTRIBUTES.size(); ++i)
     {
         glEnableVertexArrayAttrib(vertexBuffer, i);
         glVertexAttribPointer(i,
