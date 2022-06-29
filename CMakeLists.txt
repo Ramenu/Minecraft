@@ -20,6 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(main
 ./src/camera.cpp
 ./src/chunk.cpp
+./src/chunkgenerator.cpp
 ./src/frustum.cpp
 ./src/game.cpp
 ./src/glerror.cpp
