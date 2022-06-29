@@ -8,9 +8,22 @@ namespace Camera
 {
     static glm::mat4 view;
     static Ray cameraRay;
-    static glm::i32vec3 cameraPosChunkOffset;
+
+    
+    static constinit glm::i32vec3 cameraPosChunkOffset {
+        CAMERA_START_X / CHUNK_WIDTH,
+        CAMERA_START_Y / CHUNK_HEIGHT,
+        CAMERA_START_Z / CHUNK_LENGTH
+    };
+
     glm::mat4 getView() noexcept {return view;}
-    glm::i32vec3 getCameraPosChunkOffset() noexcept {return cameraPosChunkOffset;}
+    glm::i32vec3 getCameraPosChunkOffset() noexcept {
+        return {
+            cameraPosChunkOffset.x,
+            0,
+            cameraPosChunkOffset.z
+        };
+    }
     Ray getCameraRay() noexcept {return cameraRay;}
 
     /** 
@@ -61,17 +74,25 @@ namespace Camera
         
         cameraPosChunkOffset = glm::i32vec3 {
             cameraPos.x / CHUNK_WIDTH,
-            cameraPos.y / CHUNK_HEIGHT,
+            0,
             cameraPos.z / CHUNK_LENGTH
         };
+
+        // When X or Z becomes negative, the chunk offset will overlap
+        // -1/16 and 1/16 will result in the same chunk offset. This is done
+        // to prevent that
+        if (cameraPos.x < 0)
+            cameraPosChunkOffset.x -= 1;
+        if (cameraPos.z < 0)
+            cameraPosChunkOffset.z -= 1;
 
         //TODO: When a position is not found by the camera, just get the nearest block instead (provided it is in range)
         const Direction nearestDirectionToPlayer {GLMath::getDirectionClosestTo(direction.front)};
         switch (nearestDirectionToPlayer)
         {
             default: cameraRay.updateRay(cameraPos, direction.front); break;
-            case North: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1.0f}, direction.front); break;
-            case East: cameraRay.updateRay({cameraPos.x + 1.0f, cameraPos.y, cameraPos.z}, direction.front); break;
+            case North: cameraRay.updateRay({cameraPos.x, cameraPos.y, cameraPos.z + 1.0F}, direction.front); break;
+            case East: cameraRay.updateRay({cameraPos.x + 1.0F, cameraPos.y, cameraPos.z}, direction.front); break;
         }
     }
 }
