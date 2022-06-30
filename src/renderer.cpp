@@ -13,13 +13,13 @@
 Renderer::Renderer() noexcept : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
 {
-    #if 1
+    #if 0
     const glm::i32vec3 p {Camera::getCameraPosChunkOffset()};
     for (auto x {p.x - RENDER_DISTANCE_X}; x < p.x + RENDER_DISTANCE_X; ++x)
         for (auto z {p.x - RENDER_DISTANCE_Z}; z < p.z + RENDER_DISTANCE_Z; ++z)
             allChunks[{x, 0, z}].initChunk({x, 0, z});
     #else
-        allChunks[{-1, 0, 0}].initChunk({-1, 0, 0});
+        allChunks[{0, 0, 0}].initChunk({0, 0, 0});
     #endif
     cubeShader.useShader(); 
     cubeShader.setInt("allTextures", 0);
@@ -122,10 +122,13 @@ void Renderer::createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept
  */
 void Renderer::draw() noexcept 
 {
+    static constexpr unsigned int CALL_COUNT_RESET {10};
+    static unsigned int callCount {};
+    ++callCount;
     // Number of how many chunks the player can see on X and Z
     const auto globalPos {Camera::getCameraPosChunkOffset()};
+    bool createdChunkThisFrame {false};
 
-    bool createdChunkThisFrame {false}; // Create only one chunk per frame for performance
     for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X}; x < globalPos.x + RENDER_DISTANCE_X; ++x)
     {
         for (std::int32_t z {globalPos.z - RENDER_DISTANCE_Z}; z < globalPos.z + RENDER_DISTANCE_Z; ++z)
@@ -140,7 +143,7 @@ void Renderer::draw() noexcept
                         allChunks.at(index).drawChunk();
                 }
                 #if 1
-                else if (!createdChunkThisFrame)
+                else if (callCount == CALL_COUNT_RESET && !createdChunkThisFrame)
                 {
                     createChunkAndDraw(index);
                     createdChunkThisFrame = true;
@@ -150,4 +153,8 @@ void Renderer::draw() noexcept
             
         }
     }
+    // Reset the call count
+    if (callCount == CALL_COUNT_RESET)
+        callCount = 0;
+
 }
