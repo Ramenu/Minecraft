@@ -32,7 +32,7 @@ namespace ChunkGenerator
     {
         auto terrain {WorldGen::generateTerrain(biome)};
         auto mesh {generateChunkMesh(terrain.first, position)};
-        return {ChunkData{terrain.first, mesh}, terrain.second};
+        return {ChunkData{terrain.first, mesh, biome}, terrain.second};
     }
 
     /**
@@ -113,11 +113,18 @@ namespace ChunkGenerator
      */
     void init() noexcept 
     {
+        #if 1
         createChunksNearPlayer(Camera::getCameraPosChunkOffset());
 
         finishedInitialization = true;
         while (!stopThread)
             createChunksNearPlayer(Camera::getCameraPosChunkOffset());
+        #else
+            auto data {initChunkData(Plains, {0, 0, 0})};
+            mappedBiomes.insert({{0, 0, 0}, data});
+
+            finishedInitialization = true;
+        #endif
     }
 
     
