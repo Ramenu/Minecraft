@@ -5,7 +5,8 @@
 
 enum Biome : uint8_t
 {
-    Plains
+    Plains,
+    Forest
 };
 
 #endif /* MC_BIOME_H */
