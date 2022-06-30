@@ -12,7 +12,8 @@ namespace WorldGen
 	enum class TerrainTopFormat : std::uint8_t
 	{
 		Plains,
-		Forest
+		Forest,
+		Desert
 	};
 
 	enum class TerrainMidFormat : std::uint8_t
@@ -39,6 +40,8 @@ namespace WorldGen
 		std::uint8_t maximumTrees {};
 		int minimumRoll {};
 	};
+	static constexpr TreeInfo TREE_INFO_NULL {false, false, 0, 0, 0}; // Use if the biome cannot generate a tree
+
 
 	/**
 	 * Returns the tree layout/info for
@@ -51,6 +54,7 @@ namespace WorldGen
 			default: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = false, .minimumTrees = 0, .maximumTrees = 0, .minimumRoll = 397};
 			case TerrainTopFormat::Forest: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = true, 
 			                                               .minimumTrees = 2, .maximumTrees = 4, .minimumRoll = 370};
+			case TerrainTopFormat::Desert: return TREE_INFO_NULL;
 		}
 	}
 
@@ -252,6 +256,16 @@ namespace WorldGen
 		return spawnTree;
 	}
 
+	static bool canGenerateCactus(TerrainTopFormat format) noexcept
+	{
+		static constexpr int SPAWN_CACTUS_MAXIMUM_ROLL {400};
+		static constexpr int SPAWN_CACTUS_MINIMUM_ROLL {397};
+		if (format != TerrainTopFormat::Desert) // Only deserts can generate cactuses
+			return false;
+		
+		return (std::rand() % SPAWN_CACTUS_MAXIMUM_ROLL >= SPAWN_CACTUS_MINIMUM_ROLL);
+	}
+
 	/**
 	 * Takes two coordinates 'x' and 'z' and outputs a
 	 * y index created from perlin noise. 4 gradients should be used
@@ -295,8 +309,14 @@ namespace WorldGen
 				maxHeightForFormat = static_cast<float>(2 + std::rand() % 2); // Randomize between 2 and 3
 				frequency = 8.0f;
 				break;
+			case TerrainTopFormat::Desert:
+				maxHeightForFormat = 4.0f;
+				frequency = 6.0f;
+				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
+		static constexpr int CACTUS_MAX_HEIGHT {2};
+		static constexpr int CACTUS_MIN_HEIGHT {2};
 		const auto gradients {generate2DGradients()};
 
 		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
@@ -313,8 +333,19 @@ namespace WorldGen
 				if (canGenerateTree({x, topY, z}, format.topFormat)) 
 				{
 					highestY = std::min(CHUNK_HEIGHT - 1, highestY + TREE_HEIGHT);
-					assert(highestY < CHUNK_HEIGHT);
 					spawnTreeAt(chunk.first, {x, topY, z});
+				}
+				else if (canGenerateCactus(format.topFormat))
+				{
+					const auto cactusHeight {std::rand() % CACTUS_MAX_HEIGHT + CACTUS_MIN_HEIGHT};
+					if (topY + cactusHeight < CHUNK_HEIGHT)
+					{
+						if (topY + cactusHeight > highestY)
+							highestY = topY + cactusHeight;
+						// Spawn a cactus at the position
+						for (std::int32_t y {topY}; y <= topY + cactusHeight; ++y)
+							chunk.first[x][y][z] = Block{Cactus_Block};
+					}
 				}
 				for (std::int32_t y {topY}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
@@ -394,6 +425,17 @@ namespace WorldGen
 		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
 	}
 
+	static void generateDesertBiome(std::pair<ChunkArray, std::uint8_t> &chunk) noexcept
+	{
+		const TerrainFormat format {
+			.mainBlock = Block{Sand_Block},
+			.secondaryBlock = Block{Sand_Block},
+			.topFormat = TerrainTopFormat::Desert
+		};
+		generateTopHalfOfChunk(chunk, format);
+		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
+	}
+
 	/**
 	 * Generates a terrain of the given biome, and returns a pair
 	 * with the first member being the chunk with biome's terrain.
@@ -407,6 +449,7 @@ namespace WorldGen
 		{
 			case Plains: generatePlainsBiome(chunk); break;
 			case Forest: generateForestBiome(chunk); break;
+			case Desert: generateDesertBiome(chunk); break;
 		}
 		#else
 			if (biome == Plains || biome == Forest)
