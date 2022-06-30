@@ -43,9 +43,11 @@ enum BlockName : std::uint8_t
     EmeraldOre_Block,
     OakWood_Block,
     Leaf_Block,
-    Water_Block
+    Water_Block,
+    Sand_Block,
+    Cactus_Block
 };
 
-static constexpr std::uint8_t NUMBER_OF_BLOCKS {14}; 
+static constexpr std::uint8_t NUMBER_OF_BLOCKS {16}; 
 
 #endif // MC_BLOCKENUM_HPP
