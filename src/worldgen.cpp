@@ -235,9 +235,7 @@ namespace WorldGen
 		static std::uint32_t treesGenerated {};
 		const auto roll {std::rand() % SPAWN_TREE_MAXIMUM_ROLL};
 		bool spawnTree {(roll > info.minimumRoll) && (index.y + TREE_HEIGHT < CHUNK_HEIGHT)};
-		if (!info.hasMaximumLimit)
-			return spawnTree;
-		else
+		if (info.hasMaximumLimit)
 		{
 			if (treesGenerated < info.minimumTrees && info.maximumTrees > treesGenerated)
 			{
@@ -294,8 +292,8 @@ namespace WorldGen
 				frequency = 6.0f;
 				break;
 			case TerrainTopFormat::Forest:
-				maxHeightForFormat = 1.0f;
-				frequency = 5.0f;
+				maxHeightForFormat = static_cast<float>(2 + std::rand() % 2); // Randomize between 2 and 3
+				frequency = 8.0f;
 				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
@@ -411,12 +409,12 @@ namespace WorldGen
 			case Forest: generateForestBiome(chunk); break;
 		}
 		#else
-			if (biome == Plains)
+			if (biome == Plains || biome == Forest)
 			{
 				for (std::uint32_t x {}; x < CHUNK_WIDTH; ++x)
 					for (std::uint32_t y {}; y < CHUNK_HEIGHT; ++y)
 						for (std::uint32_t z {}; z < CHUNK_LENGTH; ++z)
-							chunk[x][y][z] = Block{Grass_Block};
+							chunk.first[x][y][z] = Block{Grass_Block};
 			}
 
 		#endif
