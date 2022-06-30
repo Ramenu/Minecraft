@@ -55,6 +55,12 @@ namespace GLMath
         return n * n * (3.0f - 2.0f * n);
     }
 
+    template<typename T>
+    requires std::is_arithmetic_v<T>
+    inline constexpr float step(T min, T n) noexcept {
+        return (n >= min) ? 1.0f : 0.0f;
+    }
+
     #if 0
     /**
      * Returns the two missing sides of a
