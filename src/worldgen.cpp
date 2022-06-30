@@ -11,7 +11,8 @@ namespace WorldGen
 
 	enum class TerrainTopFormat : std::uint8_t
 	{
-		Standard // No peculiar features
+		Plains,
+		Forest
 	};
 
 	enum class TerrainMidFormat : std::uint8_t
@@ -29,6 +30,29 @@ namespace WorldGen
 			TerrainMidFormat midFormat;
 		};
 	};
+
+	struct TreeInfo
+	{
+		bool formatCanSpawnTree {true};
+		bool hasMaximumLimit {};
+		std::uint8_t minimumTrees {};
+		std::uint8_t maximumTrees {};
+		int minimumRoll {};
+	};
+
+	/**
+	 * Returns the tree layout/info for
+	 * the given format.
+	 */
+	inline static constexpr TreeInfo getTreeLayout(TerrainTopFormat format) noexcept
+	{
+		switch (format)
+		{
+			default: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = false, .minimumTrees = 0, .maximumTrees = 0, .minimumRoll = 397};
+			case TerrainTopFormat::Forest: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = true, 
+			                                               .minimumTrees = 2, .maximumTrees = 4, .minimumRoll = 370};
+		}
+	}
 
 	void initSeed() noexcept {
 		std::srand(static_cast<unsigned int>(time(nullptr)));
@@ -196,6 +220,41 @@ namespace WorldGen
 	}
 
 	/**
+	 * Returns true if a tree can be spawned at the given position.
+	 * Different formats may have different criteria for whether or not
+	 * a tree should spawn.
+	 */
+	static bool canGenerateTree(const glm::i32vec3 &index, TerrainTopFormat format) noexcept
+	{
+		static constexpr int SPAWN_TREE_MAXIMUM_ROLL {400};
+		const TreeInfo info {getTreeLayout(format)};
+
+		if (!info.formatCanSpawnTree)
+			return false;
+
+		static std::uint32_t treesGenerated {};
+		const auto roll {std::rand() % SPAWN_TREE_MAXIMUM_ROLL};
+		bool spawnTree {(roll > info.minimumRoll) && (index.y + TREE_HEIGHT < CHUNK_HEIGHT)};
+		if (!info.hasMaximumLimit)
+			return spawnTree;
+		else
+		{
+			if (treesGenerated < info.minimumTrees && info.maximumTrees > treesGenerated)
+			{
+				spawnTree &= true;
+				++treesGenerated;
+			}
+		}
+
+		// Reset the # of trees generated, this is done so that the next time a
+		// chunk is created the variable will reset itself.
+		if (index.x == CHUNK_WIDTH - 1 && index.z == CHUNK_LENGTH - 1)
+			treesGenerated = 0;
+
+		return spawnTree;
+	}
+
+	/**
 	 * Takes two coordinates 'x' and 'z' and outputs a
 	 * y index created from perlin noise. 4 gradients should be used
 	 * for each chunk for consistent and good-looking results.
@@ -227,17 +286,19 @@ namespace WorldGen
 	{
 		float maxHeightForFormat {};
 		float frequency {1.0F};
-		bool formatCanSpawnTree {true};
+		std::int32_t highestY {};
 		switch (format.topFormat)
 		{
-			case TerrainTopFormat::Standard: 
+			case TerrainTopFormat::Plains: 
 				maxHeightForFormat = 3.0f; 
 				frequency = 6.0f;
 				break;
+			case TerrainTopFormat::Forest:
+				maxHeightForFormat = 1.0f;
+				frequency = 5.0f;
+				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
-		static constexpr int SPAWN_TREE_MAXIMUM_ROLL {400};
-		static constexpr int MIN_ROLL_TO_SPAWN_TREE {397};
 		const auto gradients {generate2DGradients()};
 
 		for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
@@ -246,29 +307,26 @@ namespace WorldGen
 			{
 				const float xf {static_cast<float>(x)};
 				const float zf {static_cast<float>(z)};
-				std::int32_t yIndex {std::max(randomizeYIndex(xf * frequency, zf * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP, 
-				                              MINIMUM_HEIGHT_LEVEL_FOR_TOP)};
-				const auto roll {std::rand() % SPAWN_TREE_MAXIMUM_ROLL};
-				const bool spawnTree {(roll > MIN_ROLL_TO_SPAWN_TREE) && (yIndex + TREE_HEIGHT < CHUNK_HEIGHT)};
-
-				if (yIndex > chunk.second)
-					chunk.second = static_cast<std::uint8_t>(yIndex);
+				const std::int32_t topY {randomizeYIndex(xf * frequency, zf * frequency, gradients, maxHeightForFormat) + MINIMUM_HEIGHT_LEVEL_FOR_TOP};
+				if (topY > highestY)
+					highestY = topY;
 
 				Block selectedBlock {format.mainBlock};
-				// NOLINTNEXTLINE
-				if (spawnTree&formatCanSpawnTree) // cppcheck-suppress bitwiseOnBoolean
+				if (canGenerateTree({x, topY, z}, format.topFormat)) 
 				{
-					chunk.second += TREE_HEIGHT;
-					spawnTreeAt(chunk.first, {x, yIndex, z});
+					highestY = std::min(CHUNK_HEIGHT - 1, highestY + TREE_HEIGHT);
+					assert(highestY < CHUNK_HEIGHT);
+					spawnTreeAt(chunk.first, {x, topY, z});
 				}
-				for (std::int32_t y {yIndex}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
+				for (std::int32_t y {topY}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
 					chunk.first[x][y][z] = selectedBlock;
 					selectedBlock = format.secondaryBlock;
 				}
 			}
 		}
-		chunk.second += 1;
+		chunk.second = static_cast<std::uint8_t>(highestY) + 1;
+		assert(chunk.second <= CHUNK_HEIGHT);
 	}
 
 	/**
@@ -318,7 +376,21 @@ namespace WorldGen
 		const TerrainFormat format {
 			.mainBlock = Block{Grass_Block},
 			.secondaryBlock = Block{Dirt_Block},
-			.topFormat = TerrainTopFormat::Standard
+			.topFormat = TerrainTopFormat::Plains
+		};
+		generateTopHalfOfChunk(chunk, format);
+		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
+	}
+
+	/**
+	 * Modifies the chunk to make it look like a forest biome.
+	 */
+    static void generateForestBiome(std::pair<ChunkArray, std::uint8_t> &chunk) noexcept
+	{
+		const TerrainFormat format {
+			.mainBlock = Block{Grass_Block},
+			.secondaryBlock = Block{Dirt_Block},
+			.topFormat = TerrainTopFormat::Forest
 		};
 		generateTopHalfOfChunk(chunk, format);
 		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
@@ -336,6 +408,7 @@ namespace WorldGen
 		switch (biome)
 		{
 			case Plains: generatePlainsBiome(chunk); break;
+			case Forest: generateForestBiome(chunk); break;
 		}
 		#else
 			if (biome == Plains)
