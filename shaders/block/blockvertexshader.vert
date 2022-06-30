@@ -1,8 +1,8 @@
 #version 460 core
 
+#define TOTAL_BLOCKS 15
 precision lowp float;
 
-#define TOTAL_BLOCKS 13
 #define BLOCK_ATTRIBUTES 36
 #if 1
     #define ATLAS_WIDTH 3
@@ -129,18 +129,20 @@ const vec3[BLOCK_ATTRIBUTES] lightDirections = {
 
 const float[TOTAL_BLOCKS] textureCoordsY = {
    0.0, // Grass Block
-   0.07692307692307693, // Cobblestone Block
-   0.15384615384615385, // Dirt Block
-   0.23076923076923078, // Stone Block
-   0.3076923076923077, // Coal Ore Block
-   0.38461538461538464, // Iron Ore Block
-   0.46153846153846156, // Gold Ore Block
-   0.5384615384615384, // Redstone Ore Block
-   0.6153846153846154, // Diamond Ore Block
-   0.6923076923076923, // Emerald Ore Block
-   0.7692307692307693, // Oak Wood Block
-   0.8461538461538461, // Leaf Block
-   0.9230769230769231, // Water Block
+   0.06666666666666667, // Cobblestone Block
+   0.13333333333333333, // Dirt Block
+   0.2, // Stone Block
+   0.26666666666666666, // Coal Ore Block
+   0.3333333333333333, // Iron Ore Block
+   0.4, // Gold Ore Block
+   0.4666666666666667, // Redstone Ore Block
+   0.5333333333333333, // Diamond Ore Block
+   0.6, // Emerald Ore Block
+   0.6666666666666666, // Oak Wood Block
+   0.7333333333333333, // Leaf Block
+   0.8, // Water Block
+   0.8666666666666667, // Sand Block
+   0.9333333333333333, // Cactus Block
 };
 
 void main()
