@@ -1,7 +1,9 @@
 
-CLASSIC V2.92
+CLASSIC V3.0
 ------------
-- Significant rendering optimizations, a lot less frame stutters and lag should be apparent now. 
+- Added forest biome
+- More rendering optimizations made
+- Chunks are now spawned every 10 frames instead of per frame, this does not make a significant difference for higher-end hardware but can definitely help for lower-end hardware
 
 
 Some links to the libraries I use, they are really great, go check them out:<br>
