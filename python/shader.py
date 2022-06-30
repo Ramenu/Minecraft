@@ -1,7 +1,7 @@
 import block
 
-# Technically, 14 since air block exists, however it does not have a corresponding texture in the texture atlas so just ignore it
-TOTAL_BLOCKS = 13
+# Technically, 16 since air block exists, however it does not have a corresponding texture in the texture atlas so just ignore it
+TOTAL_BLOCKS = 15
 ATLAS_HEIGHT = TOTAL_BLOCKS
 
 def getTexCoords() -> list:
@@ -25,7 +25,9 @@ blocks = [
     block.Block(textureY = coords[9], alpha = 1.0, name = "Emerald Ore Block"),
     block.Block(textureY = coords[10], alpha = 1.0, name = "Oak Wood Block"), 
     block.Block(textureY = coords[11], alpha = 1.0, name = "Leaf Block"), 
-    block.Block(textureY = coords[12], alpha = 0.7, name = "Water Block")
+    block.Block(textureY = coords[12], alpha = 0.7, name = "Water Block"),
+    block.Block(textureY = coords[13], alpha = 1.0, name = "Sand Block"),
+    block.Block(textureY = coords[14], alpha = 1.0, name = "Cactus Block")
 ]
 
 firstLineAppended = ""
