@@ -13,6 +13,9 @@
 #include <optional>
 
 static constexpr std::int32_t CHUNK_WIDTH {16}, CHUNK_HEIGHT {CHUNK_WIDTH}, CHUNK_LENGTH {CHUNK_WIDTH};
+static constexpr float CHUNK_WIDTH_F {static_cast<float>(CHUNK_WIDTH)}, 
+                       CHUNK_HEIGHT_F {static_cast<float>(CHUNK_HEIGHT)}, 
+                       CHUNK_LENGTH_F {static_cast<float>(CHUNK_LENGTH)};
 static constexpr std::int32_t CHUNK_HEIGHT_HALF {CHUNK_HEIGHT / 2};
 static constexpr std::size_t CHUNK_VOLUME {CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_LENGTH};
 static constexpr float CHUNK_RADIUS {60.0f};
@@ -26,6 +29,7 @@ struct ChunkData
 {
     ChunkArray chunk;
     ChunkMesh mesh;
+    Biome biome;
 };
 
 class Chunk
@@ -43,6 +47,7 @@ class Chunk
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
         ChunkArray chunk;
+        Biome biome;
     public:
 
         inline constexpr auto getChunk() const noexcept {return chunk;}
