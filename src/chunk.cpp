@@ -76,8 +76,6 @@ constexpr bool Chunk::faceIsVisible(glm::i8vec3 index) const noexcept {
 
 void Chunk::drawChunk() const noexcept
 {
-    // TODO: Do not draw any blocks that are below the top layer (by top later I mean blocks that the player can see)
-    // TODO: Check angle of camera and draw amount of blocks based on that
     const GLint first {lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
     const GLint count {highestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
     glBindVertexArray(vertexArray);
@@ -499,38 +497,59 @@ constexpr bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
 bool Chunk::isFacingChunk(const glm::vec3 &chunkWorldPos) noexcept 
 {
     static constexpr float MINIMUM_ANGLE_TO_SEE {-0.36F};
+    static constexpr float NEARLY_VISIBLE {-0.29f};
+    static constexpr float FACING_DIR {-0.27f};
 
     // First check if the player is looking completely down or up, if so, this means that the player can only see
     // the chunk that they are on
-    #if 1
-    static constexpr float LOOKING_DOWN {0.85f};
-    if (glm::dot(Camera::direction.front, glm::vec3{0.0F, -1.0F, 0.0F}) >= LOOKING_DOWN)
+    static constexpr float LOOKING_DOWN_UP {0.85f};
+    static constexpr int MAXIMUM_SEEABLE_CHUNKS {1};
+    static constexpr int MAXIMUM_SEEABLE_CHUNKS_UP_DOWN {3};
+    static constexpr int MINIMUM_CHUNK_OFFSET {CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS};
+    const float maximumSeeableChunksCenter {CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS * std::sin(Camera::cameraPos.y)};
+    if (glm::dot(Camera::direction.front, glm::vec3{0.0F, -1.0F, 0.0F}) >= LOOKING_DOWN_UP ||
+        glm::dot(Camera::direction.front, glm::vec3{0.0f, 1.0f, 0.0f}) >= LOOKING_DOWN_UP)
     {
-        static constexpr int MAXIMUM_SEEABLE_CHUNKS {3};
-        if (!(std::abs(Camera::cameraPos.x - chunkWorldPos.x) < CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS && 
-              std::abs(Camera::cameraPos.z - chunkWorldPos.z) < CHUNK_LENGTH * MAXIMUM_SEEABLE_CHUNKS))
+        if (!(std::abs(Camera::cameraPos.x - chunkWorldPos.x) < CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS_UP_DOWN && 
+              std::abs(Camera::cameraPos.z - chunkWorldPos.z) < CHUNK_LENGTH * MAXIMUM_SEEABLE_CHUNKS_UP_DOWN))
             return false;
     }
-    #endif
+
 
     if (Camera::cameraPos.x - chunkWorldPos.x > CHUNK_WIDTH)
     {
-        if (!(glm::dot(Camera::direction.front, glm::vec3{-1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE))
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{-1.0f, 0.0f, 0.0f})};
+        if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.x - chunkWorldPos.z > MINIMUM_CHUNK_OFFSET && dot < NEARLY_VISIBLE))
+            return false;
+        // When facing completely in the middle, cull the chunks that are far enough (i.e., can't be seen) from the player 
+        else if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z > maximumSeeableChunksCenter) 
             return false;
     }
     else if (Camera::cameraPos.x - chunkWorldPos.x < -CHUNK_WIDTH)
-        if (!(glm::dot(Camera::direction.front, glm::vec3{1.0F, 0.0F, 0.0F}) >= MINIMUM_ANGLE_TO_SEE))
+    {
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{1.0f, 0.0f, 0.0f})};
+        if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.x - chunkWorldPos.z < -(MINIMUM_CHUNK_OFFSET) && dot < NEARLY_VISIBLE))
             return false;
+        else if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z < maximumSeeableChunksCenter)
+            return false;
+    }
     
     if (Camera::cameraPos.z - chunkWorldPos.z > CHUNK_LENGTH)
     {
-        if (!(glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, -1.0F}) >= MINIMUM_ANGLE_TO_SEE))
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, -1.0f})};
+        if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.z - chunkWorldPos.x > MINIMUM_CHUNK_OFFSET && dot < NEARLY_VISIBLE))
+            return false;
+        else if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x > maximumSeeableChunksCenter)
             return false;
     }
     else if (Camera::cameraPos.z - chunkWorldPos.z < -CHUNK_LENGTH)
-        if (!(glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, 1.0F}) >= MINIMUM_ANGLE_TO_SEE))
+    {
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, 1.0f})};
+        if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.z - chunkWorldPos.z < -(MINIMUM_CHUNK_OFFSET) && dot < NEARLY_VISIBLE))
             return false;
-
+        else if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x < maximumSeeableChunksCenter)
+            return false;
+    }
     return true;
 }
 
@@ -558,6 +577,7 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glGenBuffers(1, &vertexBuffer);
     std::pair<ChunkData, std::uint8_t> data {ChunkGenerator::retrieveChunk(position)};
     chunk = data.first.chunk;
+    biome = data.first.biome;
     highestVisibleLayer = data.second;
 
     // Now put the data into the chunk's vertex buffer
