@@ -47,7 +47,7 @@ namespace ChunkGenerator
             {
                 const glm::i32vec3 chunkOffset {x, 0, z};
                 if (mappedBiomes.find(chunkOffset) == mappedBiomes.end())
-                    mappedBiomes.insert({chunkOffset, initChunkData(Forest, chunkOffset)});
+                    mappedBiomes.insert({chunkOffset, initChunkData(Desert, chunkOffset)});
 
                 const auto currentCameraOffset {Camera::getCameraPosChunkOffset()};
 
