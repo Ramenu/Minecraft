@@ -109,12 +109,11 @@ void Renderer::update() noexcept
 /**
  * Creates a chunk at the given location and draws it.
  */
-void Renderer::createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept 
+void Renderer::createChunk(const glm::i32vec3 &chunkPos) noexcept 
 {
     Chunk * const chunk {&allChunks[chunkPos]};
     chunk->initChunk(chunkPos);
     updateAdjacentChunks(*chunk, chunkPos);
-    chunk->drawChunk();
 }
 
 /**
@@ -122,7 +121,7 @@ void Renderer::createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept
  */
 void Renderer::draw() noexcept 
 {
-    static constexpr unsigned int CALL_COUNT_RESET {9};
+    static constexpr unsigned int CALL_COUNT_RESET {6};
     static unsigned int callCount {};
     ++callCount;
     // Number of how many chunks the player can see on X and Z
@@ -145,7 +144,7 @@ void Renderer::draw() noexcept
                 #if 1
                 else if (callCount == CALL_COUNT_RESET && !createdChunkThisFrame)
                 {
-                    createChunkAndDraw(index);
+                    createChunk(index);
                     createdChunkThisFrame = true;
                 }
                 #endif

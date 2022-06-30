@@ -26,7 +26,7 @@ class Renderer
         inline Shader getShader() const noexcept { return cubeShader; }
     private:
         Shader cubeShader;
-        void createChunkAndDraw(const glm::i32vec3 &chunkPos) noexcept;
+        void createChunk(const glm::i32vec3 &chunkPos) noexcept;
         inline static bool chunkIsVisibleToPlayer(float x, float y, float z) noexcept {
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
