@@ -26,9 +26,12 @@ namespace Sound
             sf::SoundBuffer buffer;
     };
     
-    static std::pair<SoundData, SoundData> blockSounds[2] {
-        std::pair<SoundData, SoundData>{"./sfx/grassblock/grassplace.ogg", "./sfx/grassblock/grassbreak.ogg"}, // Grass block sounds
-        std::pair<SoundData, SoundData>{"./sfx/stone/stoneplace.ogg", "./sfx/stone/stonebreak.ogg"} // Stone block sounds
+    static std::pair<SoundData, SoundData> blockSounds[5] {
+        std::pair<SoundData, SoundData>{"./sfx/grass/grassblockplace.wav", "./sfx/grass/grassblockbreak.wav"}, // Grass block sounds
+        std::pair<SoundData, SoundData>{"./sfx/stone/stoneblockplace.wav", "./sfx/stone/stoneblockbreak.wav"}, // Stone block sounds
+        std::pair<SoundData, SoundData>{"./sfx/wood/woodblockplace.wav", "./sfx/wood/woodblockbreak.wav"}, // Wood block sounds
+        std::pair<SoundData, SoundData>{"./sfx/leaf/leafblockplace.wav", "./sfx/leaf/leafblockbreak.wav"}, // Leaf block sounds
+        std::pair<SoundData, SoundData>{"./sfx/sand/sandblockplace.wav", "./sfx/sand/sandblockbreak.wav"} // Sand block sounds
     };
 
     /**
@@ -42,11 +45,19 @@ namespace Sound
         static constexpr int GRASS_BLOCK_SOUND_ID {0};
         static constexpr int DIRT_BLOCK_SOUND_ID {0};
         static constexpr int STONE_BLOCK_SOUND_ID {1};
+        static constexpr int WOOD_BLOCK_SOUND_ID {2};
+        static constexpr int LEAF_BLOCK_SOUND_ID {3};
+        static constexpr int CACTUS_BLOCK_SOUND_ID {3};
+        static constexpr int SAND_BLOCK_SOUND_ID {4};
         switch (name)
         {
+            default: return STONE_BLOCK_SOUND_ID;
             case Grass_Block: return GRASS_BLOCK_SOUND_ID;
             case Dirt_Block: return DIRT_BLOCK_SOUND_ID;
-            default: return STONE_BLOCK_SOUND_ID;
+            case OakWood_Block: return WOOD_BLOCK_SOUND_ID;
+            case Leaf_Block: return LEAF_BLOCK_SOUND_ID;
+            case Cactus_Block: return CACTUS_BLOCK_SOUND_ID;
+            case Sand_Block: return SAND_BLOCK_SOUND_ID;
         }
     }
 
