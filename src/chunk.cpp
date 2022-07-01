@@ -76,8 +76,11 @@ constexpr bool Chunk::faceIsVisible(glm::i8vec3 index) const noexcept {
 
 void Chunk::drawChunk() const noexcept
 {
-    const GLint first {lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
-    const GLint count {highestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * static_cast<GLint>(CUBE_ATTRIBUTES)};
+    static constexpr GLint ATTR {static_cast<GLint>(CUBE_ATTRIBUTES)};
+    const GLint first {(Camera::cameraPos.y < 0.0f) ? 0 : lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * ATTR};
+    const GLint count {(Camera::cameraPos.y < 0.0f) ? 
+        (CHUNK_HEIGHT - lowestVisibleLayer) * CHUNK_WIDTH * CHUNK_LENGTH * ATTR :
+        highestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * ATTR};
     glBindVertexArray(vertexArray);
     glDrawArrays(GL_TRIANGLES, first, count - first);
 }
@@ -127,7 +130,7 @@ void Chunk::modifyChunk(glm::i8vec3 index, Block block) noexcept
 bool Chunk::updateChunk() noexcept 
 {
     bool updateNeeded {};
-    static constexpr float HIGHLIGHTED_AMBIENT_LEVEL {1.9F};
+    static constexpr float HIGHLIGHTED_AMBIENT_LEVEL {2.5F};
     for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
     {
         for (std::int32_t y {}; y < CHUNK_HEIGHT; ++y)
@@ -184,7 +187,7 @@ bool Chunk::updateChunk() noexcept
                             {
                                 if (chunk[blockPosition.x][blockPosition.y][blockPosition.z].name == Air_Block)
                                 {
-                                    modifyChunk(blockPosition, Block{Cobblestone_Block});
+                                    modifyChunk(blockPosition, Camera::selectedBlock);
                                     // Highlighting it is necessary, so in the next call the method can decide whether to still keep
                                     // it highlighted or not. Otherwise, the highlighted ambient will stay on it.
                                     blockStates[blockPosition.x][blockPosition.y][blockPosition.z] = HIGHLIGHTED_AND_VISIBLE;
