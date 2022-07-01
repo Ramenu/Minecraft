@@ -13,7 +13,7 @@
 #include <numeric>
 #include <algorithm>
 
-static constexpr bool CHECK_BOUNDS_ACCESS {true}; // use for debug builds only
+static constexpr bool CHECK_BOUNDS_ACCESS {false}; // use for debug builds only
 
 #define ABORT_ON_OUT_OF_BOUNDS_ACCESS(index) \
     if constexpr (CHECK_BOUNDS_ACCESS) { \
@@ -77,8 +77,8 @@ constexpr bool Chunk::faceIsVisible(glm::i8vec3 index) const noexcept {
 void Chunk::drawChunk() const noexcept
 {
     static constexpr GLint ATTR {static_cast<GLint>(CUBE_ATTRIBUTES)};
-    const GLint first {(Camera::cameraPos.y < 0.0f) ? 0 : lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * ATTR};
-    const GLint count {(Camera::cameraPos.y < 0.0f) ? 
+    const GLint first {(Camera::cameraPos.y < 0.0F) ? 0 : lowestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * ATTR};
+    const GLint count {(Camera::cameraPos.y < 0.0F) ? 
         (CHUNK_HEIGHT - lowestVisibleLayer) * CHUNK_WIDTH * CHUNK_LENGTH * ATTR :
         highestVisibleLayer * CHUNK_WIDTH * CHUNK_LENGTH * ATTR};
     glBindVertexArray(vertexArray);
@@ -387,16 +387,6 @@ void Chunk::updateBuffer(std::size_t bufferIndex, Attribute attributeIndex, std:
     glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, offsetEnd, vertices.data());
 }
 
-/**
- * Returns true if any of the
- * faces are visible.
- */
-static inline constexpr bool anyFacesAreVisible(const std::array<float, SQUARES_ON_CUBE> &faces) 
-{
-    return (std::any_of(faces.begin(), faces.end(), [](auto face) {
-        return face >= COMPLETELY_VISIBLE;
-    }));
-}
 
 /**
  * Returns the visible faces of the block in
@@ -500,18 +490,18 @@ constexpr bool Chunk::blockIsVisibleToPlayer(glm::i8vec3 index) const noexcept
 bool Chunk::isFacingChunk(const glm::vec3 &chunkWorldPos) noexcept 
 {
     static constexpr float MINIMUM_ANGLE_TO_SEE {-0.36F};
-    static constexpr float NEARLY_VISIBLE {-0.29f};
-    static constexpr float FACING_DIR {-0.27f};
+    static constexpr float NEARLY_VISIBLE {-0.29F};
+    static constexpr float FACING_DIR {-0.27F};
 
     // First check if the player is looking completely down or up, if so, this means that the player can only see
     // the chunk that they are on
-    static constexpr float LOOKING_DOWN_UP {0.85f};
+    static constexpr float LOOKING_DOWN_UP {0.85F};
     static constexpr int MAXIMUM_SEEABLE_CHUNKS {1};
     static constexpr int MAXIMUM_SEEABLE_CHUNKS_UP_DOWN {3};
     static constexpr int MINIMUM_CHUNK_OFFSET {CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS};
     const float maximumSeeableChunksCenter {CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS * std::sin(Camera::cameraPos.y)};
     if (glm::dot(Camera::direction.front, glm::vec3{0.0F, -1.0F, 0.0F}) >= LOOKING_DOWN_UP ||
-        glm::dot(Camera::direction.front, glm::vec3{0.0f, 1.0f, 0.0f}) >= LOOKING_DOWN_UP)
+        glm::dot(Camera::direction.front, glm::vec3{0.0F, 1.0F, 0.0F}) >= LOOKING_DOWN_UP)
     {
         if (!(std::abs(Camera::cameraPos.x - chunkWorldPos.x) < CHUNK_WIDTH * MAXIMUM_SEEABLE_CHUNKS_UP_DOWN && 
               std::abs(Camera::cameraPos.z - chunkWorldPos.z) < CHUNK_LENGTH * MAXIMUM_SEEABLE_CHUNKS_UP_DOWN))
@@ -521,36 +511,36 @@ bool Chunk::isFacingChunk(const glm::vec3 &chunkWorldPos) noexcept
 
     if (Camera::cameraPos.x - chunkWorldPos.x > CHUNK_WIDTH)
     {
-        const float dot {glm::dot(Camera::direction.front, glm::vec3{-1.0f, 0.0f, 0.0f})};
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{-1.0F, 0.0F, 0.0F})};
         if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.x - chunkWorldPos.z > MINIMUM_CHUNK_OFFSET && dot < NEARLY_VISIBLE))
             return false;
         // When facing completely in the middle, cull the chunks that are far enough (i.e., can't be seen) from the player 
-        else if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z > maximumSeeableChunksCenter) 
+        if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z > maximumSeeableChunksCenter) 
             return false;
     }
     else if (Camera::cameraPos.x - chunkWorldPos.x < -CHUNK_WIDTH)
     {
-        const float dot {glm::dot(Camera::direction.front, glm::vec3{1.0f, 0.0f, 0.0f})};
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{1.0F, 0.0F, 0.0F})};
         if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.x - chunkWorldPos.z < -(MINIMUM_CHUNK_OFFSET) && dot < NEARLY_VISIBLE))
             return false;
-        else if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z < maximumSeeableChunksCenter)
+        if (dot < FACING_DIR && Camera::cameraPos.x - chunkWorldPos.z < maximumSeeableChunksCenter)
             return false;
     }
     
     if (Camera::cameraPos.z - chunkWorldPos.z > CHUNK_LENGTH)
     {
-        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, -1.0f})};
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, -1.0F})};
         if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.z - chunkWorldPos.x > MINIMUM_CHUNK_OFFSET && dot < NEARLY_VISIBLE))
             return false;
-        else if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x > maximumSeeableChunksCenter)
+        if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x > maximumSeeableChunksCenter)
             return false;
     }
     else if (Camera::cameraPos.z - chunkWorldPos.z < -CHUNK_LENGTH)
     {
-        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0f, 0.0f, 1.0f})};
+        const float dot {glm::dot(Camera::direction.front, glm::vec3{0.0F, 0.0F, 1.0F})};
         if (!(dot >= MINIMUM_ANGLE_TO_SEE) || (Camera::cameraPos.z - chunkWorldPos.z < -(MINIMUM_CHUNK_OFFSET) && dot < NEARLY_VISIBLE))
             return false;
-        else if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x < maximumSeeableChunksCenter)
+        if (dot < FACING_DIR && Camera::cameraPos.z - chunkWorldPos.x < maximumSeeableChunksCenter)
             return false;
     }
     return true;
