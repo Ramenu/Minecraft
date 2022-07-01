@@ -6,8 +6,6 @@ precision mediump float;
 #define DIFFUSE_VECTOR vec3(0.7, 0.7, 0.7)
 #define AMBIENT_VECTOR vec3(0.25, 0.25, 0.25)
 #define WATER_BLOCK_ID 12
-#define PI 3.14159265359
-#define PARABOLA(n, curve) (1.0 - pow(abs(sin(PI * (n) / 2.0)), (curve)))
 
 struct Material 
 {
@@ -24,8 +22,6 @@ in float blockAmbient;
 flat in int blockFragID;
 
 uniform sampler2D allTextures;
-uniform float iTime;
-uniform vec2 iResolution;
 uniform Material material;
 
 
