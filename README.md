@@ -6,7 +6,6 @@ RELEASE V1.0
 ------------
 - Added desert biome
 - Added sand and cactus block
-- Change emerald ores to spawn in batches of instead of 1 (was way too rare to get it to spawn, so hopefully this will help a bit)
 - Bottom of the chunks can be seen once you go below -16y now
 - Different biomes can be spawned all over the world
 - Emerald blocks can actually be spawned now
@@ -24,8 +23,8 @@ TO BE RESOLVED
 - Blocks are still highlighted even when the player has stopped looking at them
 - Program consumes too much memory as more chunks are created
 
-
-Some links to the libraries I use, they are really great, go check them out:<br>
+LIBRARIES/TOOLS/PROGRAMS USED
+-----------------------------
 https://www.glfw.org/ (Window and event handling library)<br>
 https://github.com/Dav1dde/glad (Provides OpenGL loader generator, and more.)<br>
 https://github.com/SFML/SFML (I use it for audio, but they support graphics, networks, and a whole lot of other stuff)<br>
