@@ -121,7 +121,7 @@ void Renderer::createChunk(const glm::i32vec3 &chunkPos) noexcept
  */
 void Renderer::draw() noexcept 
 {
-    static constexpr unsigned int CALL_COUNT_RESET {6};
+    static constexpr unsigned int CALL_COUNT_RESET {7}; // Change this number if you want chunks to render faster or slower
     static unsigned int callCount {};
     ++callCount;
     // Number of how many chunks the player can see on X and Z
