@@ -266,7 +266,7 @@ namespace WorldGen
 	 * can be returned.
 	 */
 	static inline std::int32_t randomizeYIndex(float x, float z, 
-	                                           const std::array<glm::vec2, 4ul> &gradients,
+	                                           const std::array<glm::vec2, 4UL> &gradients,
 											   float maxHeight) noexcept
 	{
 		float noise {perlin(x, z, gradients)};
@@ -294,16 +294,16 @@ namespace WorldGen
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Plains: 
-				maxHeightForFormat = 6.0f; 
-				frequency = 4.0f;
+				maxHeightForFormat = 6.0F; 
+				frequency = 4.0F;
 				break;
 			case TerrainTopFormat::Forest:
 				maxHeightForFormat = static_cast<float>(2 + std::rand() % 2); // Randomize between 2 and 3
-				frequency = 8.0f;
+				frequency = 8.0F;
 				break;
 			case TerrainTopFormat::Desert:
-				maxHeightForFormat = 4.0f;
-				frequency = 6.0f;
+				maxHeightForFormat = 4.0F;
+				frequency = 6.0F;
 				break;
 		}
 		static constexpr int MINIMUM_HEIGHT_LEVEL_FOR_TOP {CHUNK_HEIGHT_HALF};
@@ -347,7 +347,9 @@ namespace WorldGen
 			}
 		}
 		chunk.second = static_cast<std::uint8_t>(highestY) + 1;
-		assert(chunk.second <= CHUNK_HEIGHT);
+		#ifndef NDEBUG
+			assert(chunk.second <= CHUNK_HEIGHT);
+		#endif
 	}
 
 	/**
