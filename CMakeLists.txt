@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the build to debug mode
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 # Set compiler
 set(CMAKE_C_COMPILER gcc)
@@ -10,14 +10,14 @@ set(CMAKE_CXX_COMPILER g++)
 # Executable directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 
-project(Minecraft)
+project(minecraft)
 
 # Use C++20 standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
-add_executable(main
+add_executable(minecraft
 ./src/camera.cpp
 ./src/chunk.cpp
 ./src/chunkgenerator.cpp
@@ -37,7 +37,7 @@ add_executable(main
 
 # Compiler flags
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(main PRIVATE 
+    target_compile_options(minecraft PRIVATE 
     -fdiagnostics-color
     -Wall
     -Werror
@@ -45,7 +45,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     -Wextra
     -ffunction-sections
     -fdata-sections
-    #-fsanitize=address
     -fstrict-enums
     -Wctor-dtor-privacy
     -Wnon-virtual-dtor
@@ -81,21 +80,20 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Options for release build
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
         message(STATUS "Running release build")
-        target_compile_options(main PRIVATE
+        target_compile_options(minecraft PRIVATE
         -DNDEBUG
         -O3
         -ffast-math
-        #-flto # flto seems to break the program, weird..
-        #-fprofile-generate=./profile # This executes the binary a few times for sample analysis (Replace with "fprofile-use=PATH" once complete)
-        #-fprofile-partial-training
         -march=native)
-        target_link_options(main PUBLIC -flto -s)
-        target_link_libraries(main PUBLIC gcov)
+        target_link_options(minecraft PUBLIC -flto -s)
+        target_link_libraries(minecraft PUBLIC gcov)
     endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(main PRIVATE
+    target_compile_options(minecraft PRIVATE
+    -DNDEBUG
+    -ffast-math
     -fdiagnostics-color
     -Wextra-tokens
     -Wall
@@ -148,30 +146,30 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -march=native
     -O3
     )
+    target_link_options(minecraft PUBLIC -flto -s)
 endif()
 
 # Include directories
-target_include_directories(main PUBLIC "./include")
-target_link_directories(main PUBLIC "./lib")
+target_include_directories(minecraft PUBLIC "./include")
+target_link_directories(minecraft PUBLIC "./lib")
 
 # Link libraries
 if (WIN32)
 
     # Linker flags
-    target_link_options(main PUBLIC ../icons/icon.res -Wl,--gc-sections)
+    target_link_options(minecraft PUBLIC ../icons/icon.res -Wl,--gc-sections)
 
-    target_link_libraries(main PUBLIC 
+    target_link_libraries(minecraft PUBLIC 
     glfw3
-    sfml-system-3
-    sfml-audio-3
-    timer)
+    sfml-system
+    sfml-audio
+    )
 elseif(UNIX)
-    target_link_libraries(main PUBLIC
+    target_link_libraries(minecraft PUBLIC
     glad
     glfw
     sfml-system
     sfml-audio
-    timer
     )
 endif()
 
