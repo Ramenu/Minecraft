@@ -18,8 +18,18 @@ It's finally finished! After 5 months of hard work, the game has hit its first r
 
 For building the program, refer to the documentation.
 
+
+FEATURES
+--------
+- Procedurally generated world
+- Up to 3 different biomes (plains, forest, desert)
+- Many different ore blocks can be found underground (almost all of the same ones in Minecraft)
+- Destroy blocks and place them, with up to 8 different blocks that can be picked and placed
+- Unique sound effects that are distinctly different from the original game (and textures too!)
+
+
 TO BE RESOLVED
-------------
+--------------
 - Blocks are still highlighted even when the player has stopped looking at them
 - Program consumes too much memory as more chunks are created
 
