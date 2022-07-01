@@ -37,6 +37,7 @@ namespace Camera
 	inline CameraSettings settings {.yaw = 90.0f, .pitch = 0.0f, .sensitivity = 0.1f};
 	inline CameraDirections direction;
 	inline constinit glm::vec3 cameraPos {CAMERA_START_X, CAMERA_START_Y, CAMERA_START_Z};
+	inline Block selectedBlock {Grass_Block};
 
 }
 
