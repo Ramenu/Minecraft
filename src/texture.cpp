@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include <filesystem>
 #include "minecraft/gfx/texture.hpp"
-#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+#if (defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)) && (!defined(__llvm__) && !defined(__INTEL_COMPILER))
     #pragma GCC diagnostic push 
     #pragma GCC diagnostic ignored "-Wdouble-promotion"
     #pragma GCC diagnostic ignored "-Wcast-qual"
@@ -10,6 +10,7 @@
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
     #pragma GCC diagnostic ignored "-Wconversion"
     #pragma GCC diagnostic ignored "-Wold-style-cast"
+    #pragma GCC diagnostic ignored "-Wstringop-overflow"
     #include "stb-master/stb_image.h"
     #pragma GCC diagnostic pop
 #elif defined(__clang__)
