@@ -38,6 +38,14 @@ namespace Window
         {
             case GLFW_KEY_Q: return renderWireFrames();
             case GLFW_KEY_ESCAPE: return glfwSetWindowShouldClose(glWindow, CLOSE_WINDOW);
+            case GLFW_KEY_1: Camera::selectedBlock = Block{Grass_Block}; break;
+            case GLFW_KEY_2: Camera::selectedBlock = Block{Dirt_Block}; break;
+            case GLFW_KEY_3: Camera::selectedBlock = Block{Cobblestone_Block}; break;
+            case GLFW_KEY_4: Camera::selectedBlock = Block{Stone_Block}; break;
+            case GLFW_KEY_5: Camera::selectedBlock = Block{OakWood_Block}; break;
+            case GLFW_KEY_6: Camera::selectedBlock = Block{Leaf_Block}; break;
+            case GLFW_KEY_7: Camera::selectedBlock = Block{Sand_Block}; break;
+            case GLFW_KEY_8: Camera::selectedBlock = Block{Cactus_Block}; break;
         }
     }
 
