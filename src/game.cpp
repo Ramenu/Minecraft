@@ -91,7 +91,6 @@ static inline void updateCamera(const Renderer &renderer) noexcept
     renderer.getShader().useShader();
     renderer.getShader().setMat4("view", Camera::getView());
     renderer.getShader().setVec3("viewPos", Camera::cameraPos);
-    renderer.getShader().setFloat("iTime", static_cast<float>(glfwGetTime()));
 }
 
 /**
@@ -122,7 +121,6 @@ void runGame() noexcept
     while (!ChunkGenerator::hasFinishedStockpiling()); // Don't initialize the renderer until enoughs chunks have been generated
     Renderer renderer;
 
-    renderer.getShader().setVec2("iResolution", glm::vec2{Window::WIDTH, Window::HEIGHT});
 
     // Main game loop
     static constexpr int WINDOW_NOT_CLOSED {0};
