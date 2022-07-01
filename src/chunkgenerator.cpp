@@ -35,6 +35,44 @@ namespace ChunkGenerator
         return {ChunkData{terrain.first, mesh, biome}, terrain.second};
     }
 
+    static inline std::size_t genSuperChunkOffset() noexcept {
+        static constexpr int MINIMUM_SUPER_CHUNK_OFFSET {80};
+        static constexpr int MAXIMUM_SUPER_CHUNK_OFFSET {800};
+        return std::rand() % MAXIMUM_SUPER_CHUNK_OFFSET + MINIMUM_SUPER_CHUNK_OFFSET;
+    }
+
+    static inline Biome pickRandomBiome() noexcept {
+        static constexpr std::array biomes {
+            Plains,
+            Forest,
+            Desert
+        };
+        return biomes[std::rand() % biomes.size()];
+    }
+
+    /**
+     * This function keeps an internal state of
+     * 
+     */
+    static Biome generateBiomeType() noexcept
+    {
+        static std::size_t maxCalls {genSuperChunkOffset()}; 
+        static std::size_t callCount {}; 
+        static Biome currentBiome {pickRandomBiome()}; 
+        ++callCount;
+
+        // If the number of calls has exceeded the max # of calls, reset the call count and generate a new offset
+        // for the super chunk, just to keep things more 'randomized' instead of predictable.
+        if (callCount > maxCalls)
+        {
+            callCount = 0;
+            maxCalls = genSuperChunkOffset();
+            currentBiome = pickRandomBiome();
+        }
+
+        return currentBiome;
+    }
+
     /**
      * Creates chunks near the player's position,
      * where 'p' is the player's chunk offset.
@@ -47,14 +85,8 @@ namespace ChunkGenerator
             {
                 const glm::i32vec3 chunkOffset {x, 0, z};
                 if (mappedBiomes.find(chunkOffset) == mappedBiomes.end())
-                    mappedBiomes.insert({chunkOffset, initChunkData(Desert, chunkOffset)});
+                    mappedBiomes.insert({chunkOffset, initChunkData(generateBiomeType(), chunkOffset)});
 
-                const auto currentCameraOffset {Camera::getCameraPosChunkOffset()};
-
-                // If the position of the player changes while adding new chunks, return immediately
-                // so we can get the updated position the next time the function is called.
-                if (currentCameraOffset.x != p.x || currentCameraOffset.z != p.z)
-                    return;
             }
         }
     }
@@ -85,8 +117,8 @@ namespace ChunkGenerator
                 {
                     const float xW {static_cast<float>(x + worldCoords.x)};
                     const float yW {static_cast<float>(y + worldCoords.y)};
-                    const float yZ {static_cast<float>(z + worldCoords.z)};
-                    const auto pos {createCubeAt(xW, yW, yZ)};
+                    const float zW {static_cast<float>(z + worldCoords.z)};
+                    const auto pos {createCubeAt(xW, yW, zW)};
                     const auto blockId {getBlockIDVertices(terrain[x][y][z].name)};
                     chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                             pos.begin(), 
