@@ -1,0 +1,14 @@
+-> Press Q to shift into or out of wireframe mode
+-> WASD keys for movement
+-> Pressing these keys will change the selected block:
+    * Press 1: Grass block
+    * Press 2: Dirt Block
+    * Press 3: Cobblestone Block
+    * Press 4: Stone Block
+    * Press 5: Oak wood block
+    * Press 6: Leaf block
+    * Press 7: Sand block
+    * Press 8: Cactus block
+
+-> Press the right mouse button to place a block (this sometimes doesn't work depending on the angle)
+-> Press the left mouse button to destroy a block
