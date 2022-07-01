@@ -52,8 +52,10 @@ namespace WorldGen
 		switch (format)
 		{
 			default: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = false, .minimumTrees = 0, .maximumTrees = 0, .minimumRoll = 397};
+
 			case TerrainTopFormat::Forest: return TreeInfo{.formatCanSpawnTree = true, .hasMaximumLimit = true, 
 			                                               .minimumTrees = 2, .maximumTrees = 4, .minimumRoll = 370};
+
 			case TerrainTopFormat::Desert: return TREE_INFO_NULL;
 		}
 	}
@@ -119,23 +121,18 @@ namespace WorldGen
 	static constexpr void editChunk(ChunkArray &chunk, glm::u8vec3 portionSize, glm::u8vec3 currentIndex, Block block) noexcept
 	{
 		#ifndef NDEBUG
-			if (currentIndex.y >= CHUNK_HEIGHT_HALF)
-			{
-				//printf("editChunk called with illegal y-indice: %d\n", currentIndex.y);
-				exit(-8);
-			}
-
+			assert(currentIndex.y < CHUNK_HEIGHT_HALF);
 		#endif
 		glm::u8vec3 offset {portionSize + currentIndex};
-		if (offset.x >= CHUNK_WIDTH_HALF)
+		if (offset.x + 1 >= CHUNK_WIDTH_HALF)
 			offset.x = CHUNK_WIDTH_HALF - 1;
-		if (offset.y >= CHUNK_HEIGHT_HALF)
+		if (offset.y + 1 >= CHUNK_HEIGHT_HALF)
 			offset.y = CHUNK_HEIGHT_HALF - 1;
-		if (offset.z >= CHUNK_LENGTH_HALF)
+		if (offset.z + 1 >= CHUNK_LENGTH_HALF)
 			offset.z = CHUNK_LENGTH_HALF - 1;
-		for (std::int32_t x {currentIndex.x}; x < offset.x; ++x)
-			for (std::int32_t y {currentIndex.y}; y < offset.y; ++y)
-				for (std::int32_t z {currentIndex.z}; z < offset.z; ++z)
+		for (std::int32_t x {currentIndex.x}; x < offset.x + 1; ++x)
+			for (std::int32_t y {currentIndex.y}; y < offset.y + 1; ++y)
+				for (std::int32_t z {currentIndex.z}; z < offset.z + 1; ++z)
 					chunk[x][y][z] = block;
 
 	}
@@ -147,35 +144,28 @@ namespace WorldGen
 	 */
 	static BlockName selectOrePick(std::uint32_t y) noexcept
 	{
+		static constexpr int NUM_TO_SPAWN_ORE {5};
 		#ifndef NDEBUG
-			if (y >= 8)
-			{
-				printf("selectOrePick invalid pick!!!: %u\n", y);
-				exit(-12);
-			}
+			assert(y < CHUNK_HEIGHT_HALF);
 		#endif
-		const std::uint32_t rarity {CHUNK_HEIGHT_HALF - y}; // Higher is better
-		static constexpr BlockName oresToChooseFrom[] {
-			CoalOre_Block, CoalOre_Block,
-			IronOre_Block, IronOre_Block,
-			GoldOre_Block,
-			RedstoneOre_Block,
-			DiamondOre_Block,
-			EmeraldOre_Block
+		static constexpr struct {
+			BlockName name;
+			std::size_t maxRollSpawnRate;
+			std::uint32_t minimumY;
+		} oreSpawnRateProbabilities[] {
+			{.name = IronOre_Block, .maxRollSpawnRate = 50, .minimumY = 5}, // Iron
+			{.name = RedstoneOre_Block, .maxRollSpawnRate = 100, .minimumY = 4}, // Redstone
+			{.name = GoldOre_Block, .maxRollSpawnRate = 100, .minimumY = 3}, // Gold
+			{.name = DiamondOre_Block, .maxRollSpawnRate = 250, .minimumY = 2}, // Diamond
+			{.name = EmeraldOre_Block, .maxRollSpawnRate = 500, .minimumY = 1} // Emerald
 		};
-		if (rarity == 0) // To avoid floating-point exception
-			return oresToChooseFrom[0];
-		
-		const auto randomSelect {std::rand() % rarity};
-		#ifndef NDEBUG
-			if (randomSelect >= 8)
-			{
-				printf("ERROR: INVALID RANDOM\n");
-				exit(-1);
-			}
 
-		#endif
- 		return oresToChooseFrom[randomSelect];
+		for (auto ore : oreSpawnRateProbabilities)
+			if (std::rand() % ore.maxRollSpawnRate <= NUM_TO_SPAWN_ORE && y <= ore.minimumY)
+				return ore.name;
+		
+		// If none of the ores spawned, then just spawn an ore block
+		return CoalOre_Block;
 	}
 
 	/**
@@ -188,26 +178,24 @@ namespace WorldGen
 	{
 		static constexpr std::array coalAndRedstoneBlockCombinations {
 			glm::u8vec3{2, 2, 2},
-			glm::u8vec3{2, 2, 0},
 			glm::u8vec3{1, 1, 1},
 			glm::u8vec3{3, 3, 3}
 		};
 
 		static constexpr std::array ironBlockCombinations {
+			glm::u8vec3{1, 0, 1},
 			glm::u8vec3{1, 1, 1},
-			glm::u8vec3{2, 0, 2},
 			glm::u8vec3{2, 2, 2},
-			glm::u8vec3{1, 1, 0}
 		};
 
 		static constexpr std::array goldBlockCombinations {
+			glm::u8vec3{1, 0, 1},
 			glm::u8vec3{1, 1, 1},
 			glm::u8vec3{2, 2, 2}
 		}; 
 
 		static constexpr std::array diamondBlockCombinations {
 			glm::u8vec3{1, 0, 0},
-			glm::u8vec3{0, 0, 1},
 			glm::u8vec3{1, 0, 1},
 			glm::u8vec3{2, 2, 2}
 		};
@@ -218,7 +206,7 @@ namespace WorldGen
 			case IronOre_Block: return ironBlockCombinations[std::rand() % ironBlockCombinations.size()];
 			case GoldOre_Block: return goldBlockCombinations[std::rand() % goldBlockCombinations.size()];
 			case DiamondOre_Block: return diamondBlockCombinations[std::rand() % diamondBlockCombinations.size()];
-			case EmeraldOre_Block: return {1, 0, 0};
+			case EmeraldOre_Block: return {0, 0, 1};
 		}
 
 	}
@@ -256,6 +244,10 @@ namespace WorldGen
 		return spawnTree;
 	}
 
+	/**
+	 * Returns true if a cactus can be generated in
+	 * the current position.
+	 */
 	static bool canGenerateCactus(TerrainTopFormat format) noexcept
 	{
 		static constexpr int SPAWN_CACTUS_MAXIMUM_ROLL {400};
@@ -302,8 +294,8 @@ namespace WorldGen
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Plains: 
-				maxHeightForFormat = 3.0f; 
-				frequency = 6.0f;
+				maxHeightForFormat = 6.0f; 
+				frequency = 4.0f;
 				break;
 			case TerrainTopFormat::Forest:
 				maxHeightForFormat = static_cast<float>(2 + std::rand() % 2); // Randomize between 2 and 3
@@ -365,11 +357,7 @@ namespace WorldGen
 	static void generateBottomHalfOfChunk(ChunkArray &chunk, int yEnd) noexcept
 	{
 		#ifndef NDEBUG
-			if (!(yEnd <= CHUNK_HEIGHT_HALF))
-			{
-				printf("ERROR: At 'generateBottomHalfOfChunk' y's value is %d!\n", yEnd);
-				exit(EXIT_FAILURE);
-			}
+			assert(yEnd <= CHUNK_HEIGHT_HALF);
 		#endif
 		static constexpr std::uint32_t MAXIMUM_NUM {100};
 		static constexpr Block stoneBlock {Stone_Block};
@@ -384,7 +372,9 @@ namespace WorldGen
 					chunk[x][y][z] = Block{Stone_Block};
 					const glm::u8vec3 index {x, y, z};
 					const std::uint32_t randomPercent {std::rand() % MAXIMUM_NUM + 1};
-					if (randomPercent >= 90 && randomPercent <= 100)
+
+					// Spawn a ore if the percent is between 95 and 100
+					if (randomPercent >= 95 && randomPercent <= 100)
 					{
 						const BlockName ore {selectOrePick(y)};
 						editChunk(chunk, getOrePortionSize(ore), index, Block{ore});
