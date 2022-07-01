@@ -1,6 +1,5 @@
 #define GLFW_INCLUDE_NONE
 
-#define GAME_BENCHMARK
 
 #include <cmath>
 #include "minecraft/game/game.hpp"
@@ -58,8 +57,8 @@ void initGame(const char *windowTitle) noexcept
         GLError::enableGLDebugCallBack();
     #endif
 
-    static constexpr float x {};
-    static constexpr float y {};
+    static constexpr GLint x {};
+    static constexpr GLint y {};
     glViewport(x, y, Window::WIDTH, Window::HEIGHT);
 
     // Initialize vertex array for uniform buffer
