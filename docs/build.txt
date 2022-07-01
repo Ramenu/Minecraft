@@ -1,0 +1,19 @@
+
+To build the program, you'll need to have a C++20 compatible compiler, such as
+GCC (10+) or Clang (14+). I have not tested it on MSVC, but you can configure
+the CMakeLists.txt to make it work on there too.
+
+Unfortunately I didn't really design this to be simple. I do not have much experience
+writing good, portable build configurations so this isn't intended to be 'simple', sorry.
+
+To start off, you'll need to compile the glad file in the "./include/glad" directory and link
+it to a static or shared library, whichever you prefer. You'll also need to compile SFML (as of
+writing this, SFML 2.5.1 works). You will also need GLFW3. 
+
+I am not sure how to write a proper CMake portable CMake configuration. It is a mess
+right now at the moment. You'll probably have to edit some of the configurations  yourself. Sorry.
+I would greatly appreciate any help in trying to make it better. 
+
+Also, I have only tested the release build on Linux. But there is absolutely no reason why it wouldn't work
+on Windows or MacOS. From the time I was using Windows, everything compiled well and fine. Uncertain
+about MacOS, but I am fairly confident it should work there too.
