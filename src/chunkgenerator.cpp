@@ -2,7 +2,7 @@
 
 #include "minecraft/world/chunkgenerator.hpp"
 #include "minecraft/world/worldgen.hpp"
-#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+#if (defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)) && (!defined(__llvm__) && !defined(__INTEL_COMPILER))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
     #include "glm/gtx/hash.hpp"
