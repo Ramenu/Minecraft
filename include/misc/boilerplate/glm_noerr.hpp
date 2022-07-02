@@ -1,7 +1,7 @@
 #ifndef GLM_NOERR_HPP
 #define GLM_NOERR_HPP
 
-#if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)
+#if (defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__)) && (!defined(__llvm__) && !defined(__INTEL_COMPILER))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wduplicated-branches"
     #include "glm/glm.hpp"
