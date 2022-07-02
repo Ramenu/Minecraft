@@ -86,7 +86,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         -ffast-math
         -march=native)
         target_link_options(minecraft PUBLIC -flto -s)
-        target_link_libraries(minecraft PUBLIC gcov)
     endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 endif()
