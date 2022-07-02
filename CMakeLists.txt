@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_BUILD_TYPE "Release")
 
 # Set compiler
-set(CMAKE_C_COMPILER gcc)
-set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
 
 # Executable directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
@@ -21,7 +21,6 @@ add_executable(minecraft
 ./src/camera.cpp
 ./src/chunk.cpp
 ./src/chunkgenerator.cpp
-./src/frustum.cpp
 ./src/game.cpp
 ./src/glerror.cpp
 ./src/glmath.cpp
@@ -98,6 +97,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wall
     -Wextra
     -Wpedantic
+    -Werror
     -Wabstract-final-class
     -Wbad-function-cast
     -Wbitfield-enum-conversion
