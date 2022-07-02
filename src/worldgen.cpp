@@ -295,7 +295,7 @@ namespace WorldGen
 		{
 			case TerrainTopFormat::Plains: 
 				maxHeightForFormat = 6.0F; 
-				frequency = 4.0F;
+				frequency = 6.0F;
 				break;
 			case TerrainTopFormat::Forest:
 				maxHeightForFormat = static_cast<float>(2 + std::rand() % 2); // Randomize between 2 and 3
@@ -363,7 +363,6 @@ namespace WorldGen
 		#endif
 		static constexpr std::uint32_t MAXIMUM_NUM {100};
 		static constexpr Block stoneBlock {Stone_Block};
-		static constexpr glm::u8vec3 STONE_BLOCK_PORTION {4, 4, 4};
 		glm::u8vec3 portion;
 		for (std::int32_t y {}; y < yEnd; ++y)
 		{
