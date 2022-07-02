@@ -23,7 +23,7 @@ class Renderer
         Renderer() noexcept;
         void draw() noexcept;
         void update() noexcept;
-        inline Shader getShader() const noexcept { return cubeShader; }
+        inline const Shader &getShader() const noexcept { return cubeShader; }
     private:
         Shader cubeShader;
         void createChunk(const glm::i32vec3 &chunkPos) noexcept;
