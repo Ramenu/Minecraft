@@ -16,20 +16,27 @@
 #else
     #include "SFML/Audio.hpp"
 #endif
+#include <filesystem>
+#include "minecraft/glerror/glerror.hpp"
+
+
 
 namespace Sound
 {
+	namespace std_fs = std::filesystem;
     class SoundData
     {
+        private:
+            sf::SoundBuffer buffer;
         public:
-            explicit inline SoundData(const std::string &soundFilePath) noexcept
+            explicit SoundData(const std::string &soundFilePath) noexcept
             {
+				if (!std_fs::exists(soundFilePath))
+					GLError::error_message("Could not find \"" + soundFilePath + "\"!");
                 buffer.loadFromFile(soundFilePath);
                 audio.setBuffer(buffer);
             }
             sf::Sound audio;
-        private:
-            sf::SoundBuffer buffer;
     };
     
     static std::pair<SoundData, SoundData> blockSounds[5] {
