@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include <iostream>
 #include "misc/color.h"
+#include "minecraft/world/chunkgenerator.hpp"
 
 namespace GLError
 {
@@ -13,7 +14,9 @@ namespace GLError
      */
     void error_message(std::string_view error) noexcept // cppcheck-suppress passedByValue
     {
-        std::cerr << COLOR_RED << "\nFATAL ERROR: " << COLOR_RESET << error << '\n';
+        if (!ChunkGenerator::stopThread)
+            ChunkGenerator::stopThread = true;
+        std::cerr << COLOR_RED "\nFATAL ERROR: " COLOR_RESET << error << '\n';
         exit(EXIT_FAILURE);
     }
 
