@@ -294,7 +294,7 @@ namespace WorldGen
 		switch (format.topFormat)
 		{
 			case TerrainTopFormat::Plains: 
-				maxHeightForFormat = 6.0F; 
+				maxHeightForFormat = 5.0F; 
 				frequency = 6.0F;
 				break;
 			case TerrainTopFormat::Forest:
