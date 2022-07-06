@@ -18,22 +18,11 @@
 namespace ChunkGenerator
 {
     static ChunkMesh generateChunkMesh(const ChunkArray &terrain, const glm::i32vec3 &position) noexcept;
-    static constexpr int PRELOAD_CHUNKS {1};
 
     bool finishedInitialization {false};
-    std::unordered_map<glm::i32vec3, std::pair<ChunkData, std::uint8_t>> mappedBiomes;
+    std::unordered_map<glm::i32vec3, ChunkTerrain> mappedBiomes;
 
 
-    /**
-     * Returns a chunk of the given biome and at the chunk offset
-     * position specified.
-     */
-    static std::pair<ChunkData, std::uint8_t> initChunkData(Biome biome, const glm::i32vec3 &position) noexcept
-    {
-        auto terrain {WorldGen::generateTerrain(biome)};
-        auto mesh {generateChunkMesh(terrain.first, position)};
-        return {ChunkData{terrain.first, mesh, biome}, terrain.second};
-    }
 
     static inline std::size_t genSuperChunkOffset() noexcept {
         static constexpr int MINIMUM_SUPER_CHUNK_OFFSET {80};
@@ -79,6 +68,31 @@ namespace ChunkGenerator
      */
     static void createChunksNearPlayer(const glm::i32vec3 &p) noexcept
     {
+        #if 1
+        std::int32_t farZ {p.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS};
+        std::int32_t farX {p.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS};
+        for (int i {}; i < 2; ++i)
+        {
+            for (auto x {p.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS}; x < p.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS; ++x)
+            {
+                const glm::i32vec3 chunkOffset {x, 0, farZ}; 
+                if (mappedBiomes.find(chunkOffset) == mappedBiomes.end()) // If not found
+                    mappedBiomes.insert({chunkOffset, WorldGen::generateTerrain(generateBiomeType())});
+            }
+            farZ = p.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS;
+        }
+
+        for (int i {}; i < 2; ++i)
+        {
+            for (auto z {p.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS}; z < p.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS; ++z)
+            {
+                const glm::i32vec3 chunkOffset {farX, 0, z};
+                if (mappedBiomes.find(chunkOffset) == mappedBiomes.end()) 
+                    mappedBiomes.insert({chunkOffset, WorldGen::generateTerrain(generateBiomeType())});
+            }
+            farX = p.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS;
+        }
+        #else
         for (auto x {p.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS}; x < p.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS; ++x)
         {
             for (auto z {p.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS}; z < p.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS; ++z)
@@ -89,6 +103,7 @@ namespace ChunkGenerator
 
             }
         }
+        #endif
     }
 
     /**
@@ -118,8 +133,8 @@ namespace ChunkGenerator
                     const float xW {static_cast<float>(x + worldCoords.x)};
                     const float yW {static_cast<float>(y + worldCoords.y)};
                     const float zW {static_cast<float>(z + worldCoords.z)};
-                    const auto pos {createCubeAt(xW, yW, zW)};
-                    const auto blockId {getBlockIDVertices(terrain[x][y][z].name)};
+                    auto pos {createCubeAt(xW, yW, zW)};
+                    auto blockId {getBlockIDVertices(terrain[x][y][z].name)};
                     chunkVertices.meshAttributes[Attribute::Position].insert(chunkVertices.meshAttributes[Attribute::Position].end(), 
                                                                             pos.begin(), 
                                                                             pos.end());
@@ -145,18 +160,20 @@ namespace ChunkGenerator
      */
     void init() noexcept 
     {
-        #if 1
-        createChunksNearPlayer(Camera::getCameraPosChunkOffset());
+        const auto p {Camera::getCameraPosChunkOffset()};
+        for (auto x {p.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS}; x < p.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS; ++x)
+        {
+            for (auto z {p.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS}; z < p.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS; ++z)
+            {
+                const glm::i32vec3 chunkOffset {x, 0, z};
+                if (mappedBiomes.find(chunkOffset) == mappedBiomes.end())
+                    mappedBiomes.insert({chunkOffset, WorldGen::generateTerrain(generateBiomeType())});
 
+            }
+        }
         finishedInitialization = true;
         while (!stopThread)
             createChunksNearPlayer(Camera::getCameraPosChunkOffset());
-        #else
-            auto data {initChunkData(Plains, {0, 0, 0})};
-            mappedBiomes.insert({{0, 0, 0}, data});
-
-            finishedInitialization = true;
-        #endif
     }
 
     
@@ -164,10 +181,25 @@ namespace ChunkGenerator
      * Returns the specified biome's chunk data
      * (i.e., the mesh and terrain layout).
      */
-    std::pair<ChunkData, std::uint8_t> retrieveChunk(const glm::i32vec3 &position) noexcept
+    ChunkData retrieveChunk(const glm::i32vec3 &position) noexcept
     {
-        auto data {std::move(mappedBiomes.at(position))}; // copying the data can be expensive so move it instead
-        return data;
+        #if 1
+        auto chunkTerrain {mappedBiomes.at(position)}; // copying the data can be expensive so move it instead
+        auto mesh {generateChunkMesh(chunkTerrain.chunk, position)};
+        return {chunkTerrain, mesh};
+        #else
+            return initChunkData(generateBiomeType(), position);
+        #endif
+    }
+
+    /**
+     * Updates the map to use the given terrain at the key (i.e., position) located.
+     * This is useful for when the player makes an update to the chunk, like breaking
+     * or placing a block, so that when the chunk is unloaded and loaded back in, the
+     * map will retain its state.
+     */
+    void updateChunkAt(const ChunkTerrain &terrain, const glm::i32vec3 &position) noexcept {
+        mappedBiomes[position] = terrain;
     }
 
     /**
