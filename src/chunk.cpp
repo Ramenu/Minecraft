@@ -568,10 +568,10 @@ void Chunk::initChunk(glm::vec3 position) noexcept
 {
     glGenVertexArrays(1, &vertexArray);
     glGenBuffers(1, &vertexBuffer);
-    std::pair<ChunkData, std::uint8_t> data {ChunkGenerator::retrieveChunk(position)};
-    chunk = data.first.chunk;
-    biome = data.first.biome;
-    highestVisibleLayer = data.second;
+    const auto data {ChunkGenerator::retrieveChunk(position)};
+    chunk = data.terrain.chunk;
+    highestVisibleLayer = data.terrain.topLayer;
+    lowestVisibleLayer = data.terrain.lowestLayer;
 
     // Now put the data into the chunk's vertex buffer
     // -----------------------------------------------
@@ -582,8 +582,9 @@ void Chunk::initChunk(glm::vec3 position) noexcept
     glBufferData(GL_ARRAY_BUFFER, TOTAL_BYTES, nullptr, GL_DYNAMIC_DRAW);
 
     // Now fill in the buffer's data
+    // UPDATE THIS TO REMOVE THE BUFFER SUBDATA FOR VISIBILITY
     for (std::size_t i {}; i < ATTRIBUTES.size(); ++i)
-        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], data.first.mesh.meshAttributes[i].data());
+        glBufferSubData(GL_ARRAY_BUFFER, OFFSETS[i], SIZE_OF_CHUNK_VERTICES[i], data.mesh.meshAttributes[i].data());
     updateChunkVisibility();
 
     // Tell OpenGL what to do with the buffer's data (where the ATTRIBUTES are, etc).
