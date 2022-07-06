@@ -3,6 +3,7 @@
 #include "minecraft/math/frustum.hpp"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/rendering/renderinfo.hpp"
+#include "minecraft/world/chunkgenerator.hpp"
 #include <cstdio>
 
 
@@ -13,22 +14,15 @@
 Renderer::Renderer() noexcept : 
 cubeShader {"shaders/block/blockvertexshader.vert", "shaders/block/blockfragmentshader.frag"}
 {
-    #if 0
     const glm::i32vec3 p {Camera::getCameraPosChunkOffset()};
     for (auto x {p.x - RENDER_DISTANCE_X}; x < p.x + RENDER_DISTANCE_X; ++x)
-        for (auto z {p.x - RENDER_DISTANCE_Z}; z < p.z + RENDER_DISTANCE_Z; ++z)
+        for (auto z {p.z - RENDER_DISTANCE_Z}; z < p.z + RENDER_DISTANCE_Z; ++z)
             allChunks[{x, 0, z}].initChunk({x, 0, z});
-    #else
-        allChunks[{0, 0, 0}].initChunk({0, 0, 0});
-    #endif
     cubeShader.useShader(); 
     cubeShader.setInt("allTextures", 0);
 
-
-    #if 1
     for (const auto&[chunkPos, chunk]: allChunks)
         updateAdjacentChunks(chunk, chunkPos);
-    #endif
 }
 
 /**
@@ -73,6 +67,47 @@ void Renderer::updateAdjacentChunks(const Chunk &chunk, const glm::i32vec3 &key)
         chunkNegZ->updateChunkVisibilityToNeighbor(chunk.getChunk(), BackFace);
         chunk.updateChunkVisibilityToNeighbor(chunkNegZ->getChunk(), FrontFace);
     }
+}
+
+/**
+ * Removes the chunks that are 'far away' from
+ * the camera. This is done so the program doesn't build
+ * up memory overtime.
+ */
+void Renderer::removeFarawayChunks(const glm::i32vec3 &globalPos) noexcept 
+{
+    std::int32_t farZ {globalPos.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS - 1};
+    std::int32_t farX {globalPos.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS - 1};
+    for (int i {}; i < 2; ++i)
+    {
+        for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X - PRELOAD_CHUNKS - 1}; x < globalPos.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS + 1; ++x)
+        {
+            if (allChunks.find({x, 0, farZ}) != allChunks.end())
+            {
+                Chunk * const chunk {&allChunks.at({x, 0, farZ})};
+                const ChunkTerrain terrain {.chunk = chunk->getChunk(), .topLayer = chunk->getTopLayer(), .lowestLayer = chunk->getBottomLayer()};
+                ChunkGenerator::updateChunkAt(terrain, {x, 0, farZ});
+                allChunks.erase({x, 0, farZ});
+            }
+        }
+        farZ = globalPos.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS + 1;
+    }
+
+    for (int i {}; i < 2; ++i)
+    {
+        for (std::int32_t z {globalPos.z - RENDER_DISTANCE_Z - PRELOAD_CHUNKS - 1}; z < globalPos.z + RENDER_DISTANCE_Z + PRELOAD_CHUNKS + 1; ++z)
+        {
+            if (allChunks.find({farX, 0, z}) != allChunks.end())
+            {
+                Chunk * const chunk {&allChunks.at({farX, 0, z})};
+                const ChunkTerrain terrain {.chunk = chunk->getChunk(), .topLayer = chunk->getTopLayer(), .lowestLayer = chunk->getBottomLayer()};
+                ChunkGenerator::updateChunkAt(terrain, {farX, 0, z});
+                allChunks.erase({farX, 0, z});
+            }
+        }
+        farX = globalPos.x + RENDER_DISTANCE_X + PRELOAD_CHUNKS + 1;
+    }
+
 }
 
 
@@ -121,11 +156,10 @@ void Renderer::createChunk(const glm::i32vec3 &chunkPos) noexcept
  */
 void Renderer::draw() noexcept 
 {
-    static constexpr unsigned int CALL_COUNT_RESET {7}; // Change this number if you want chunks to render faster or slower
+    const auto globalPos {Camera::getCameraPosChunkOffset()};
+    static constexpr unsigned int CALL_COUNT_RESET {6}; // Change this number if you want chunks to render faster or slower
     static unsigned int callCount {};
     ++callCount;
-    // Number of how many chunks the player can see on X and Z
-    const auto globalPos {Camera::getCameraPosChunkOffset()};
     bool createdChunkThisFrame {false};
 
     for (std::int32_t x {globalPos.x - RENDER_DISTANCE_X}; x < globalPos.x + RENDER_DISTANCE_X; ++x)
@@ -141,19 +175,14 @@ void Renderer::draw() noexcept
                     if (Chunk::isFacingChunk(Chunk::getChunkGlobalOffset(index)))
                         allChunks.at(index).drawChunk();
                 }
-                #if 1
-                else if (callCount == CALL_COUNT_RESET && !createdChunkThisFrame)
+                else if (callCount % CALL_COUNT_RESET == 0 && !createdChunkThisFrame)
                 {
                     createChunk(index);
                     createdChunkThisFrame = true;
                 }
-                #endif
             }
             
         }
     }
-    // Reset the call count
-    if (callCount == CALL_COUNT_RESET)
-        callCount = 0;
-
+    removeFarawayChunks(globalPos);
 }
