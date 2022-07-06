@@ -12,15 +12,15 @@ enum Attribute : std::uint8_t
 {
     Position,
     BlockID,
-    Visibility,
-    Ambient
+    Ambient,
+    Visibility
 };
 
 static constexpr std::array ATTRIBUTES {
     3, // Position 
     1, // Block ID
-    1, // Visibility
-    1  // Ambient
+    1,  // Ambient
+    1 // Visibility
 };
 
 static constexpr std::array<std::size_t, ATTRIBUTES.size()> VERTICES_SIZES {[](){
