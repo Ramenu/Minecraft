@@ -26,7 +26,6 @@ FEATURES
 TO BE RESOLVED
 --------------
 - Blocks are still highlighted even when the player has stopped looking at them
-- Program consumes too much memory as more chunks are created
 
 LIBRARIES/TOOLS/PROGRAMS USED
 -----------------------------
