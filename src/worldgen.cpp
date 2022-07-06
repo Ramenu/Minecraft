@@ -16,20 +16,12 @@ namespace WorldGen
 		Desert
 	};
 
-	enum class TerrainMidFormat : std::uint8_t
-	{
-		Standard // No peculiar features (to be defined)
-	};
 
 	struct TerrainFormat
 	{
 		Block mainBlock;
 		Block secondaryBlock;
-		union
-		{
-			TerrainTopFormat topFormat;
-			TerrainMidFormat midFormat;
-		};
+		TerrainTopFormat topFormat;
 	};
 
 	struct TreeInfo
@@ -265,9 +257,9 @@ namespace WorldGen
 	 * The 'maxHeight' parameter is simply the maximum y index that
 	 * can be returned.
 	 */
-	static inline std::int32_t randomizeYIndex(float x, float z, 
-	                                           const std::array<glm::vec2, 4UL> &gradients,
-											   float maxHeight) noexcept
+	static inline constexpr std::int32_t randomizeYIndex(float x, float z, 
+	                                           			 const std::array<glm::vec2, 4UL> &gradients,
+											             float maxHeight) noexcept
 	{
 		float noise {perlin(x, z, gradients)};
 
@@ -285,8 +277,7 @@ namespace WorldGen
 	 * which specifies the layout of the chunk and what blocks
 	 * should be used.
 	 */
-	static void generateTopHalfOfChunk(std::pair<ChunkArray, std::uint8_t> &chunk,
-	                                   TerrainFormat format) noexcept
+	static void generateTopHalfOfChunk(ChunkTerrain &terrain, TerrainFormat format) noexcept
 	{
 		float maxHeightForFormat {};
 		float frequency {1.0F};
@@ -325,7 +316,7 @@ namespace WorldGen
 				if (canGenerateTree({x, topY, z}, format.topFormat)) 
 				{
 					highestY = std::min(CHUNK_HEIGHT - 1, highestY + TREE_HEIGHT);
-					spawnTreeAt(chunk.first, {x, topY, z});
+					spawnTreeAt(terrain.chunk, {x, topY, z});
 				}
 				else if (canGenerateCactus(format.topFormat))
 				{
@@ -336,19 +327,19 @@ namespace WorldGen
 							highestY = topY + cactusHeight;
 						// Spawn a cactus at the position
 						for (std::int32_t y {topY}; y <= topY + cactusHeight; ++y)
-							chunk.first[x][y][z] = Block{Cactus_Block};
+							terrain.chunk[x][y][z] = Block{Cactus_Block};
 					}
 				}
 				for (std::int32_t y {topY}; y >= MINIMUM_HEIGHT_LEVEL_FOR_TOP; --y)
 				{
-					chunk.first[x][y][z] = selectedBlock;
+					terrain.chunk[x][y][z] = selectedBlock;
 					selectedBlock = format.secondaryBlock;
 				}
 			}
 		}
-		chunk.second = static_cast<std::uint8_t>(highestY) + 1;
+		terrain.topLayer = static_cast<std::uint8_t>(highestY) + 1;
 		#ifndef NDEBUG
-			assert(chunk.second <= CHUNK_HEIGHT);
+			assert(terrain.topLayer <= CHUNK_HEIGHT);
 		#endif
 	}
 
@@ -356,15 +347,12 @@ namespace WorldGen
 	 * Should be immediately called when dealing with the lower parts of the chunk
 	 * (i.e., any y component lower than CHUNK_HEIGHT_HALF). Handles ore generation
 	 */
-	static void generateBottomHalfOfChunk(ChunkArray &chunk, int yEnd) noexcept
+	static void generateBottomHalfOfChunk(ChunkArray &chunk) noexcept
 	{
-		#ifndef NDEBUG
-			assert(yEnd <= CHUNK_HEIGHT_HALF);
-		#endif
 		static constexpr std::uint32_t MAXIMUM_NUM {100};
 		static constexpr Block stoneBlock {Stone_Block};
 		glm::u8vec3 portion;
-		for (std::int32_t y {}; y < yEnd; ++y)
+		for (std::int32_t y {}; y < CHUNK_HEIGHT_HALF; ++y)
 		{
 			for (std::int32_t x {}; x < CHUNK_WIDTH; ++x)
 			{
@@ -391,40 +379,40 @@ namespace WorldGen
 	/**
 	 * Modifies the chunk to make it look like a plains biome.
 	 */
-    static void generatePlainsBiome(std::pair<ChunkArray, std::uint8_t> &chunk) noexcept
+    static void generatePlainsBiome(ChunkTerrain &terrain) noexcept
 	{
 		const TerrainFormat format {
 			.mainBlock = Block{Grass_Block},
 			.secondaryBlock = Block{Dirt_Block},
 			.topFormat = TerrainTopFormat::Plains
 		};
-		generateTopHalfOfChunk(chunk, format);
-		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
+		generateTopHalfOfChunk(terrain, format);
+		generateBottomHalfOfChunk(terrain.chunk);
 	}
 
 	/**
 	 * Modifies the chunk to make it look like a forest biome.
 	 */
-    static void generateForestBiome(std::pair<ChunkArray, std::uint8_t> &chunk) noexcept
+    static void generateForestBiome(ChunkTerrain &terrain) noexcept
 	{
 		const TerrainFormat format {
 			.mainBlock = Block{Grass_Block},
 			.secondaryBlock = Block{Dirt_Block},
 			.topFormat = TerrainTopFormat::Forest
 		};
-		generateTopHalfOfChunk(chunk, format);
-		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
+		generateTopHalfOfChunk(terrain, format);
+		generateBottomHalfOfChunk(terrain.chunk);
 	}
 
-	static void generateDesertBiome(std::pair<ChunkArray, std::uint8_t> &chunk) noexcept
+	static void generateDesertBiome(ChunkTerrain &terrain) noexcept
 	{
 		const TerrainFormat format {
 			.mainBlock = Block{Sand_Block},
 			.secondaryBlock = Block{Sand_Block},
 			.topFormat = TerrainTopFormat::Desert
 		};
-		generateTopHalfOfChunk(chunk, format);
-		generateBottomHalfOfChunk(chunk.first, CHUNK_HEIGHT_HALF);
+		generateTopHalfOfChunk(terrain, format);
+		generateBottomHalfOfChunk(terrain.chunk);
 	}
 
 	/**
@@ -432,15 +420,15 @@ namespace WorldGen
 	 * with the first member being the chunk with biome's terrain.
 	 * The second param is the maximum height of the chunk.
 	 */
-    std::pair<ChunkArray, std::uint8_t> generateTerrain(Biome biome) noexcept 
+    ChunkTerrain generateTerrain(Biome biome) noexcept 
     {
-		std::pair<ChunkArray, std::uint8_t> chunk {};
+		ChunkTerrain terrain {};
 		#if 1
 		switch (biome)
 		{
-			case Plains: generatePlainsBiome(chunk); break;
-			case Forest: generateForestBiome(chunk); break;
-			case Desert: generateDesertBiome(chunk); break;
+			case Plains: generatePlainsBiome(terrain); break;
+			case Forest: generateForestBiome(terrain); break;
+			case Desert: generateDesertBiome(terrain); break;
 		}
 		#else
 			if (biome == Plains || biome == Forest)
@@ -452,7 +440,7 @@ namespace WorldGen
 			}
 
 		#endif
-		return chunk;
+		return terrain;
     }
 
 }
