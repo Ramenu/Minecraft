@@ -6,7 +6,8 @@
 
 struct ChunkMesh
 {
-    std::array<std::vector<float>, ATTRIBUTES.size()> meshAttributes; 
+    // Don't include visibility as an attribute as it will not be used in the mesh vector anyway
+    std::array<std::vector<float>, ATTRIBUTES.size() - 1> meshAttributes; 
 };
 
 
