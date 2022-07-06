@@ -22,7 +22,6 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out float blockAmbient;
-flat out int blockFragID;
 
 uniform mat4 view;
 layout (std140, binding = 0) uniform Matrices
@@ -148,7 +147,7 @@ const float[TOTAL_BLOCKS] textureCoordsY = {
 void main()
 {
     const int attributeId = gl_VertexID % BLOCK_ATTRIBUTES;
-    blockFragID = int(blockID) - 1;
+    const int blockFragID = int(blockID) - 1;
     FragPos = aPos * aVisible;
     Normal = lightDirections[attributeId];
     gl_Position = projection * view * vec4(FragPos, 1.0);
