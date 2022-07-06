@@ -15,8 +15,8 @@ precision lowp float;
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in float blockID;
-layout (location = 2) in float aVisible;
-layout (location = 3) in float aAmbient;
+layout (location = 2) in float aAmbient;
+layout (location = 3) in float aVisible;
 
 out vec2 TexCoord;
 out vec3 Normal;
