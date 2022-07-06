@@ -25,11 +25,17 @@ static_assert(CHUNK_HEIGHT == CHUNK_WIDTH && CHUNK_HEIGHT == CHUNK_LENGTH, "ERRO
 
 using ChunkArray = std::array<std::array<std::array<Block, CHUNK_LENGTH>, CHUNK_HEIGHT>, CHUNK_WIDTH>;
 
-struct ChunkData
+struct ChunkTerrain
 {
     ChunkArray chunk;
+    std::uint8_t topLayer {CHUNK_HEIGHT - 1};
+    std::uint8_t lowestLayer {CHUNK_HEIGHT_HALF};
+};
+
+struct ChunkData
+{
+    ChunkTerrain terrain;
     ChunkMesh mesh;
-    Biome biome;
 };
 
 class Chunk
@@ -47,10 +53,13 @@ class Chunk
         static void updateBuffer(size_t bufferIndex, Attribute attributeIndex, 
                                  std::span<const float> vertices, Face face=BackFace) noexcept;
         ChunkArray chunk;
-        Biome biome;
     public:
 
-        inline constexpr auto getChunk() const noexcept {return chunk;}
+        inline constexpr auto getTopLayer() const noexcept {return highestVisibleLayer;}
+
+        inline constexpr auto getBottomLayer() const noexcept {return lowestVisibleLayer;}
+
+        inline const constexpr auto &getChunk() const noexcept {return chunk;}
         
         void updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Face face) const noexcept;
 
