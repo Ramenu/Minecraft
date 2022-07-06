@@ -31,6 +31,7 @@ class Renderer
             return (glm::dot(Camera::direction.front, {x, y, z}) > 0.0f);
         }
         void updateAdjacentChunks(const Chunk &chunk, const glm::i32vec3 &key) const noexcept;
+        void removeFarawayChunks(const glm::i32vec3 &cameraGlobalPos) noexcept;
         std::unordered_map<glm::i32vec3, Chunk> allChunks;
 };
 
