@@ -1,11 +1,10 @@
 #version 460 core
 
-precision mediump float;
+precision lowp float;
 
 #define LOWEST_AMBIENT -0.2
 #define DIFFUSE_VECTOR vec3(0.7, 0.7, 0.7)
 #define AMBIENT_VECTOR vec3(0.25, 0.25, 0.25)
-#define WATER_BLOCK_ID 12
 
 struct Material 
 {
@@ -19,7 +18,6 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 in float blockAmbient;
-flat in int blockFragID;
 
 uniform sampler2D allTextures;
 uniform Material material;
@@ -38,7 +36,7 @@ void main()
     const float diff = max(dot(Normal, direction), LOWEST_AMBIENT); // Calculate diffuse impact of the light 
     const vec3 diffuse = DIFFUSE_VECTOR * diff * texDiffuse;
 
-    vec3 result = (ambient + diffuse);
+    const vec3 result = (ambient + diffuse);
 
     fragColor = vec4(result, 1.0);
 }
