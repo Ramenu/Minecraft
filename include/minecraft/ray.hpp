@@ -12,9 +12,9 @@ class Ray
     public:
         Ray() = default;
         inline constexpr Ray(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection) noexcept : ray {rayOrigin + rayDirection} {}
-        inline void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept
+        inline constexpr void updateRay(const glm::vec3 &origin, const glm::vec3 &direction) noexcept
         {
-            static constexpr float distance {2.0f};
+			const float distance {2.0F};
             ray = origin + direction * distance;
             #if 0
                 //setTitle({static_cast<int8_t>(ray.x), static_cast<int8_t>(ray.y), static_cast<int8_t>(ray.z)});
