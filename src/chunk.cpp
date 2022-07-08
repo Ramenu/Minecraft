@@ -13,7 +13,11 @@
 #include <numeric>
 #include <algorithm>
 
-static constexpr bool CHECK_BOUNDS_ACCESS {false}; // use for debug builds only
+#ifndef NDEBUG
+	static constexpr bool CHECK_BOUNDS_ACCESS {true}; // use for debug builds only
+#else
+	static constexpr bool CHECK_BOUNDS_ACCESS {false};
+#endif
 
 #define ABORT_ON_OUT_OF_BOUNDS_ACCESS(index) \
     if constexpr (CHECK_BOUNDS_ACCESS) { \
