@@ -81,6 +81,10 @@ void initGame(const char *windowTitle) noexcept
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+/**
+ * Updates the camera's position. Including the
+ * shader uniforms. 
+ */
 static inline void updateCamera(const Renderer &renderer) noexcept
 {
     double mouseXPos {};

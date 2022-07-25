@@ -1,6 +1,5 @@
 #include "minecraft/rendering/renderer.hpp"
 #include "minecraft/block/face.h"
-#include "minecraft/math/frustum.hpp"
 #include "minecraft/math/glmath.hpp"
 #include "minecraft/rendering/renderinfo.hpp"
 #include "minecraft/world/chunkgenerator.hpp"

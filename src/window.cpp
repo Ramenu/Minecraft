@@ -66,6 +66,10 @@ namespace Window
         }
     }
 
+    /**
+     * Deletes the game's window
+     * (if not null).
+     */
     void deleteWindow() noexcept
     {
         if (window != nullptr)

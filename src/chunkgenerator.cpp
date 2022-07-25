@@ -23,13 +23,19 @@ namespace ChunkGenerator
     std::unordered_map<glm::i32vec3, ChunkTerrain> mappedBiomes;
 
 
-
+    /**
+     * Determines the size of the super chunk using
+     * a pseudo-randomized number.
+     */
     static inline std::size_t genSuperChunkOffset() noexcept {
         static constexpr int MINIMUM_SUPER_CHUNK_OFFSET {80};
         static constexpr int MAXIMUM_SUPER_CHUNK_OFFSET {800};
         return std::rand() % MAXIMUM_SUPER_CHUNK_OFFSET + MINIMUM_SUPER_CHUNK_OFFSET;
     }
 
+    /**
+     * Returns a pseudo-randomized biome.
+     */
     static inline Biome pickRandomBiome() noexcept {
         static constexpr std::array biomes {
             Plains,

@@ -52,11 +52,20 @@ namespace WorldGen
 		}
 	}
 
+	/**
+	 * Initializes the game's seed. Should be called at
+	 * the beginning of the game only once.
+	 */
 	void initSeed() noexcept {
 		std::srand(static_cast<unsigned int>(time(nullptr)));
 	}
 
 
+	/**
+	 * Spawns a tree at the chunk's position (i.e., the x, y, z index).
+	 * Note that it will only spawn a tree iff there is the y-level is low
+	 * enough.
+	 */
 	static constexpr void spawnTreeAt(ChunkArray &chunk, glm::u8vec3 index) noexcept
 	{
 

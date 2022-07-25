@@ -334,6 +334,11 @@ std::array<std::optional<glm::i8vec3>, SQUARES_ON_CUBE> Chunk::getBlocksSurround
     return surroundingBlocks;
 }
 
+/**
+ * This method updates the chunk's visible mesh. Which part of it depends on the
+ * face passed as input. If the chunk neighbor's opposite face (i.e., the opposite
+ * direction of the face passed) is an air block, only then will the face be visible. 
+ */
 void Chunk::updateChunkVisibilityToNeighbor(const ChunkArray &chunkNeighbor, Face face) const noexcept 
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
