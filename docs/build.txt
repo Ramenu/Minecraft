@@ -7,13 +7,18 @@ Unfortunately I didn't really design this to be simple. I do not have much exper
 writing good, portable build configurations so this isn't intended to be 'simple', sorry.
 
 To start off, you'll need to compile the glad file in the "./include/glad" directory and link
-it to a static or shared library, whichever you prefer. You'll also need to compile SFML (as of
-writing this, SFML 2.5.1 works). You will also need GLFW3. 
+it as a static or shared library, whichever you prefer. You'll also need GLFW3 and SFML, make sure
+you get the right versions as listed in the dependencies, otherwise it probably won't work.
 
-I am not sure how to write a proper CMake portable CMake configuration. It is a mess
+I am not sure how to write a proper portable CMake configuration. It is a mess
 right now at the moment. You'll probably have to edit some of the configurations  yourself. Sorry.
 I would greatly appreciate any help in trying to make it better. 
 
 Also, I have only tested the release build on Linux. But there is absolutely no reason why it wouldn't work
 on Windows or MacOS. From the time I was using Windows, everything compiled well and fine. Uncertain
 about MacOS, but I am fairly confident it should work there too.
+
+Dependencies:
+  SFML 2.5.1
+  GLFW3 3.3.6
+  GLAD (included in the source directory so you don't have to worry about finding the right version online)
