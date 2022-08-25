@@ -170,10 +170,7 @@ void Renderer::draw() noexcept
             if (Chunk::isFacingChunk(Chunk::getChunkGlobalOffset(index)))
             {
                 if (allChunks.find(index) != allChunks.end()) 
-                {
-                    if (Chunk::isFacingChunk(Chunk::getChunkGlobalOffset(index)))
-                        allChunks.at(index).drawChunk();
-                }
+                    allChunks.at(index).drawChunk();
                 else if (callCount % CALL_COUNT_RESET == 0 && !createdChunkThisFrame)
                 {
                     createChunk(index);
