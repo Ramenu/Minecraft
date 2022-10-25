@@ -1,6 +1,7 @@
 #include "minecraft/world/worldgen.hpp"
 #include "minecraft/world/perlin.hpp"
 #include <cmath>
+#include <ctime>
 
 namespace WorldGen
 {
